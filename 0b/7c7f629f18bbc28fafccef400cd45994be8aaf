@@ -1,0 +1,19 @@
+frontend/e2e/select.spec.ts
+  s_41659c77223350::t_8af82249bf7655 73-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0b7c7f629f18bbc28fafccef400cd45994be8aaf",
+  "prompts": {},
+  "sessions": {
+    "s_41659c77223350": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a19de3-d599-7230-ab2d-72efc4035651",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}
