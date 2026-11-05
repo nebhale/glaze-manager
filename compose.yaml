@@ -1,0 +1,13 @@
+services:
+  app:
+    image: ghcr.io/nebhale/glaze-manager:1.0.0
+    ports:
+      - "${GLAZE_BIND_ADDRESS:-127.0.0.1}:${GLAZE_PORT:-8000}:8000"
+    volumes:
+      - studio-data:/data
+    restart: unless-stopped
+    init: true
+    stop_grace_period: 30s
+
+volumes:
+  studio-data:

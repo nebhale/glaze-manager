@@ -1,0 +1,25 @@
+.venv/
+.tools/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+data/
+*.db*
+node_modules/
+dist/
+test-results/
+playwright-report/
+.DS_Store
+*.egg-info/
+.env
+.coverage
+htmlcov/
+.qa/
+.qa-*.log
+*.tsbuildinfo
+
+# Local inventory backups and historical design captures
+backups/
+screenshots/
+.env.*

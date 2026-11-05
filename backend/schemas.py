@@ -1,0 +1,231 @@
+from typing import Annotated, Generic, Literal, TypeVar
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+
+from .domain import normalize_uid
+
+Name = Annotated[str, Field(min_length=1, max_length=200)]
+Text = Annotated[str, Field(max_length=20000)]
+Weight = Annotated[float, Field(ge=0, le=10000000, allow_inf_nan=False)]
+FullWeight = Annotated[float, Field(ge=0.001, le=10000000, allow_inf_nan=False, description="Gross starting weight in grams, including the container.")]
+
+
+class Schema(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+
+class RecordPatch(Schema):
+    """Field-level edits with compare-and-set protection against lost updates."""
+
+    changes: dict[str, str | float | bool | None] = Field(min_length=1)
+    expected: dict[str, str | float | bool | None]
+
+    @model_validator(mode="after")
+    def matching_fields(self):
+        if self.changes.keys() != self.expected.keys():
+            raise ValueError("Provide the previous value for every changed field.")
+        return self
+
+
+class ManufacturerInput(Schema):
+    name: Name
+    website: str | None = None
+    notes: Text | None = None
+
+    @field_validator("website")
+    @classmethod
+    def url(cls, value):
+        if value and not value.startswith(("https://", "http://")):
+            raise ValueError("Use an http:// or https:// URL.")
+        return value or None
+
+
+class ManufacturerOut(ManufacturerInput):
+    id: str
+
+
+class GlazeInput(Schema):
+    manufacturer_id: str
+    name: Name
+    product_code: Name | None = None
+    product_line: Name | None = None
+    cone: Name | None = None
+    classification: Literal["glaze", "underglaze", "other"] | None = None
+    product_url: str | None = None
+    notes: Text | None = None
+
+    @field_validator("product_url")
+    @classmethod
+    def url(cls, value):
+        return ManufacturerInput.url(value)
+
+
+class PhotoOut(Schema):
+    id: str
+    glaze_id: str
+    url: str
+    thumbnail_url: str
+    caption: str | None
+    cover: bool
+
+
+class GlazeOut(GlazeInput):
+    id: str
+    manufacturer_name: str
+    photos: list[PhotoOut]
+
+
+class PresetInput(Schema):
+    name: Name
+    tare_g: Weight | None = None
+
+
+class PresetOut(PresetInput):
+    id: str
+
+
+class ContainerInput(Schema):
+    glaze_id: str
+    preset_id: str | None = None
+    location: Name | None = None
+    notes: Text | None = None
+    tare_g: Weight | None = None
+    full_weight_g: FullWeight | None = None
+
+
+class ContainerEdit(Schema):
+    glaze_id: str | None = None
+    expected_revision: int
+    preset_id: str | None = None
+    location: Name | None = None
+    notes: Text | None = None
+    tare_g: Weight | None = None
+    full_weight_g: FullWeight | None = None
+    archived: bool | None = None
+
+
+class StockOut(Schema):
+    gross_g: float | None
+    remaining_g: float | None
+    percentage: float | None
+    low_stock: bool
+    incomplete: bool
+    below_tare: bool
+    threshold_g: Weight
+
+
+class ContainerOut(ContainerInput, StockOut):
+    starting_net_g: float | None
+    id: str
+    number: int
+    tag_uid: str | None
+    archived: bool
+    revision: int
+    created_at: str
+    last_weighed_at: str | None
+    glaze: GlazeOut
+
+
+class MeasurementInput(Schema):
+    request_id: Annotated[str, Field(min_length=8, max_length=100)]
+    gross_g: Weight
+    expected_revision: int
+    source: Literal["web", "device"] = "web"
+    device_id: Annotated[str, Field(min_length=1, max_length=64)] | None = None
+    tag_uid: str | None = None
+    note: Text | None = None
+
+    @field_validator("tag_uid")
+    @classmethod
+    def tag(cls, value):
+        return normalize_uid(value) if value is not None else None
+
+    @model_validator(mode="after")
+    def device(self):
+        if self.source == "device" and (not self.device_id or not self.tag_uid):
+            raise ValueError("Device measurements require device_id and tag_uid.")
+        return self
+
+
+class MeasurementOut(StockOut):
+    id: str
+    container_id: str
+    tare_g: float | None
+    full_weight_g: float | None
+    measured_at: str
+    source: str
+    device_id: str | None
+    note: str | None
+    voided: bool
+    void_reason: str | None
+
+
+class SaveResult(Schema):
+    measurement_id: str
+    container_id: str
+    revision: int
+    stock: StockOut
+
+
+class ScanInput(Schema):
+    device_id: Annotated[str, Field(pattern=r"^[a-zA-Z0-9_.:-]{1,64}$")]
+    uid: str
+
+    @field_validator("uid")
+    @classmethod
+    def tag(cls, value):
+        return normalize_uid(value)
+
+
+class DeviceJar(StockOut):
+    container_id: str
+    revision: int
+    glaze_name: str
+    manufacturer_name: str
+    tare_g: float | None
+    full_weight_g: float | None
+    archived: bool
+
+
+class LookupOut(Schema):
+    uid: str
+    container: DeviceJar | None
+
+
+class ScanOut(LookupOut):
+    device_id: str
+    last_seen: str
+
+
+class BindInput(Schema):
+    container_id: str
+    expected_revision: int
+    move: bool = False
+    replace: bool = False
+
+
+class RevisionInput(Schema):
+    expected_revision: int
+
+
+class VoidInput(RevisionInput):
+    reason: Annotated[str, Field(min_length=1, max_length=2000)]
+
+
+class SettingsInput(Schema):
+    low_stock_threshold_g: Weight
+
+
+class PhotoEdit(Schema):
+    caption: Annotated[str, Field(max_length=2000)] | None = None
+    cover: bool = False
+
+
+T = TypeVar("T")
+
+
+class Page(BaseModel, Generic[T]):
+    items: list[T]
+    total: int
+    page: int
+    page_size: int

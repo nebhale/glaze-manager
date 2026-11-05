@@ -1,0 +1,165 @@
+<style>
+#glaze-detail-concepts .gm-stage { min-height: 680px; }
+#glaze-detail-concepts .gm-pane { --gm-bg:#fff; --gm-soft:#f8f5fb; --gm-line:#e6e1eb; --gm-ink:#302b38; --gm-muted:#655b6d; --gm-purple:#70439c; --gm-lilac:#eee5f7; color:var(--gm-ink); background:var(--gm-bg); border:1px solid var(--gm-line); border-radius:8px; font:13px/1.5 Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; overflow:hidden; }
+#glaze-detail-concepts .gm-pane * { box-sizing:border-box; }
+#glaze-detail-concepts .gm-top { background:var(--gm-soft); border-bottom:1px solid var(--gm-line); padding:9px 18px; color:var(--gm-muted); font-size:11px; }
+#glaze-detail-concepts .gm-body { padding:18px; }
+#glaze-detail-concepts .gm-identity { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+#glaze-detail-concepts .gm-name { font-size:21px; font-weight:600; margin:0; }
+#glaze-detail-concepts .gm-meta { color:var(--gm-muted); font-size:11px; }
+#glaze-detail-concepts .gm-stock { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px 20px; align-items:center; padding-bottom:18px; border-bottom:1px solid var(--gm-line); }
+#glaze-detail-concepts .gm-quantity { display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; }
+#glaze-detail-concepts .gm-quantity strong { font-size:27px; font-weight:600; line-height:1.2; }
+#glaze-detail-concepts .gm-quantity span { color:var(--gm-muted); font-size:11px; }
+#glaze-detail-concepts .gm-track { height:5px; border-radius:3px; background:var(--gm-lilac); overflow:hidden; }
+#glaze-detail-concepts .gm-track span { display:block; width:75%; height:100%; background:#956cb5; border-radius:inherit; }
+#glaze-detail-concepts .gm-primary { border:0; border-radius:5px; color:#fff; background:var(--gm-purple); padding:8px 12px; font-size:12px; font-weight:500; line-height:1.5; min-height:34px; }
+#glaze-detail-concepts button { font-family:inherit; }
+#glaze-detail-concepts button:focus-visible, #glaze-detail-concepts input:focus-visible, #glaze-detail-concepts summary:focus-visible { outline:2px solid var(--gm-purple); outline-offset:3px; }
+#glaze-detail-concepts .gm-stock > .gm-primary { grid-column:2; grid-row:1 / span 2; }
+#glaze-detail-concepts .gm-section { padding:16px 0 0; }
+#glaze-detail-concepts .gm-section-head { display:flex; align-items:baseline; gap:12px; margin-bottom:12px; }
+#glaze-detail-concepts .gm-section-head h3 { font-size:13px; font-weight:600; margin:0; }
+#glaze-detail-concepts .gm-edit { padding:2px 0; border:0; background:transparent; color:var(--gm-purple); font-size:11px; }
+#glaze-detail-concepts .gm-fields { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px 24px; margin:0; }
+#glaze-detail-concepts .gm-fields > div { min-width:0; }
+#glaze-detail-concepts dt { color:var(--gm-muted); font-size:11px; }
+#glaze-detail-concepts dd { margin:3px 0 0; color:var(--gm-ink); font-size:13px; overflow-wrap:anywhere; }
+#glaze-detail-concepts .gm-note { margin:10px 0 0; font-size:12px; color:var(--gm-muted); }
+#glaze-detail-concepts .gm-history { margin-top:18px; border-top:1px solid var(--gm-line); padding-top:12px; font-size:12px; }
+#glaze-detail-concepts .gm-history summary { color:var(--gm-ink); }
+#glaze-detail-concepts .gm-table { width:100%; border-collapse:collapse; margin-top:10px; font-size:12px; }
+#glaze-detail-concepts .gm-table th { color:var(--gm-muted); font-size:11px; font-weight:500; text-align:left; padding:5px 0; }
+#glaze-detail-concepts .gm-table td { border-top:1px solid var(--gm-line); padding:7px 0; }
+#glaze-detail-concepts .gm-table td:last-child, #glaze-detail-concepts .gm-table th:last-child { text-align:right; }
+#glaze-detail-concepts .gm-pair { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; }
+#glaze-detail-concepts .gm-properties { margin:0; display:grid; gap:9px; }
+#glaze-detail-concepts .gm-properties > div { display:grid; grid-template-columns:105px minmax(0,1fr); gap:12px; align-items:baseline; }
+#glaze-detail-concepts .gm-properties dd { margin:0; }
+#glaze-detail-concepts .gm-property-note { margin-top:18px; padding-top:14px; border-top:1px solid var(--gm-line); }
+#glaze-detail-concepts .gm-overview { display:grid; grid-template-columns:minmax(0,1.8fr) minmax(180px,1fr); gap:24px; }
+#glaze-detail-concepts .gm-overview .gm-fields { grid-template-columns:repeat(2,minmax(0,1fr)); }
+#glaze-detail-concepts .gm-activity { border-left:1px solid var(--gm-line); padding-left:20px; }
+#glaze-detail-concepts .gm-activity h3 { font-size:13px; font-weight:600; margin:16px 0 10px; }
+#glaze-detail-concepts .gm-reading { margin:0 0 14px; font-size:12px; }
+#glaze-detail-concepts .gm-reading time { display:block; color:var(--gm-muted); font-size:11px; margin-bottom:3px; }
+#glaze-detail-concepts .gm-reading strong { font-weight:600; }
+#glaze-detail-concepts .gm-field-input { width:100%; min-width:0; padding:4px 6px; border:1px solid #c8b7d6; border-radius:4px; color:var(--gm-ink); background:var(--gm-bg); font:inherit; }
+#glaze-detail-concepts .gm-weigh { margin-top:12px; padding:12px; background:var(--gm-soft); border-radius:5px; display:flex; align-items:end; gap:10px; flex-wrap:wrap; }
+#glaze-detail-concepts .gm-weigh[hidden] { display:none; }
+#glaze-detail-concepts .gm-weigh label { display:grid; gap:5px; flex:1; color:var(--gm-muted); font-size:11px; min-width:130px; }
+#glaze-detail-concepts .gm-saved { font-size:11px; color:#38664c; }
+@media(max-width:600px) {
+ #glaze-detail-concepts .gm-fields { grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 20px; }
+ #glaze-detail-concepts .gm-pair, #glaze-detail-concepts .gm-overview { grid-template-columns:1fr; gap:0; }
+ #glaze-detail-concepts .gm-activity { border-left:0; border-top:1px solid var(--gm-line); padding-left:0; margin-top:16px; }
+ #glaze-detail-concepts .gm-stage { min-height:1020px; }
+ #glaze-detail-concepts .gm-body { padding:14px; }
+ #glaze-detail-concepts .gm-properties > div { grid-template-columns:110px minmax(0,1fr); }
+}
+@media(pointer:coarse) {
+ #glaze-detail-concepts .gm-edit, #glaze-detail-concepts .gm-primary, #glaze-detail-concepts summary { min-height:44px; }
+ #glaze-detail-concepts .gm-field-input { font-size:16px; }
+}
+</style>
+<div id="glaze-detail-concepts" class="viz-carousel viz-dotted-background" aria-label="Jar detail layout concepts">
+<section data-variant="Stacked field grid" aria-label="Stacked field grid" class="gm-stage">
+<div class="gm-pane" data-layout="grid">
+<div class="gm-top">Jar #1</div><div class="gm-body">
+<div class="gm-identity"><div><h2 class="gm-name">Blue Surf</h2><div class="gm-meta">Mayco · SW-100 · Working jar</div></div></div>
+<div class="gm-stock"><div class="gm-quantity"><strong data-weight>510 g</strong><span>of 680 g · <span data-percent>75%</span></span></div><div class="gm-track" role="progressbar" aria-label="Remaining glaze" aria-valuemin="0" aria-valuemax="100" aria-valuenow="75"><span></span></div><button type="button" class="gm-primary" data-weigh>Record weight</button></div>
+<form class="gm-weigh" hidden><label>Gross weight (g)<input type="number" class="gm-field-input" required min="86" step="0.1" value="596" aria-label="Gross weight in grams"></label><button class="gm-primary">Save weight</button><button type="button" class="gm-edit" data-cancel>Cancel</button></form>
+<section class="gm-section"><div class="gm-section-head"><h3>Container</h3><button class="gm-edit" type="button" data-edit aria-label="Edit container fields">Edit</button></div><dl class="gm-fields">
+<div><dt>Label</dt><dd>Working jar</dd></div><div><dt>Location</dt><dd>Glaze shelf · A1</dd></div><div><dt>NFC tag</dt><dd>04A2B3C4D5E610</dd></div><div><dt>Empty jar</dt><dd>86 g</dd></div><div><dt>Gross weight</dt><dd data-gross>596 g</dd></div><div><dt>Starting weight</dt><dd>766 g</dd></div>
+</dl></section>
+<section class="gm-section"><div class="gm-section-head"><h3>Glaze</h3><button class="gm-edit" type="button" data-edit aria-label="Edit glaze fields">Edit</button></div><dl class="gm-fields">
+<div><dt>Manufacturer</dt><dd>Mayco</dd></div><div><dt>Product code</dt><dd>SW-100</dd></div><div><dt>Firing range</dt><dd>Cone 5–10</dd></div><div><dt>Color</dt><dd>Blue / green</dd></div><div><dt>Finish</dt><dd>Gloss</dd></div>
+</dl></section>
+<section class="gm-section"><div class="gm-section-head"><h3>Notes</h3></div><p class="gm-note">Stir before use.</p></section>
+<details class="gm-history"><summary>Weight history · 3 readings</summary><table class="gm-table"><thead><tr><th>Date</th><th>Glaze remaining</th></tr></thead><tbody><tr><td>Nov 2</td><td>510 g</td></tr><tr><td>Oct 28</td><td>590 g</td></tr><tr><td>Oct 18</td><td>680 g</td></tr></tbody></table></details>
+</div></div>
+</section>
+<section data-variant="Compact property rows" aria-label="Compact property rows" class="gm-stage" hidden>
+<div class="gm-pane" data-layout="properties">
+<div class="gm-top">Jar #1</div><div class="gm-body">
+<div class="gm-identity"><div><h2 class="gm-name">Blue Surf</h2><div class="gm-meta">Mayco · SW-100 · Working jar</div></div></div>
+<div class="gm-stock"><div class="gm-quantity"><strong data-weight>510 g</strong><span>of 680 g · <span data-percent>75%</span></span></div><div class="gm-track" role="progressbar" aria-label="Remaining glaze" aria-valuemin="0" aria-valuemax="100" aria-valuenow="75"><span></span></div><button type="button" class="gm-primary" data-weigh>Record weight</button></div>
+<form class="gm-weigh" hidden><label>Gross weight (g)<input type="number" class="gm-field-input" required min="86" step="0.1" value="596" aria-label="Gross weight in grams"></label><button class="gm-primary">Save weight</button><button type="button" class="gm-edit" data-cancel>Cancel</button></form>
+<div class="gm-pair">
+<section class="gm-section"><div class="gm-section-head"><h3>Container</h3><button class="gm-edit" type="button" data-edit aria-label="Edit container fields">Edit</button></div><dl class="gm-properties">
+<div><dt>Label</dt><dd>Working jar</dd></div><div><dt>Location</dt><dd>Glaze shelf · A1</dd></div><div><dt>NFC tag</dt><dd>04A2B3C4D5E610</dd></div><div><dt>Empty jar</dt><dd>86 g</dd></div><div><dt>Gross weight</dt><dd data-gross>596 g</dd></div><div><dt>Starting weight</dt><dd>766 g</dd></div>
+</dl></section>
+<section class="gm-section"><div class="gm-section-head"><h3>Glaze</h3><button class="gm-edit" type="button" data-edit aria-label="Edit glaze fields">Edit</button></div><dl class="gm-properties">
+<div><dt>Manufacturer</dt><dd>Mayco</dd></div><div><dt>Product code</dt><dd>SW-100</dd></div><div><dt>Firing range</dt><dd>Cone 5–10</dd></div><div><dt>Color</dt><dd>Blue / green</dd></div><div><dt>Finish</dt><dd>Gloss</dd></div>
+</dl></section>
+</div>
+<section class="gm-section gm-property-note"><div class="gm-section-head"><h3>Notes</h3></div><p class="gm-note">Stir before use.</p></section>
+<details class="gm-history"><summary>Weight history · 3 readings</summary><table class="gm-table"><thead><tr><th>Date</th><th>Glaze remaining</th></tr></thead><tbody><tr><td>Nov 2</td><td>510 g</td></tr><tr><td>Oct 28</td><td>590 g</td></tr><tr><td>Oct 18</td><td>680 g</td></tr></tbody></table></details>
+</div></div>
+</section>
+<section data-variant="Overview with activity" aria-label="Overview with activity" class="gm-stage" hidden>
+<div class="gm-pane" data-layout="activity">
+<div class="gm-top">Jar #1</div><div class="gm-body">
+<div class="gm-identity"><div><h2 class="gm-name">Blue Surf</h2><div class="gm-meta">Mayco · SW-100 · Working jar</div></div></div>
+<div class="gm-stock"><div class="gm-quantity"><strong data-weight>510 g</strong><span>of 680 g · <span data-percent>75%</span></span></div><div class="gm-track" role="progressbar" aria-label="Remaining glaze" aria-valuemin="0" aria-valuemax="100" aria-valuenow="75"><span></span></div><button type="button" class="gm-primary" data-weigh>Record weight</button></div>
+<form class="gm-weigh" hidden><label>Gross weight (g)<input type="number" class="gm-field-input" required min="86" step="0.1" value="596" aria-label="Gross weight in grams"></label><button class="gm-primary">Save weight</button><button type="button" class="gm-edit" data-cancel>Cancel</button></form>
+<div class="gm-overview"><div>
+<section class="gm-section"><div class="gm-section-head"><h3>Container</h3><button class="gm-edit" type="button" data-edit aria-label="Edit container fields">Edit</button></div><dl class="gm-fields">
+<div><dt>Label</dt><dd>Working jar</dd></div><div><dt>Location</dt><dd>Glaze shelf · A1</dd></div><div><dt>Empty jar</dt><dd>86 g</dd></div><div><dt>Gross weight</dt><dd data-gross>596 g</dd></div><div><dt>Starting weight</dt><dd>766 g</dd></div><div><dt>NFC tag</dt><dd>04A2B3C4D5E610</dd></div>
+</dl></section>
+<section class="gm-section"><div class="gm-section-head"><h3>Glaze</h3><button class="gm-edit" type="button" data-edit aria-label="Edit glaze fields">Edit</button></div><dl class="gm-fields">
+<div><dt>Manufacturer</dt><dd>Mayco</dd></div><div><dt>Product code</dt><dd>SW-100</dd></div><div><dt>Firing range</dt><dd>Cone 5–10</dd></div><div><dt>Finish</dt><dd>Gloss</dd></div><div><dt>Color</dt><dd>Blue / green</dd></div>
+</dl></section>
+</div><aside class="gm-activity"><h3>Recent weights</h3><div class="gm-reading"><time>Nov 2</time><strong>510 g remaining</strong><div class="gm-meta">After glazing bowls</div></div><div class="gm-reading"><time>Oct 28</time><strong>590 g remaining</strong><div class="gm-meta">Studio inventory check</div></div><div class="gm-reading"><time>Oct 18</time><strong>680 g remaining</strong><div class="gm-meta">New jar</div></div><h3>Notes</h3><p class="gm-note">Stir before use.</p></aside>
+</div>
+</div></div>
+</section>
+</div>
+<script>
+const root = document.getElementById('glaze-detail-concepts');
+root.querySelectorAll('button, summary').forEach(control=>control.classList.add('cursor-interaction'));
+root.querySelectorAll('[data-weight]').forEach(value=>value.setAttribute('aria-live','polite'));
+root.querySelectorAll('.gm-pane').forEach(pane => {
+  const form=pane.querySelector('.gm-weigh');
+  pane.querySelector('[data-weigh]').addEventListener('click',()=>{ form.hidden=!form.hidden; if(!form.hidden)form.querySelector('input').focus(); });
+  pane.querySelector('[data-cancel]').addEventListener('click',()=>{form.hidden=true;});
+  const saveWeight=event=>{
+    event.preventDefault();
+    if(!form.reportValidity())return;
+    const gross=Number(form.querySelector('input').value);
+    const net=Math.max(0,gross-86);
+    const pct=Math.round(net/680*100);
+    pane.querySelector('[data-weight]').textContent=`${net.toLocaleString(undefined,{maximumFractionDigits:1})} g`;
+    pane.querySelector('[data-percent]').textContent=`${pct}%`;
+    const track=pane.querySelector('.gm-track');
+    track.setAttribute('aria-valuenow',String(Math.min(100,pct)));
+    track.querySelector('span').style.width=`${Math.min(100,pct)}%`;
+    const grossField=pane.querySelector('[data-gross]');
+    if(!grossField.querySelector('input'))grossField.textContent=`${gross} g`;
+    form.hidden=true;
+  };
+  const saveButton=form.querySelector('.gm-primary');
+  saveButton.type='button';
+  saveButton.addEventListener('click',saveWeight);
+  form.addEventListener('submit',saveWeight);
+  form.querySelector('input').addEventListener('keydown',event=>{if(event.key==='Enter')saveWeight(event);});
+  pane.querySelectorAll('[data-edit]').forEach(button=>button.addEventListener('click',()=>{
+    const section=button.closest('.gm-section');
+    const editing=button.dataset.editing==='true';
+    section.querySelectorAll('dd').forEach(value=>{
+      if(editing){const input=value.querySelector('input');if(input)value.textContent=input.value;}
+      else{const input=document.createElement('input');input.className='gm-field-input';input.value=value.textContent;input.setAttribute('aria-label',value.previousElementSibling.textContent);value.textContent='';value.append(input);}
+    });
+    button.dataset.editing=String(!editing);
+    button.textContent=editing?'Edit':'Done';
+    button.setAttribute('aria-label',`${editing?'Edit':'Finish editing'} ${section.querySelector('h3').textContent.toLowerCase()} fields`);
+  }));
+});
+if(globalThis.Tweak){
+ root.querySelectorAll('.gm-pane').forEach(pane=>{
+   const density={spacing:14};
+   const tweak=new Tweak({container:pane,onChange:()=>{pane.querySelectorAll('.gm-fields').forEach(grid=>grid.style.rowGap=`${density.spacing}px`);pane.querySelectorAll('.gm-properties').forEach(grid=>grid.style.rowGap=`${Math.max(4,density.spacing-5)}px`);}});
+   tweak.addSlider(density,'spacing',{label:'Field spacing',min:8,max:24,unit:'px'});
+ });
+}
+</script>
