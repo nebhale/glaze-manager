@@ -11,6 +11,7 @@ import {
   InlinePanel,
   PhotoThumb,
   GlazeHeading,
+  sortableHeadings,
 } from "../components";
 import { GlazeFields } from "../editors";
 import { ContainerForm, GlazeForm, useSave } from "../forms";
@@ -21,22 +22,31 @@ export function Catalog() {
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
   const q = params.get("q") || "";
+  const sort = params.get("sort") === "product_line" ? "product_line" : "name";
+  const descending = params.get("descending") === "true";
   const [adding, setAdding] = useState(false);
   const [searchExpanded, setSearchExpanded] = useState(Boolean(q));
   const searchOpen = searchExpanded || Boolean(q);
   const listScroll = useRef<HTMLDivElement>(null);
-  const records = useApi<Page<Glaze>>(
-    `/glazes?page_size=1000&q=${encodeURIComponent(q)}`,
-  );
-  const search = q ? `?q=${encodeURIComponent(q)}` : "";
+  const apiParams = new URLSearchParams({
+    page_size: "1000",
+    q,
+    sort,
+    descending: String(descending),
+  });
+  const records = useApi<Page<Glaze>>(`/glazes?${apiParams}`);
+  const search = params.size ? `?${params}` : "";
   const listHref = `/catalog${search}`;
+  const heading = sortableHeadings(sort, descending, update);
 
-  function updateSearch(value: string) {
+  function update(values: Record<string, string>) {
     setParams(
       (current) => {
         const next = new URLSearchParams(current);
-        if (value) next.set("q", value);
-        else next.delete("q");
+        for (const [key, value] of Object.entries(values)) {
+          if (value) next.set(key, value);
+          else next.delete(key);
+        }
         return next;
       },
       { replace: true },
@@ -73,7 +83,7 @@ export function Catalog() {
               title="Search glazes"
               aria-expanded={searchOpen}
               onClick={() => {
-                if (searchOpen) updateSearch("");
+                if (searchOpen) update({ q: "" });
                 setSearchExpanded(!searchOpen);
               }}
             >
@@ -99,13 +109,13 @@ export function Catalog() {
                 placeholder="Search glazes…"
                 autoFocus
                 value={q}
-                onChange={(event) => updateSearch(event.target.value)}
+                onChange={(event) => update({ q: event.target.value })}
               />
               <button
                 className="icon-button"
                 aria-label="Clear and close search"
                 onClick={() => {
-                  updateSearch("");
+                  update({ q: "" });
                   setSearchExpanded(false);
                 }}
               >
@@ -116,23 +126,23 @@ export function Catalog() {
         )}
         <ErrorMessage error={records.error} />
         <div className="inventory-table-scroll" ref={listScroll}>
-          {records.isPending ? (
-            <Loading />
-          ) : records.data?.items.length ? (
+          {records.isPending || records.data?.items.length ? (
             <table className="stock-table catalog-table">
               <caption className="sr-only">
                 Glazes. Select a name to open details.
               </caption>
               <thead>
                 <tr>
-                  <th scope="col">Name</th>
-                  <th scope="col" className="catalog-product-line">
-                    Product Line
-                  </th>
+                  {heading("name", "Name")}
+                  {heading(
+                    "product_line",
+                    "Product Line",
+                    "catalog-product-line",
+                  )}
                 </tr>
               </thead>
               <tbody>
-                {records.data.items.map((record) => (
+                {records.data?.items.map((record) => (
                   <tr
                     key={record.id}
                     className={selectedId === record.id ? "selected-row" : ""}
@@ -187,6 +197,7 @@ export function Catalog() {
               />
             )
           )}
+          {records.isPending && <Loading />}
         </div>
         <div className="inventory-footer">
           <span>

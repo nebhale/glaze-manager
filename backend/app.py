@@ -63,7 +63,7 @@ def create_app(data_dir: Path | None = None):
         yield
         engine.dispose()
 
-    app = FastAPI(title="Glaze Manager", version="1.0.0", lifespan=lifespan)
+    app = FastAPI(title="Glaze Manager", version="1.1.0", lifespan=lifespan)
     app.state.engine = engine
     app.state.sessions = sessions
 
@@ -169,10 +169,12 @@ def create_app(data_dir: Path | None = None):
         db: DB,
         q: str = "",
         manufacturer_id: str | None = None,
+        sort: Literal["name", "product_line"] = "name",
+        descending: bool = False,
         number: int = Query(1, alias="page", ge=1),
         size: int = Query(100, alias="page_size", ge=1, le=1000),
     ):
-        rows = db.scalars(select(m.Glaze).order_by(m.Glaze.name)).all()
+        rows = db.scalars(select(m.Glaze)).all()
         result = [
             glaze_view(db, x)
             for x in rows
@@ -192,6 +194,17 @@ def create_app(data_dir: Path | None = None):
                 )
             ).casefold()
         ]
+        result.sort(
+            key=lambda glaze: (glaze["name"].casefold(), glaze["id"]),
+            reverse=sort == "name" and descending,
+        )
+        if sort == "product_line":
+            with_line = sorted(
+                (glaze for glaze in result if glaze["product_line"]),
+                key=lambda glaze: glaze["product_line"].casefold(),
+                reverse=descending,
+            )
+            result = with_line + [glaze for glaze in result if not glaze["product_line"]]
         return page(result, number, size)
 
     @app.get("/api/v1/glazes/{identifier}", response_model=s.GlazeOut)
