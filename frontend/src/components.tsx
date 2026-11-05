@@ -3,6 +3,7 @@ import {
   useEffect,
   useId,
   useRef,
+  type ComponentProps,
   type FormEvent,
   type ReactElement,
   type ReactNode,
@@ -111,6 +112,23 @@ export function InlinePanel({
         {children}
       </div>
     </section>
+  );
+}
+
+export function CostInput(props: ComponentProps<"input">) {
+  return (
+    <div className="cost-input">
+      <span aria-hidden="true">$</span>
+      <input
+        {...props}
+        aria-description="US dollars"
+        type="number"
+        inputMode="decimal"
+        min="0"
+        max="9999999999.99"
+        step="0.01"
+      />
+    </div>
   );
 }
 

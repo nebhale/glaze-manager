@@ -71,12 +71,23 @@ test("add a jar without a starting weight and update its container and glaze in 
     `${maker.name} · ${secondGlaze.name}`,
   );
   await selectOption(page, "Container", secondPreset.name);
+  await dialog.getByLabel("Cost", { exact: true }).fill("18.50");
   await dialog.getByRole("button", { name: "Add", exact: true }).click();
   await expect(dialog).toBeHidden();
   const pane = page.getByRole("complementary", { name: "Jar details" });
   await expect(pane.getByLabel("Container", { exact: true })).toHaveText(secondPreset.name);
   const readJar = async () => (await request.get(`/api/v1${new URL(page.url()).pathname}`)).json();
-  expect(await readJar()).toMatchObject({ tare_g: 100, full_weight_g: null });
+  expect(await readJar()).toMatchObject({ tare_g: 100, full_weight_g: null, cost_usd: "18.50" });
+  const cost = pane.getByLabel("Cost", { exact: true });
+  await expect(cost).toHaveValue("18.50");
+  await cost.fill("0");
+  await cost.blur();
+  await expect.poll(readJar).toMatchObject({ cost_usd: "0.00" });
+  await page.reload();
+  await expect(cost).toHaveValue("0.00");
+  await cost.fill("");
+  await cost.blur();
+  await expect.poll(readJar).toMatchObject({ cost_usd: null });
   await expect(pane.getByLabel("Starting weight (g)")).toHaveCount(0);
   await expect(pane.getByLabel("Empty jar (g)")).toHaveCount(0);
   await selectOption(page, "Container", firstPreset.name);

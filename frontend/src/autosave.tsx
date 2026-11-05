@@ -2,6 +2,7 @@ import { useEffect, useId, useSyncExternalStore, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { UrlInput } from "./UrlInput";
+import { CostInput } from "./components";
 import { api, ApiError, type Jar } from "./api";
 import { Select } from "./Select";
 import { TextArea } from "./TextArea";
@@ -14,7 +15,7 @@ type Options = {
   field: string;
   value: Value;
   label: string;
-  type?: "text" | "number" | "url" | "textarea";
+  type?: "text" | "number" | "currency" | "url" | "textarea";
   required?: boolean;
   min?: number;
   max?: number;
@@ -383,6 +384,13 @@ export function InlineField(options: Options) {
         <TextArea {...props} onChange={onInputChange} rows={2} />
       ) : options.type === "url" ? (
         <UrlInput {...props} label={options.label} onChange={onInputChange} />
+      ) : options.type === "currency" ? (
+        <CostInput
+          {...props}
+          onChange={({ currentTarget }) =>
+            change(currentTarget.value, currentTarget.validationMessage)
+          }
+        />
       ) : (
         <input
           {...props}

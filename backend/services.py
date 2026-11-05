@@ -6,7 +6,7 @@ from fastapi import HTTPException
 from sqlalchemy import select
 
 from . import models as m
-from .domain import DEFAULT_LOW_STOCK_THRESHOLD_MG, grams, net_weight, stock
+from .domain import DEFAULT_LOW_STOCK_THRESHOLD_MG, dollars, grams, net_weight, stock
 
 
 class Events:
@@ -114,6 +114,7 @@ def container_stock(db, container):
 
 def container_view(db, container):
     result = fields(container)
+    result["cost_usd"] = dollars(result.pop("cost_cents"))
     result["starting_net_g"] = grams(net_weight(container.full_weight_mg, container.tare_mg))
     result["tare_g"] = grams(result.pop("tare_mg"))
     result["full_weight_g"] = grams(result.pop("full_weight_mg"))

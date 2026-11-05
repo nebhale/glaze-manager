@@ -16,7 +16,7 @@ import {
   type Page,
   type Preset,
 } from "./api";
-import { ErrorMessage, Field, Submit, type SubmitEvent } from "./components";
+import { CostInput, ErrorMessage, Field, Submit, type SubmitEvent } from "./components";
 
 export function useSave<T = unknown>(onSuccess?: (data: T) => void) {
   const client = useQueryClient();
@@ -225,6 +225,9 @@ export function ContainerForm({
             maxLength={200}
             placeholder="e.g. Studio, Home"
           />
+        </Field>
+        <Field label="Cost">
+          <CostInput name="cost_usd" placeholder="Not set" />
         </Field>
         <Field label="Notes">
           <TextArea name="notes" />

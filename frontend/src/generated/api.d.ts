@@ -449,6 +449,8 @@ export interface components {
             preset_id?: string | null;
             /** Location */
             location?: string | null;
+            /** Cost Usd */
+            cost_usd?: number | string | null;
             /** Notes */
             notes?: string | null;
             /** Tare G */
@@ -466,6 +468,8 @@ export interface components {
             preset_id?: string | null;
             /** Location */
             location?: string | null;
+            /** Cost Usd */
+            cost_usd?: number | string | null;
             /** Notes */
             notes?: string | null;
             /** Tare G */
@@ -495,6 +499,8 @@ export interface components {
             preset_id?: string | null;
             /** Location */
             location?: string | null;
+            /** Cost Usd */
+            cost_usd?: string | null;
             /** Notes */
             notes?: string | null;
             /** Tare G */

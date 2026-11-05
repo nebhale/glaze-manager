@@ -174,6 +174,13 @@ export function JarFields({ jar }: { jar: Jar }) {
         />
         <InlineField
           resource={resource}
+          field="cost_usd"
+          value={jar.cost_usd ?? null}
+          label="Cost"
+          type="currency"
+        />
+        <InlineField
+          resource={resource}
           field="notes"
           value={jar.notes ?? null}
           label="Notes"
