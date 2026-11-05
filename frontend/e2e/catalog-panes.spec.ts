@@ -151,6 +151,53 @@ test("glazes keep selection, search, and edits in a dedicated detail pane", asyn
   expect(new URL(page.url()).searchParams.has("q")).toBe(false);
 });
 
+test("glaze headings sort the filtered list and keep its order through detail navigation", async ({
+  page,
+  request,
+}, testInfo) => {
+  const maker = await create(request, "/manufacturers", {
+    name: `Sort studio ${crypto.randomUUID()}`,
+  });
+  for (const [name, product_line] of [
+    ["Copper", "Matte"],
+    ["amber", "Satin"],
+    ["Blue", null],
+  ]) {
+    await create(request, "/glazes", {
+      manufacturer_id: maker.id,
+      name,
+      product_line,
+    });
+  }
+  await page.goto(`/catalog?q=${encodeURIComponent(maker.name)}`);
+  const list = page.getByRole("region", { name: "Glazes", exact: true });
+  const name = list.getByRole("columnheader", { name: "Name", exact: true });
+  const line = list.getByRole("columnheader", { name: "Product Line" });
+  const names = list.getByRole("link");
+  await expect(name).toHaveAttribute("aria-sort", "ascending");
+  await expect(names).toHaveText(["amber", "Blue", "Copper"]);
+  await name.getByRole("button").press("Enter");
+  await expect(name).toHaveAttribute("aria-sort", "descending");
+  await expect(names).toHaveText(["Copper", "Blue", "amber"]);
+  await expect(name.getByRole("button")).toBeFocused();
+  await line.getByRole("button").click();
+  await expect(line).toHaveAttribute("aria-sort", "ascending");
+  await expect(names).toHaveText(["Copper", "amber", "Blue"]);
+  await line.getByRole("button").click();
+  await expect(names).toHaveText(["amber", "Copper", "Blue"]);
+  await names.first().click();
+  await page.reload();
+  await page
+    .getByRole("button", {
+      name: testInfo.project.name === "phone" ? "Glazes" : "Close glaze details",
+      exact: true,
+    })
+    .click();
+  await expect(page.getByLabel("Search catalog")).toHaveValue(maker.name);
+  await expect(line).toHaveAttribute("aria-sort", "descending");
+  await expect(names).toHaveText(["amber", "Copper", "Blue"]);
+});
+
 test("manufacturers are listed, added, and edited inline in Settings", async ({
   page,
   request,

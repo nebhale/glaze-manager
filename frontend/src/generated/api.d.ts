@@ -1108,6 +1108,8 @@ export interface operations {
             query?: {
                 q?: string;
                 manufacturer_id?: string | null;
+                sort?: "name" | "product_line";
+                descending?: boolean;
                 page?: number;
                 page_size?: number;
             };

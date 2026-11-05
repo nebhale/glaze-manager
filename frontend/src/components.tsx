@@ -10,7 +10,9 @@ import {
 import {
   AlertCircle,
   Archive,
+  ArrowDown,
   ArrowLeft,
+  ArrowUp,
   Check,
   Droplets,
   Plus,
@@ -318,6 +320,36 @@ export function RemainingBar({
       />
     </div>
   );
+}
+
+export function sortableHeadings(
+  sort: string,
+  descending: boolean,
+  update: (values: { sort: string; descending: string }) => void,
+) {
+  return (key: string, label: string, className?: string) => {
+    const active = sort === key;
+    return (
+      <th
+        scope="col"
+        className={className}
+        aria-sort={
+          active ? (descending ? "descending" : "ascending") : undefined
+        }
+      >
+        <button
+          type="button"
+          onClick={() =>
+            update({ sort: key, descending: String(active && !descending) })
+          }
+        >
+          {label}
+          {active &&
+            (descending ? <ArrowDown size={11} /> : <ArrowUp size={11} />)}
+        </button>
+      </th>
+    );
+  };
 }
 
 export function JarList({

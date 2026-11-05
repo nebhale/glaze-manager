@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useMatch, useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowDown, ArrowUp, Plus, Search, X } from "lucide-react";
+import { Plus, Search, X } from "lucide-react";
 import { useApi, type Jar, type Page } from "../api";
 import {
   Empty,
@@ -8,6 +8,7 @@ import {
   Loading,
   InlinePanel,
   JarList,
+  sortableHeadings,
 } from "../components";
 import { ContainerForm } from "../forms";
 import { ContainerDetail } from "./ContainerDetail";
@@ -75,28 +76,6 @@ export function Inventory() {
       document.getElementById(`jar-${id}`)?.focus({ preventScroll: true }),
     );
   }
-  const heading = (key: string, label: string, className: string) => (
-    <th
-      scope="col"
-      className={className}
-      aria-sort={
-        sort === key ? (descending ? "descending" : "ascending") : undefined
-      }
-    >
-      <button
-        onClick={() =>
-          update({
-            sort: key,
-            descending: String(sort === key ? !descending : false),
-          })
-        }
-      >
-        {label}
-        {sort === key &&
-          (descending ? <ArrowDown size={11} /> : <ArrowUp size={11} />)}
-      </button>
-    </th>
-  );
   return (
     <SplitWorkspace hasSelection={Boolean(selectedId || adding)}>
       <section
@@ -164,7 +143,7 @@ export function Inventory() {
               caption="Jar inventory. Select a name to open jar details."
               selectedId={selectedId}
               search={search}
-              renderHeading={heading}
+              renderHeading={sortableHeadings(sort, descending, update)}
             />
           ) : (
             !jars.error && (
