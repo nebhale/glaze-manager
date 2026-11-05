@@ -14,6 +14,14 @@ CONES = (
 )
 
 
+def cents(dollars: Decimal | None) -> int | None:
+    return None if dollars is None else int(dollars * 100)
+
+
+def dollars(cents: int | None) -> Decimal | None:
+    return None if cents is None else Decimal(cents).scaleb(-2)
+
+
 def matches_cone(stored: str | None, query: str) -> bool:
     if not stored:
         return False

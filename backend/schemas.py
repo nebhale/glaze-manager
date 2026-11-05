@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Annotated, Generic, Literal, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -5,6 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from .domain import normalize_uid
 
 Name = Annotated[str, Field(min_length=1, max_length=200)]
+DollarAmount = Annotated[Decimal, Field(ge=0, max_digits=12, decimal_places=2)]
 Text = Annotated[str, Field(max_length=20000)]
 Weight = Annotated[float, Field(ge=0, le=10000000, allow_inf_nan=False)]
 FullWeight = Annotated[float, Field(ge=0.001, le=10000000, allow_inf_nan=False, description="Gross starting weight in grams, including the container.")]
@@ -88,6 +90,7 @@ class ContainerInput(Schema):
     glaze_id: str
     preset_id: str | None = None
     location: Name | None = None
+    cost_usd: DollarAmount | None = None
     notes: Text | None = None
     tare_g: Weight | None = None
     full_weight_g: FullWeight | None = None
@@ -98,6 +101,7 @@ class ContainerEdit(Schema):
     expected_revision: int
     preset_id: str | None = None
     location: Name | None = None
+    cost_usd: DollarAmount | None = None
     notes: Text | None = None
     tare_g: Weight | None = None
     full_weight_g: FullWeight | None = None

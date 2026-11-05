@@ -52,6 +52,7 @@ class Container(Base):
     glaze_id: Mapped[str] = mapped_column(ForeignKey("glazes.id"), index=True)
     preset_id: Mapped[str | None] = mapped_column(ForeignKey("presets.id"))
     location: Mapped[str | None] = mapped_column(index=True)
+    cost_cents: Mapped[int | None]
     notes: Mapped[str | None] = mapped_column(Text)
     tare_mg: Mapped[int | None] = mapped_column(Integer)
     full_weight_mg: Mapped[int | None] = mapped_column(Integer)

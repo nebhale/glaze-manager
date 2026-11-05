@@ -16,14 +16,14 @@ from fastapi.staticfiles import StaticFiles
 from PIL import Image, ImageOps, UnidentifiedImageError
 from pillow_heif import register_heif_opener
 from pydantic import ValidationError
-from sqlalchemy import delete, func, select, text
+from sqlalchemy import delete, func, inspect, select, text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from . import models as m
 from . import schemas as s
 from .database import Base, data_directory, make_engine, session_factory
-from .domain import grams, matches_cone, milligrams, normalize_uid, revision_check
+from .domain import cents, grams, matches_cone, milligrams, normalize_uid, revision_check
 from .services import (
     Events,
     container_stock,
@@ -55,7 +55,12 @@ def create_app(data_dir: Path | None = None):
 
     @asynccontextmanager
     async def lifespan(app):
-        Base.metadata.create_all(engine)
+        with engine.begin() as connection:
+            connection.exec_driver_sql("BEGIN IMMEDIATE")
+            Base.metadata.create_all(connection)
+            columns = inspect(connection).get_columns("containers")
+            if not any(column["name"] == "cost_cents" for column in columns):
+                connection.exec_driver_sql("ALTER TABLE containers ADD COLUMN cost_cents INTEGER")
         with sessions() as db:
             if db.get(m.Setting, 1) is None:
                 db.add(m.Setting(id=1))
@@ -63,7 +68,7 @@ def create_app(data_dir: Path | None = None):
         yield
         engine.dispose()
 
-    app = FastAPI(title="Glaze Manager", version="1.1.0", lifespan=lifespan)
+    app = FastAPI(title="Glaze Manager", version="1.2.0", lifespan=lifespan)
     app.state.engine = engine
     app.state.sessions = sessions
 
@@ -392,7 +397,8 @@ def create_app(data_dir: Path | None = None):
     @app.post("/api/v1/containers", response_model=s.ContainerOut, status_code=201)
     def create_container(body: s.ContainerInput, db: DB):
         require(db, m.Glaze, body.glaze_id)
-        values = body.model_dump(exclude={"tare_g", "full_weight_g"})
+        values = body.model_dump(exclude={"tare_g", "full_weight_g", "cost_usd"})
+        values["cost_cents"] = cents(body.cost_usd)
         tare, full = milligrams(body.tare_g), milligrams(body.full_weight_g)
         if body.preset_id:
             preset = require(db, m.Preset, body.preset_id)
@@ -427,6 +433,8 @@ def create_app(data_dir: Path | None = None):
         for key, value in values.items():
             if key in {"tare_g", "full_weight_g"}:
                 setattr(item, key.removesuffix("_g") + "_mg", milligrams(value))
+            elif key == "cost_usd":
+                item.cost_cents = cents(value)
             elif key != "archived" or value is not None:
                 setattr(item, key, value)
         item.revision += 1

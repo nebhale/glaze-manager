@@ -74,13 +74,15 @@ test("shared fields align between create and detail", async ({
         "Glaze",
         "Container",
         "Location",
+        "Cost",
         "Notes",
       ]);
-      expect(Object.keys(saved)).toEqual(["Glaze", "Container", "Location", "Notes", "NFC Tag"]);
+      expect(Object.keys(saved)).toEqual(["Glaze", "Container", "Location", "Cost", "Notes", "NFC Tag"]);
       // The jar detail includes a weight summary above its fields. Compare the
       // spacing between each shared field's label and its control.
       for (const [addName, detailName] of [
         ["Location", "Location"],
+        ["Cost", "Cost"],
         ["Container", "Container"],
         ["Notes", "Notes"],
       ]) {

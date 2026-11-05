@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Glaze Manager",
-    "version": "1.1.0"
+    "version": "1.2.0"
   },
   "paths": {
     "/healthz": {
@@ -1909,6 +1909,21 @@
             ],
             "title": "Location"
           },
+          "cost_usd": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Usd"
+          },
           "notes": {
             "anyOf": [
               {
@@ -1996,6 +2011,21 @@
               }
             ],
             "title": "Location"
+          },
+          "cost_usd": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Usd"
           },
           "notes": {
             "anyOf": [
@@ -2124,6 +2154,17 @@
               }
             ],
             "title": "Location"
+          },
+          "cost_usd": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Usd"
           },
           "notes": {
             "anyOf": [

@@ -1890,6 +1890,21 @@ code {
 .inline-url {
   position: relative;
 }
+.cost-input {
+  position: relative;
+}
+.cost-input > span {
+  position: absolute;
+  left: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--muted);
+  font-size: 13px;
+}
+.field .cost-input input {
+  padding-left: 23px;
+}
 .inline-url input {
   padding-right: 38px;
 }
