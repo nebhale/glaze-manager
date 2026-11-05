@@ -61,7 +61,7 @@ jobs:
       - name: Smoke test the production image
         run: |
           docker run -d --name glaze-smoke -p 127.0.0.1:18080:8000 glaze-manager:test
-          curl --retry 30 --retry-connrefused --retry-delay 1 -fsS http://localhost:18080/healthz
+          curl --retry 30 --retry-all-errors --retry-delay 1 -fsS http://localhost:18080/healthz
           curl -fsS http://localhost:18080/ | grep -q 'Glaze Manager'
           curl -fsS http://localhost:18080/api/v1/containers | jq -e '.total == 0'
           test "$(docker exec glaze-smoke id -u)" = 10001
