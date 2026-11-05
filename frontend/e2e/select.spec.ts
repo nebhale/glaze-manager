@@ -65,15 +65,14 @@ test("opaque menus support validation, keyboard selection, clearing, and dismiss
   await expect(menu).toBeHidden();
   await expect(dialog).toBeVisible();
   await expect(manufacturer).toBeFocused();
-  const heading = await dialog
-    .getByRole("heading", { name: "Glaze" })
-    .boundingBox();
   await manufacturer.click();
   await page.screenshot({
     path: testInfo.outputPath("opaque-menu.png"),
     fullPage: true,
   });
-  await page.mouse.click(heading!.x + 5, heading!.y + 5);
+  // The menu can open over the heading. Its collision padding keeps the
+  // viewport corner outside the menu on both desktop and mobile.
+  await page.mouse.click(2, 2);
   await expect(menu).toBeHidden();
   await expect(dialog).toBeVisible();
   expect(
