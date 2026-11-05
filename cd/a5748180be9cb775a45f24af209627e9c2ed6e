@@ -1,0 +1,50 @@
+backend/models.py
+  s_67887bbda6ca7f::t_fe9f2445840b1a 55
+frontend/src/editors.tsx
+  s_67887bbda6ca7f::t_bf0e469bf2f3be 177-181
+  s_67887bbda6ca7f::t_136f95993829bf 175-176
+openapi.json
+  s_67887bbda6ca7f::t_e535d7c7ccfd8b 1912-1926,2015-2029,2158-2168
+frontend/src/styles.css
+  s_67887bbda6ca7f::t_bf0e469bf2f3be 1893-1907
+tests/test_jar_cost.py
+  s_67887bbda6ca7f::t_66c4db672d5f58 1-38
+frontend/src/generated/api.d.ts
+  s_67887bbda6ca7f::t_e535d7c7ccfd8b 452-453,471-472,502-503
+backend/schemas.py
+  s_67887bbda6ca7f::t_fe9f2445840b1a 1,9,93,104
+frontend/e2e/field-alignment.spec.ts
+  s_67887bbda6ca7f::t_66c4db672d5f58 77,80,85
+frontend/e2e/jar-weights.spec.ts
+  s_67887bbda6ca7f::t_66c4db672d5f58 74,80-90
+frontend/src/components.tsx
+  s_67887bbda6ca7f::t_bf0e469bf2f3be 6,118-131
+  s_67887bbda6ca7f::t_86c85982f78933 132-134
+frontend/src/forms.tsx
+  s_67887bbda6ca7f::t_bf0e469bf2f3be 19,229-230
+  s_67887bbda6ca7f::t_da8e037a312f7a 231
+backend/app.py
+  s_67887bbda6ca7f::t_fe9f2445840b1a 19,26,58-63,400-401,436-437
+backend/services.py
+  s_67887bbda6ca7f::t_fe9f2445840b1a 9,117
+frontend/src/autosave.tsx
+  s_67887bbda6ca7f::t_bf0e469bf2f3be 5,18,387-393
+backend/domain.py
+  s_67887bbda6ca7f::t_fe9f2445840b1a 17-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cda5748180be9cb775a45f24af209627e9c2ed6e",
+  "prompts": {},
+  "sessions": {
+    "s_67887bbda6ca7f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1abcc-dd55-7f22-8537-9ff76d21860d",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}
