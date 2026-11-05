@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.2.0](https://github.com/nebhale/glaze-manager/releases/tag/v1.2.0) · 2026-11-05
+
+- Record an optional cost in US dollars for each jar. The Cost field appears between Location and Notes when adding or editing a jar. Existing jars start with a blank cost.
+
 ## [1.1.0](https://github.com/nebhale/glaze-manager/releases/tag/v1.1.0) · 2026-11-05
 
 - Sort the Glazes list by Name or Product Line in either direction. Search results use the same order, and opening a glaze or reloading keeps your selection. Glazes without a product line appear last when sorting by Product Line.
