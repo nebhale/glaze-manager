@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   useApi,
   type Manufacturer,
@@ -24,6 +24,7 @@ export function Settings() {
   );
   const [addingManufacturer, setAddingManufacturer] = useState(false);
   const { hash } = useLocation();
+  const navigate = useNavigate();
   const loading =
     manufacturers.isPending || presets.isPending || settings.isPending;
   useEffect(() => {
@@ -56,8 +57,7 @@ export function Settings() {
                   resource="/settings"
                   field="low_stock_threshold_g"
                   value={settings.data.low_stock_threshold_g}
-                  label="Studio low-stock threshold (g)"
-                  hint="Warn when a jar’s remaining glaze falls below this weight."
+                  label="Low-stock warning threshold (g)"
                   type="number"
                   required
                 />
@@ -126,34 +126,43 @@ export function Settings() {
               </AddButton>
             )}
           </div>
-          {addingManufacturer && (
-            <div className="settings-row">
-              <ManufacturerForm done={() => setAddingManufacturer(false)} />
-            </div>
-          )}
-          <ErrorMessage error={manufacturers.error} />
-          {manufacturers.isPending ? (
-            <Loading />
-          ) : manufacturers.data?.items.length ? (
-            manufacturers.data.items.map((manufacturer) => (
-              <div
-                className="settings-row"
-                key={manufacturer.id}
-                id={`manufacturer-${manufacturer.id}`}
-                data-manufacturer-id={manufacturer.id}
-                role="group"
-                aria-label={manufacturer.name}
-                tabIndex={-1}
-              >
-                <ManufacturerFields manufacturer={manufacturer} />
+          <div className="record-list manufacturer-list">
+            {addingManufacturer && (
+              <div className="record-item">
+                <ManufacturerForm done={() => setAddingManufacturer(false)} />
               </div>
-            ))
-          ) : (
-            !addingManufacturer &&
-            manufacturers.data && (
-              <p className="settings-row helper">No manufacturers yet.</p>
-            )
-          )}
+            )}
+            <ErrorMessage error={manufacturers.error} />
+            {manufacturers.isPending ? (
+              <Loading />
+            ) : manufacturers.data?.items.length ? (
+              manufacturers.data.items.map((manufacturer) => (
+                <div
+                  className="record-item"
+                  key={manufacturer.id}
+                  id={`manufacturer-${manufacturer.id}`}
+                  data-manufacturer-id={manufacturer.id}
+                  role="group"
+                  aria-label={manufacturer.name}
+                  tabIndex={-1}
+                >
+                  <ManufacturerFields
+                    manufacturer={manufacturer}
+                    onDelete={() => {
+                      if (hash === `#manufacturer-${manufacturer.id}`)
+                        navigate("#manufacturers", { replace: true });
+                      document.getElementById("manufacturers")?.focus({ preventScroll: true });
+                    }}
+                  />
+                </div>
+              ))
+            ) : (
+              !addingManufacturer &&
+              manufacturers.data && (
+                <p className="helper">No manufacturers yet.</p>
+              )
+            )}
+          </div>
         </section>
       </div>
     </>

@@ -12,7 +12,7 @@ import {
   RemainingWeight,
 } from "../components";
 import { useSave } from "../forms";
-import { forgetJarDrafts } from "../autosave";
+import { forgetDrafts } from "../autosave";
 import { JarFields } from "../editors";
 
 dayjs.extend(relativeTime);
@@ -51,7 +51,7 @@ export function ContainerDetail({
   }
   const save = useSave(closeAdjustment);
   const deletion = useSave(() => {
-    forgetJarDrafts(`/containers/${id}`);
+    forgetDrafts(`/containers/${id}`);
     onClose();
   });
   const measurement = useSave(() => {
@@ -116,11 +116,11 @@ export function ContainerDetail({
                 }
               >
                 {jar.archived ? <RotateCcw size={15} /> : <Archive size={15} />}
-                {jar.archived ? "Restore jar" : "Archive jar"}
+                {jar.archived ? "Restore jar" : "Archive"}
               </button>
               <button
                 type="button"
-                className="icon-button delete-jar"
+                className="icon-button delete-record"
                 aria-label="Delete jar"
                 title="Delete jar"
                 disabled={actionPending}

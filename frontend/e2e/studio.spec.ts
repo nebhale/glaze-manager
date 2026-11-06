@@ -43,7 +43,7 @@ test("create a catalog and jar, weigh, archive and restore while retaining readi
     .getByRole("button", { name: "Add", exact: true })
     .click();
   await expect(page.getByRole("dialog")).toBeHidden();
-  const activeJars = page.getByRole("table", { name: "Active jars" });
+  const activeJars = page.getByRole("table", { name: "Jars" });
   await expect(activeJars.getByRole("columnheader")).toHaveText([
     "ID",
     "Name",
@@ -90,13 +90,13 @@ test("create a catalog and jar, weigh, archive and restore while retaining readi
       expect.objectContaining({ gross_g: 250, remaining_g: 150 }),
     ]),
   );
-  await page.getByRole("button", { name: "Archive jar" }).click();
+  await page.getByRole("button", { name: "Archive", exact: true }).click();
   await expect(
     page.getByRole("button", { name: "Restore jar" }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Restore jar" }).click();
   await expect(
-    page.getByRole("button", { name: "Archive jar" }),
+    page.getByRole("button", { name: "Archive", exact: true }),
   ).toBeVisible();
   await expect(page.locator(".big-weight")).toContainText("150 g");
   expect(await (await request.get(historyPath)).json()).toEqual(history);
@@ -193,7 +193,7 @@ test("manage photos as square tiles above the jar list", async ({
   ).json();
   await page.goto(`/glazes/${glaze.id}`);
   const photos = page.getByRole("region", { name: "Photos", exact: true });
-  const upload = photos.getByLabel("Add photo", { exact: true });
+  const upload = photos.getByLabel("Add glaze photo", { exact: true });
   await expect(photos).toBeVisible();
   await expect(photos.locator(".photo-tile")).toHaveCount(1);
   await expect(photos.locator("summary")).toHaveCount(0);
@@ -228,7 +228,7 @@ test("manage photos as square tiles above the jar list", async ({
   }
   const photosBounds = await photos.boundingBox();
   const jarsBounds = await page
-    .getByRole("heading", { name: /^Active jars/ })
+    .getByRole("heading", { name: /^Jars/ })
     .boundingBox();
   expect(photosBounds!.y + photosBounds!.height).toBeLessThan(jarsBounds!.y);
   await page.screenshot({
@@ -253,4 +253,12 @@ test("manage photos as square tiles above the jar list", async ({
   }
   await expect(photos.locator(".photo-tile")).toHaveCount(1);
   await expect(upload).toBeEnabled();
+  const deleteGlaze = page.getByRole("button", { name: "Delete glaze" });
+  page.once("dialog", (dialog) => dialog.dismiss());
+  await deleteGlaze.click();
+  await expect(page.getByRole("heading", { name: glaze.name })).toBeVisible();
+  page.once("dialog", (dialog) => dialog.accept());
+  await deleteGlaze.click();
+  await expect(page).toHaveURL(/\/catalog$/);
+  await expect(page.getByRole("link", { name: glaze.name, exact: true })).toHaveCount(0);
 });

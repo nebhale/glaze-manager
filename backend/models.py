@@ -1,8 +1,9 @@
 from datetime import datetime, timezone
+from typing import ClassVar
 from uuid import uuid4
 
 from sqlalchemy import Boolean, ForeignKey, Integer, String, Text, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .database import Base
 from .domain import DEFAULT_LOW_STOCK_THRESHOLD_MG
@@ -85,15 +86,47 @@ class Measurement(Base):
     response_json: Mapped[str] = mapped_column(Text, default="{}")
 
 
-class Photo(Base):
-    __tablename__ = "photos"
+class Vessel(Base):
+    __tablename__ = "vessels"
+    # Keep retired vessel numbers retired.
+    __table_args__: ClassVar = {"sqlite_autoincrement": True}
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(200))
+    location: Mapped[str | None]
+    archived: Mapped[bool] = mapped_column(Boolean, default=False, server_default="0")
+    photos: Mapped[list["VesselPhoto"]] = relationship(
+        order_by=lambda: (VesselPhoto.cover.desc(), VesselPhoto.created_at, VesselPhoto.id),
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
+
+
+class GlazeApplication(Base):
+    __tablename__ = "glaze_applications"
     id: Mapped[str] = mapped_column(primary_key=True, default=identity)
+    vessel_id: Mapped[int] = mapped_column(ForeignKey("vessels.id", ondelete="CASCADE"), index=True)
     glaze_id: Mapped[str] = mapped_column(ForeignKey("glazes.id"), index=True)
+    application_note: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[str] = mapped_column(default=timestamp)
+
+
+class PhotoFields:
+    id: Mapped[str] = mapped_column(primary_key=True, default=identity)
     filename: Mapped[str]
     thumbnail: Mapped[str]
     caption: Mapped[str | None]
     cover: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[str] = mapped_column(default=timestamp)
+
+
+class Photo(PhotoFields, Base):
+    __tablename__ = "photos"
+    glaze_id: Mapped[str] = mapped_column(ForeignKey("glazes.id"), index=True)
+
+
+class VesselPhoto(PhotoFields, Base):
+    __tablename__ = "vessel_photos"
+    vessel_id: Mapped[int] = mapped_column(ForeignKey("vessels.id", ondelete="CASCADE"), index=True)
 
 
 class Setting(Base):

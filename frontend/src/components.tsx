@@ -3,6 +3,7 @@ import {
   useEffect,
   useId,
   useRef,
+  useState,
   type ComponentProps,
   type FormEvent,
   type ReactElement,
@@ -10,6 +11,7 @@ import {
 } from "react";
 import {
   AlertCircle,
+  Amphora,
   Archive,
   ArrowDown,
   ArrowLeft,
@@ -17,10 +19,11 @@ import {
   Check,
   Droplets,
   Plus,
+  Search,
   X,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { grams, percent, type Jar, type Glaze } from "./api";
+import { grams, percent, type Jar, type Glaze, type VesselSummary } from "./api";
 
 export function JarIcon({ className = "" }: { className?: string }) {
   return (
@@ -136,15 +139,19 @@ export function Field({
   label,
   children,
   hint,
+  hideLabel,
 }: {
   label: string;
   children: ReactNode;
   hint?: string;
+  hideLabel?: boolean;
 }) {
   const id = useId();
   return (
     <div className="field">
-      <label htmlFor={id}>{label}</label>
+      <label htmlFor={id} className={hideLabel ? "sr-only" : undefined}>
+        {label}
+      </label>
       {cloneElement(
         children as ReactElement<{ id?: string; "aria-describedby"?: string }>,
         { id, "aria-describedby": hint ? `${id}-hint` : undefined },
@@ -217,6 +224,77 @@ export function Submit({
     </div>
   );
 }
+export function ListHeading({
+  title,
+  query,
+  onQueryChange,
+  inputLabel,
+  placeholder,
+  children,
+}: {
+  title: string;
+  query: string;
+  onQueryChange: (value: string) => void;
+  inputLabel: string;
+  placeholder: string;
+  children: ReactNode;
+}) {
+  const [expanded, setExpanded] = useState(Boolean(query));
+  const open = expanded || Boolean(query);
+  const toggle = useRef<HTMLButtonElement>(null);
+  const toggleLabel = `Search ${title.toLowerCase()}`;
+
+  function closeSearch() {
+    onQueryChange("");
+    setExpanded(false);
+    toggle.current?.focus();
+  }
+
+  return (
+    <>
+      <div className="inventory-heading">
+        <h1>{title}</h1>
+        <div className="inventory-actions">
+          <button
+            ref={toggle}
+            type="button"
+            className={`icon-button ${open ? "selected" : ""}`}
+            aria-label={toggleLabel}
+            title={toggleLabel}
+            aria-expanded={open}
+            onClick={() => open ? closeSearch() : setExpanded(true)}
+          >
+            <Search size={18} />
+          </button>
+          {children}
+        </div>
+      </div>
+      {open && (
+        <div className="inventory-search">
+          <div className="search-box">
+            <Search size={16} />
+            <input
+              aria-label={inputLabel}
+              placeholder={placeholder}
+              autoFocus
+              value={query}
+              onChange={(event) => onQueryChange(event.target.value)}
+            />
+            <button
+              type="button"
+              className="icon-button"
+              aria-label="Clear and close search"
+              onClick={closeSearch}
+            >
+              <X size={15} />
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 export function PageHeading({
   eyebrow,
   title,
@@ -239,6 +317,68 @@ export function PageHeading({
     </div>
   );
 }
+export function DetailPane({
+  item,
+  children,
+  onClose,
+}: {
+  item: "glaze" | "vessel";
+  children: ReactNode;
+  onClose: () => void;
+}) {
+  const label = item === "vessel" ? "Vessel" : "Glaze";
+  return (
+    <aside
+      className="jar-detail-pane catalog-detail-pane"
+      aria-label={`${label} details`}
+    >
+      <div className="pane-navigation">
+        <button className="text-button back-to-inventory" onClick={onClose}>
+          <ArrowLeft size={16} />
+          {label}s
+        </button>
+        <button
+          className="icon-button close-pane"
+          aria-label={`Close ${item} details`}
+          onClick={onClose}
+        >
+          <X size={17} />
+        </button>
+      </div>
+      <div className="pane-content">{children}</div>
+    </aside>
+  );
+}
+
+function ArchiveMarker() {
+  return (
+    <span
+      className="jar-archive-marker"
+      role="img"
+      aria-label="Archived"
+      title="Archived"
+    >
+      <Archive size={12} aria-hidden="true" />
+    </span>
+  );
+}
+
+function VesselThumb({ vessel }: { vessel: VesselSummary }) {
+  const photo = vessel.photos[0];
+  return photo ? (
+    <img
+      className="glaze-thumb"
+      src={photo.thumbnail_url}
+      alt=""
+      loading="lazy"
+    />
+  ) : (
+    <span className="glaze-thumb placeholder">
+      <Amphora size={24} aria-hidden="true" />
+    </span>
+  );
+}
+
 export function PhotoThumb({
   glaze,
   large = false,
@@ -370,6 +510,75 @@ export function sortableHeadings(
   };
 }
 
+export function VesselList({
+  vessels,
+  selectedId,
+  search = "",
+  heading = (_key, label, className) => (
+    <th scope="col" className={className}>
+      {label}
+    </th>
+  ),
+}: {
+  vessels: VesselSummary[];
+  selectedId?: string;
+  search?: string;
+  heading?: ReturnType<typeof sortableHeadings>;
+}) {
+  return (
+    <table className="stock-table">
+      <caption className="sr-only">Vessels</caption>
+      <thead>
+        <tr>
+          {heading("id", "ID", "stock-id-column")}
+          {heading("name", "Name", "stock-name-column")}
+          {heading("location", "Location", "stock-location-column")}
+        </tr>
+      </thead>
+      <tbody>
+        {vessels.map((vessel) => (
+          <tr
+            key={vessel.id}
+            className={
+              String(vessel.id) === selectedId ? "selected-row" : undefined
+            }
+            onClick={(event) => {
+              if (!(event.target as HTMLElement).closest("a,button"))
+                event.currentTarget.querySelector("a")?.click();
+            }}
+          >
+            <td className="stock-id-column" title={`#${vessel.id}`}>
+              #{vessel.id}
+            </td>
+            <td className="stock-name-column">
+              <Link
+                id={`vessel-${vessel.id}`}
+                className="jar-select"
+                to={`/vessels/${vessel.id}${search}`}
+                aria-label={`${vessel.name} #${vessel.id}${vessel.archived ? ", archived" : ""}`}
+                aria-current={
+                  String(vessel.id) === selectedId ? "true" : undefined
+                }
+                title={vessel.name}
+              >
+                <VesselThumb vessel={vessel} />
+                <strong className="jar-name-text">{vessel.name}</strong>
+                {vessel.archived && <ArchiveMarker />}
+              </Link>
+            </td>
+            <td
+              className="stock-location-column"
+              title={vessel.location ?? undefined}
+            >
+              {vessel.location || "—"}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
 export function JarList({
   jars,
   caption,
@@ -391,15 +600,15 @@ export function JarList({
       </th>
     ));
   return (
-    <table className="stock-table">
+    <table className="stock-table jar-table">
       <caption className="sr-only">{caption}</caption>
       <thead>
         <tr>
-          {column("number", "ID", "jar-id-column")}
-          {column("name", "Name", "jar-name-column")}
+          {column("number", "ID", "stock-id-column")}
+          {column("name", "Name", "stock-name-column")}
           {column("percentage", "Remaining", "jar-bar-column")}
           {column("remaining_g", "Weight", "jar-weight-column")}
-          {column("location", "Location", "jar-location-column")}
+          {column("location", "Location", "stock-location-column")}
         </tr>
       </thead>
       <tbody>
@@ -413,8 +622,8 @@ export function JarList({
                 e.currentTarget.querySelector("a")?.click();
             }}
           >
-            <td className="jar-id-column">#{jar.number}</td>
-            <td className="jar-name-column">
+            <td className="stock-id-column">#{jar.number}</td>
+            <td className="stock-name-column">
               <Link
                 id={`jar-${jar.id}`}
                 className="jar-select"
@@ -434,11 +643,7 @@ export function JarList({
                     </span>
                   )}
                 </span>
-                {jar.archived && (
-                  <span className="jar-archive-marker" title="Archived">
-                    <Archive size={12} aria-hidden="true" />
-                  </span>
-                )}
+                {jar.archived && <ArchiveMarker />}
               </Link>
             </td>
             <td className="jar-bar-column">
@@ -448,7 +653,7 @@ export function JarList({
               <RemainingWeight jar={jar} />
             </td>
             <td
-              className="jar-location-column"
+              className="stock-location-column"
               title={jar.location || "Not set"}
             >
               {jar.location || "—"}

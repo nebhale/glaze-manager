@@ -1,3 +1,4 @@
+import { Trash2 } from "lucide-react";
 import {
   useApi,
   type Glaze,
@@ -6,24 +7,48 @@ import {
   type Page,
   type Preset,
 } from "./api";
-import { InlineField } from "./autosave";
+import { forgetDrafts, InlineField } from "./autosave";
 import { ErrorMessage } from "./components";
+import { useSave } from "./forms";
 
 export function ManufacturerFields({
   manufacturer,
+  onDelete,
 }: {
   manufacturer: Manufacturer;
+  onDelete: () => void;
 }) {
   const resource = `/manufacturers/${manufacturer.id}`;
+  const deletion = useSave(() => {
+    forgetDrafts(resource);
+    onDelete();
+  });
   return (
-    <div className="editable-grid">
-      <InlineField
-        resource={resource}
-        field="name"
-        value={manufacturer.name}
-        label="Name"
-        required
-      />
+    <div className="editable-grid manufacturer-fields">
+      <div className="manufacturer-heading">
+        <InlineField
+          resource={resource}
+          field="name"
+          value={manufacturer.name}
+          label="Name"
+          hideLabel
+          required
+        />
+        <button
+          type="button"
+          className="icon-button delete-record"
+          aria-label={`Delete manufacturer ${manufacturer.name}`}
+          title="Delete manufacturer"
+          disabled={deletion.isPending}
+          onClick={() => {
+            if (window.confirm(`Permanently delete manufacturer “${manufacturer.name}”?`))
+              deletion.mutate({ path: resource, method: "DELETE" });
+          }}
+        >
+          <Trash2 size={16} aria-hidden="true" />
+        </button>
+      </div>
+      <ErrorMessage error={deletion.error} />
       <InlineField
         resource={resource}
         field="website"

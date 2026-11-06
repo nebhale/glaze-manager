@@ -1,12 +1,20 @@
 import { useRef, useState, type ReactNode } from "react";
 import { Link, useMatch, useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Camera, Plus, Search, Trash2, X } from "lucide-react";
-import { useApi, type Glaze, type Jar, type Page, type Photo } from "../api";
+import { Plus, Trash2 } from "lucide-react";
 import {
-  AddButton,
+  useApi,
+  type Glaze,
+  type GlazeRecord,
+  type Jar,
+  type Page,
+} from "../api";
+import {
+  DetailPane,
+  VesselList,
   Empty,
   ErrorMessage,
   JarList,
+  ListHeading,
   Loading,
   InlinePanel,
   PhotoThumb,
@@ -14,7 +22,9 @@ import {
   sortableHeadings,
 } from "../components";
 import { GlazeFields } from "../editors";
+import { forgetDrafts } from "../autosave";
 import { ContainerForm, GlazeForm, useSave } from "../forms";
+import { PhotoGallery } from "../PhotoGallery";
 import { SplitWorkspace } from "../SplitWorkspace";
 
 export function Catalog() {
@@ -25,8 +35,6 @@ export function Catalog() {
   const sort = params.get("sort") === "product_line" ? "product_line" : "name";
   const descending = params.get("descending") === "true";
   const [adding, setAdding] = useState(false);
-  const [searchExpanded, setSearchExpanded] = useState(Boolean(q));
-  const searchOpen = searchExpanded || Boolean(q);
   const listScroll = useRef<HTMLDivElement>(null);
   const apiParams = new URLSearchParams({
     page_size: "1000",
@@ -74,56 +82,23 @@ export function Catalog() {
         className="inventory-list catalog-list"
         aria-label="Glazes"
       >
-        <div className="inventory-heading">
-          <h1>Glazes</h1>
-          <div className="inventory-actions">
-            <button
-              className={`icon-button ${searchOpen ? "selected" : ""}`}
-              aria-label="Search glazes"
-              title="Search glazes"
-              aria-expanded={searchOpen}
-              onClick={() => {
-                if (searchOpen) update({ q: "" });
-                setSearchExpanded(!searchOpen);
-              }}
-            >
-              <Search size={18} />
-            </button>
-            <button
-              className="button primary catalog-add-button"
-              aria-label="Add glaze"
-              title="Add glaze"
-              onClick={() => setAdding(true)}
-            >
-              <Plus size={18} />
-              <span>Add</span>
-            </button>
-          </div>
-        </div>
-        {searchOpen && (
-          <div className="inventory-search">
-            <label className="search-box">
-              <Search size={16} />
-              <input
-                aria-label="Search catalog"
-                placeholder="Search glazes…"
-                autoFocus
-                value={q}
-                onChange={(event) => update({ q: event.target.value })}
-              />
-              <button
-                className="icon-button"
-                aria-label="Clear and close search"
-                onClick={() => {
-                  update({ q: "" });
-                  setSearchExpanded(false);
-                }}
-              >
-                <X size={15} />
-              </button>
-            </label>
-          </div>
-        )}
+        <ListHeading
+          title="Glazes"
+          query={q}
+          onQueryChange={(value) => update({ q: value })}
+          inputLabel="Search catalog"
+          placeholder="Search glazes…"
+        >
+          <button
+            className="button primary list-add-button"
+            aria-label="Add glaze"
+            title="Add glaze"
+            onClick={() => setAdding(true)}
+          >
+            <Plus size={18} />
+            <span>Add</span>
+          </button>
+        </ListHeading>
         <ErrorMessage error={records.error} />
         <div className="inventory-table-scroll" ref={listScroll}>
           {records.isPending || records.data?.items.length ? (
@@ -207,7 +182,7 @@ export function Catalog() {
         </div>
       </section>
       {adding ? (
-        <CatalogPane onClose={() => setAdding(false)}>
+        <DetailPane item="glaze" onClose={() => setAdding(false)}>
           <section
             className="catalog-create"
             aria-labelledby="catalog-create-heading"
@@ -221,7 +196,7 @@ export function Catalog() {
             />
             <GlazeForm done={() => setAdding(false)} />
           </section>
-        </CatalogPane>
+        </DetailPane>
       ) : selectedId ? (
         <GlazeDetail key={selectedId} id={selectedId} onClose={closeDetail} />
       ) : (
@@ -231,82 +206,17 @@ export function Catalog() {
   );
 }
 
-function CatalogPane({
-  onClose,
-  children,
-}: {
-  onClose: () => void;
-  children: ReactNode;
-}) {
-  return (
-    <aside
-      className="jar-detail-pane catalog-detail-pane"
-      aria-label="Glaze details"
-    >
-      <div className="pane-navigation">
-        <button className="text-button back-to-inventory" onClick={onClose}>
-          <ArrowLeft size={16} />
-          Glazes
-        </button>
-        <button
-          className="icon-button close-pane"
-          aria-label="Close glaze details"
-          onClick={onClose}
-        >
-          <X size={17} />
-        </button>
-      </div>
-      <div className="pane-content">{children}</div>
-    </aside>
-  );
-}
-
-function PhotoCard({ photo }: { photo: Photo }) {
-  const save = useSave();
-  return (
-    <div className="photo-item">
-      <div className="photo-tile">
-        <a
-          href={photo.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Open photo"
-        >
-          <img
-            src={photo.thumbnail_url}
-            alt={photo.caption || "Glaze sample"}
-          />
-        </a>
-        <button
-          type="button"
-          className="icon-button photo-delete"
-          aria-label="Delete photo"
-          title="Delete photo"
-          disabled={save.isPending}
-          onClick={() => {
-            if (window.confirm("Delete this photo?"))
-              save.mutate({ path: `/photos/${photo.id}`, method: "DELETE" });
-          }}
-        >
-          <Trash2 size={15} aria-hidden="true" />
-        </button>
-      </div>
-      <ErrorMessage error={save.error} />
-    </div>
-  );
-}
-
 function GlazeProductHeader({
   heading,
-  onAddJar,
+  children,
 }: {
   heading: ReactNode;
-  onAddJar?: () => void;
+  children?: ReactNode;
 }) {
   return (
     <div className="glaze-product-header">
       <div className="glaze-product-title">{heading}</div>
-      {onAddJar && <AddButton onClick={onAddJar}>Add a jar</AddButton>}
+      {children && <div className="detail-actions">{children}</div>}
     </div>
   );
 }
@@ -318,26 +228,49 @@ export function GlazeDetail({
   id: string;
   onClose: () => void;
 }) {
-  const query = useApi<Glaze>(`/glazes/${id}`);
+  const query = useApi<GlazeRecord>(`/glazes/${id}`);
   const containers = useApi<Page<Jar>>(
     `/containers?glaze_id=${id}&page_size=1000`,
   );
   const [addingJar, setAddingJar] = useState(false);
-  const upload = useSave();
+  const deletion = useSave(() => {
+    forgetDrafts(`/glazes/${id}`);
+    onClose();
+  });
   if (query.isPending || !query.data)
     return (
-      <CatalogPane onClose={onClose}>
+      <DetailPane item="glaze" onClose={onClose}>
         {query.isPending ? <Loading /> : <ErrorMessage error={query.error} />}
-      </CatalogPane>
+      </DetailPane>
     );
   const glaze = query.data;
   return (
-    <CatalogPane onClose={onClose}>
-      <section className="detail-section glaze-product-section">
-        <GlazeProductHeader
-          heading={<GlazeHeading glaze={glaze} />}
-          onAddJar={() => setAddingJar(true)}
-        />
+    <DetailPane item="glaze" onClose={onClose}>
+      <section className="detail-section glaze-product-section no-divider">
+        <GlazeProductHeader heading={<GlazeHeading glaze={glaze} />}>
+          <button
+            type="button"
+            className="button secondary"
+            disabled={deletion.isPending}
+            onClick={() => setAddingJar(true)}
+          >
+            <Plus size={15} /> Add a jar
+          </button>
+          <button
+            type="button"
+            className="icon-button delete-record"
+            aria-label="Delete glaze"
+            title="Delete glaze"
+            disabled={deletion.isPending}
+            onClick={() => {
+              if (window.confirm(`Permanently delete ${glaze.name} and its glaze photos?`))
+                deletion.mutate({ path: `/glazes/${id}`, method: "DELETE" });
+            }}
+          >
+            <Trash2 size={16} aria-hidden="true" />
+          </button>
+        </GlazeProductHeader>
+        <ErrorMessage error={deletion.error} />
         {addingJar && (
           <InlinePanel title="Jar" onClose={() => setAddingJar(false)}>
             <ContainerForm
@@ -348,59 +281,20 @@ export function GlazeDetail({
         )}
         <GlazeFields glaze={glaze} />
       </section>
-      <section className="detail-section photo-section" aria-label="Photos">
-        <div className="section-heading">
-          <h3>
-            Photos <span className="count">{glaze.photos.length}</span>
-          </h3>
-        </div>
-        <div className="photo-grid" aria-busy={upload.isPending}>
-          {glaze.photos.map((photo) => (
-            <PhotoCard photo={photo} key={photo.id} />
-          ))}
-          <label
-            className={`photo-tile photo-add-tile ${upload.isPending ? "disabled" : ""}`}
-            title="Add photo"
-          >
-            <span className="photo-add-icon" aria-hidden="true">
-              <Camera size={26} />
-              <Plus size={13} />
-            </span>
-            <input
-              type="file"
-              aria-label="Add photo"
-              accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
-              disabled={upload.isPending}
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  const body = new FormData();
-                  body.append("file", file);
-                  upload.mutate({ path: `/glazes/${glaze.id}/photos`, body });
-                }
-                e.target.value = "";
-              }}
-            />
-          </label>
-        </div>
-        <span className="sr-only" role="status">
-          {upload.isPending ? "Uploading photo…" : ""}
-        </span>
-        <ErrorMessage error={upload.error} />
-      </section>
-      <section className="detail-section">
+      <PhotoGallery glaze={glaze} />
+      <section className="detail-section no-divider">
         <div className="section-heading">
           <div>
             <h3>
-              Active jars{" "}
+              Jars{" "}
               <span className="count">{containers.data?.total ?? 0}</span>
             </h3>
           </div>
         </div>
         <ErrorMessage error={containers.error} />
         {containers.data?.items.length ? (
-          <div className="active-jars-scroll">
-            <JarList jars={containers.data.items} caption="Active jars" />
+          <div className="related-table-scroll">
+            <JarList jars={containers.data.items} caption="Jars" />
           </div>
         ) : (
           <div className="small-empty">
@@ -408,6 +302,20 @@ export function GlazeDetail({
           </div>
         )}
       </section>
-    </CatalogPane>
+      <section className="detail-section" aria-label="Vessels">
+        <div className="section-heading">
+          <h3>
+            Vessels <span className="count">{glaze.vessels.length}</span>
+          </h3>
+        </div>
+        {glaze.vessels.length ? (
+          <div className="related-table-scroll">
+            <VesselList vessels={glaze.vessels} />
+          </div>
+        ) : (
+          <p className="small-empty">No vessels use this glaze yet.</p>
+        )}
+      </section>
+    </DetailPane>
   );
 }

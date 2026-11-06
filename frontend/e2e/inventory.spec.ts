@@ -67,7 +67,7 @@ test("manage 50 jars in a persistent inventory and edit related records directly
   await expect(rows.first().locator("td")).toHaveCount(5);
   await expect(rows.locator(".badge")).toHaveCount(0);
   await expect(rows.first().locator("td").nth(4)).toHaveText("Shelf A");
-  const numbers = await rows.locator(".jar-id-column").allTextContents();
+  const numbers = await rows.locator(".stock-id-column").allTextContents();
   expect(new Set(numbers).size).toBe(50);
   expect(numbers.every((n) => /^#\d+$/.test(n))).toBeTruthy();
   await expect(page.getByRole("button", { name: /^Filters/ })).toHaveCount(0);
@@ -77,7 +77,7 @@ test("manage 50 jars in a persistent inventory and edit related records directly
   await expect(rows).toHaveCount(50);
   const selected = rows.nth(12);
   const jarId = await selected.getAttribute("data-jar-id");
-  const jarNumber = await selected.locator(".jar-id-column").innerText();
+  const jarNumber = await selected.locator(".stock-id-column").innerText();
   const link = selected.getByRole("link");
   await link.scrollIntoViewIfNeeded();
   const scroll = await page
@@ -117,7 +117,7 @@ test("manage 50 jars in a persistent inventory and edit related records directly
     "href", /^\/settings#manufacturer-/,
   );
   await expect(
-    page.locator(`[data-jar-id="${jarId}"] .jar-id-column`),
+    page.locator(`[data-jar-id="${jarId}"] .stock-id-column`),
   ).toHaveText(jarNumber);
 
   const accessibility = await new AxeBuilder({ page })

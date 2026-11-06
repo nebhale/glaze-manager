@@ -62,7 +62,7 @@ test("first scale reading sets full weight and later scans respect a manual over
   ).toHaveAttribute("aria-valuenow", "50");
   await page.goto(`/glazes/${glaze.id}`);
   await expect(
-    page.getByRole("table", { name: "Active jars" }).getByRole("progressbar"),
+    page.getByRole("table", { name: "Jars" }).getByRole("progressbar"),
   ).toHaveAttribute("aria-valuenow", "50");
   await page.goto(`/containers/${jar.id}`);
   await expect(page.getByText("Studio connected")).toBeAttached();
