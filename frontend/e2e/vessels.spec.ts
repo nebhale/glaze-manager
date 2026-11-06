@@ -230,18 +230,18 @@ test("record a numbered vessel and navigate its photos from a glaze", async ({
   await add.click();
   const form = used.getByRole("form", { name: "New glaze application" });
   await selectOption(page, "Glaze", `${maker.name} · Rutile blue (RB)`);
-  await form.getByLabel("Application note").fill("3 layers");
+  await form.getByLabel("Application note").fill("3 coats");
   await form.getByRole("button", { name: "Save", exact: true }).click();
-  await expect(used.getByLabel("Application note")).toHaveValue("3 layers");
+  await expect(used.getByLabel("Application note")).toHaveValue("3 coats");
   await expect(used.getByLabel("Application note")).toHaveCSS(
     "border-bottom-style",
     "solid",
   );
   await add.click();
-  await form.getByLabel("Application note").fill("lay");
-  await expect(page.getByRole("option", { name: "3 layers" })).toBeVisible();
-  await page.getByRole("option", { name: "3 layers" }).click();
-  await expect(form.getByLabel("Application note")).toHaveValue("3 layers");
+  await form.getByLabel("Application note").fill("coa");
+  await expect(page.getByRole("option", { name: "3 coats" })).toBeVisible();
+  await page.getByRole("option", { name: "3 coats" }).click();
+  await expect(form.getByLabel("Application note")).toHaveValue("3 coats");
   await form.getByRole("button", { name: "Cancel" }).click();
 
   await used.getByRole("link", { name: glaze.name }).click();

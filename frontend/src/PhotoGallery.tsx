@@ -92,7 +92,6 @@ export function PhotoGallery(
             <Camera size={26} />
             <Plus size={13} />
           </span>
-          {!glaze && <span>{addLabel}</span>}
           <input
             type="file"
             aria-label={addLabel}
