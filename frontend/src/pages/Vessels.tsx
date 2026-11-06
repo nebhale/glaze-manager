@@ -130,7 +130,7 @@ function AddApplication({
           name="application_note"
           source="application_note"
           maxLength={2000}
-          placeholder="e.g. 3 layers"
+          placeholder="e.g. 3 coats"
         />
       </div>
       <ErrorMessage error={choices.error || save.error} />
@@ -186,7 +186,7 @@ function ApplicationRow({
         hideLabel
         suggestions="application_note"
         maxLength={2000}
-        placeholder="e.g. 3 layers"
+        placeholder="e.g. 3 coats"
       />
       <ErrorMessage error={remove.error} />
     </li>

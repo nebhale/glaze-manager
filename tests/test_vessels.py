@@ -131,13 +131,13 @@ def test_application_links_notes_and_shared_photos(client, catalog):
     assert first["cover"] and not second["cover"]
     assert client.get(glaze_path).json()["vessels"] == []
 
-    base = client.post(apps, json={"glaze_id": glaze_id, "application_note": "3 layers"}).json()
+    base = client.post(apps, json={"glaze_id": glaze_id, "application_note": "3 coats"}).json()
     rim = client.post(apps, json={"glaze_id": glaze_id}).json()
     edit = {"changes": {"application_note": "overlapping"}, "expected": {"application_note": None}}
     assert (
         client.patch(f"{apps}/{rim['id']}", json=edit).json()["application_note"] == "overlapping"
     )
-    assert client.get("/api/v1/suggestions/application_note").json() == ["3 layers", "overlapping"]
+    assert client.get("/api/v1/suggestions/application_note").json() == ["3 coats", "overlapping"]
     applications = client.get(vessel_path).json()["applications"]
     assert [a["id"] for a in applications] == [base["id"], rim["id"]]
     assert applications[0]["glaze_name"] == "Blue Rutile"

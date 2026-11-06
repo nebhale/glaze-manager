@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.3.1](https://github.com/nebhale/glaze-manager/releases/tag/v1.3.1) · 2026-11-05
+
+- Vessel glaze notes now use “3 coats” as the example. The vessel photo upload tile shows a camera icon and retains its accessible label.
+
 ## [1.3.0](https://github.com/nebhale/glaze-manager/releases/tag/v1.3.0) · 2026-11-05
 
 - Track pottery vessels by permanent number, name, location, and photos. Record each glaze application with an optional note and revisit archived pieces.
