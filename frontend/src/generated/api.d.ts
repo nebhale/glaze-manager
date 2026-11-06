@@ -85,7 +85,8 @@ export interface paths {
         /** Edit Manufacturer */
         put: operations["edit_manufacturer_api_v1_manufacturers__identifier__put"];
         post?: never;
-        delete?: never;
+        /** Delete Manufacturer */
+        delete: operations["delete_manufacturer_api_v1_manufacturers__identifier__delete"];
         options?: never;
         head?: never;
         /** Patch Manufacturer */
@@ -110,6 +111,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/glaze-options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Glaze Options */
+        get: operations["glaze_options_api_v1_glaze_options_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/glazes/{identifier}": {
         parameters: {
             query?: never;
@@ -122,7 +140,8 @@ export interface paths {
         /** Edit Glaze */
         put: operations["edit_glaze_api_v1_glazes__identifier__put"];
         post?: never;
-        delete?: never;
+        /** Delete Glaze */
+        delete: operations["delete_glaze_api_v1_glazes__identifier__delete"];
         options?: never;
         head?: never;
         /** Patch Glaze */
@@ -164,6 +183,79 @@ export interface paths {
         head?: never;
         /** Patch Preset */
         patch: operations["patch_preset_api_v1_presets__identifier__patch"];
+        trace?: never;
+    };
+    "/api/v1/vessels": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Vessels */
+        get: operations["vessels_api_v1_vessels_get"];
+        put?: never;
+        /** Create Vessel */
+        post: operations["create_vessel_api_v1_vessels_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{identifier}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Vessel Detail */
+        get: operations["vessel_detail_api_v1_vessels__identifier__get"];
+        put?: never;
+        post?: never;
+        /** Delete Vessel */
+        delete: operations["delete_vessel_api_v1_vessels__identifier__delete"];
+        options?: never;
+        head?: never;
+        /** Patch Vessel */
+        patch: operations["patch_vessel_api_v1_vessels__identifier__patch"];
+        trace?: never;
+    };
+    "/api/v1/vessels/{identifier}/applications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add Application */
+        post: operations["add_application_api_v1_vessels__identifier__applications_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{identifier}/applications/{application_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Application */
+        get: operations["get_application_api_v1_vessels__identifier__applications__application_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete Application */
+        delete: operations["delete_application_api_v1_vessels__identifier__applications__application_id__delete"];
+        options?: never;
+        head?: never;
+        /** Patch Application */
+        patch: operations["patch_application_api_v1_vessels__identifier__applications__application_id__patch"];
         trace?: never;
     };
     "/api/v1/containers": {
@@ -360,6 +452,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/vessels/{identifier}/photos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload Vessel Photo */
+        post: operations["upload_vessel_photo_api_v1_vessels__identifier__photos_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/photos/{identifier}/caption": {
         parameters: {
             query?: never;
@@ -396,6 +505,23 @@ export interface paths {
         patch: operations["edit_photo_api_v1_photos__identifier__patch"];
         trace?: never;
     };
+    "/api/v1/vessels/{identifier}/photos/{photo_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Vessel Photo */
+        delete: operations["delete_vessel_photo_api_v1_vessels__identifier__photos__photo_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/events": {
         parameters: {
             query?: never;
@@ -417,6 +543,28 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** ApplicationInput */
+        ApplicationInput: {
+            /** Glaze Id */
+            glaze_id: string;
+            /** Application Note */
+            application_note?: string | null;
+        };
+        /** ApplicationOut */
+        ApplicationOut: {
+            /** Glaze Id */
+            glaze_id: string;
+            /** Glaze Name */
+            glaze_name: string;
+            /** Manufacturer Name */
+            manufacturer_name: string;
+            /** Product Code */
+            product_code: string | null;
+            /** Id */
+            id: string;
+            /** Application Note */
+            application_note: string | null;
+        };
         /** BindInput */
         BindInput: {
             /** Container Id */
@@ -436,6 +584,11 @@ export interface components {
         };
         /** Body_upload_photo_api_v1_glazes__identifier__photos_post */
         Body_upload_photo_api_v1_glazes__identifier__photos_post: {
+            /** File */
+            file: string;
+        };
+        /** Body_upload_vessel_photo_api_v1_vessels__identifier__photos_post */
+        Body_upload_vessel_photo_api_v1_vessels__identifier__photos_post: {
             /** File */
             file: string;
         };
@@ -556,6 +709,33 @@ export interface components {
             /** Archived */
             archived: boolean;
         };
+        /** GlazeDetailOut */
+        GlazeDetailOut: {
+            /** Manufacturer Id */
+            manufacturer_id: string;
+            /** Name */
+            name: string;
+            /** Product Code */
+            product_code?: string | null;
+            /** Product Line */
+            product_line?: string | null;
+            /** Cone */
+            cone?: string | null;
+            /** Classification */
+            classification?: ("glaze" | "underglaze" | "other") | null;
+            /** Product Url */
+            product_url?: string | null;
+            /** Notes */
+            notes?: string | null;
+            /** Id */
+            id: string;
+            /** Manufacturer Name */
+            manufacturer_name: string;
+            /** Photos */
+            photos: components["schemas"]["PhotoOut"][];
+            /** Vessels */
+            vessels: components["schemas"]["VesselSummary"][];
+        };
         /** GlazeInput */
         GlazeInput: {
             /** Manufacturer Id */
@@ -599,6 +779,17 @@ export interface components {
             manufacturer_name: string;
             /** Photos */
             photos: components["schemas"]["PhotoOut"][];
+        };
+        /** GlazeReference */
+        GlazeReference: {
+            /** Glaze Id */
+            glaze_id: string;
+            /** Glaze Name */
+            glaze_name: string;
+            /** Manufacturer Name */
+            manufacturer_name: string;
+            /** Product Code */
+            product_code: string | null;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -733,6 +924,17 @@ export interface components {
             /** Page Size */
             page_size: number;
         };
+        /** Page[VesselSummary] */
+        Page_VesselSummary_: {
+            /** Items */
+            items: components["schemas"]["VesselSummary"][];
+            /** Total */
+            total: number;
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+        };
         /** PhotoEdit */
         PhotoEdit: {
             /** Caption */
@@ -747,8 +949,6 @@ export interface components {
         PhotoOut: {
             /** Id */
             id: string;
-            /** Glaze Id */
-            glaze_id: string;
             /** Url */
             url: string;
             /** Thumbnail Url */
@@ -757,6 +957,8 @@ export interface components {
             caption: string | null;
             /** Cover */
             cover: boolean;
+            /** Glaze Id */
+            glaze_id: string;
         };
         /** PresetInput */
         PresetInput: {
@@ -855,6 +1057,56 @@ export interface components {
             /** Context */
             ctx?: Record<string, never>;
         };
+        /** VesselInput */
+        VesselInput: {
+            /** Name */
+            name: string;
+            /** Location */
+            location?: string | null;
+        };
+        /** VesselOut */
+        VesselOut: {
+            /** Name */
+            name: string;
+            /** Location */
+            location?: string | null;
+            /** Archived */
+            archived: boolean;
+            /** Id */
+            id: number;
+            /** Photos */
+            photos: components["schemas"]["VesselPhotoOut"][];
+            /** Applications */
+            applications: components["schemas"]["ApplicationOut"][];
+        };
+        /** VesselPhotoOut */
+        VesselPhotoOut: {
+            /** Id */
+            id: string;
+            /** Url */
+            url: string;
+            /** Thumbnail Url */
+            thumbnail_url: string;
+            /** Caption */
+            caption: string | null;
+            /** Cover */
+            cover: boolean;
+            /** Vessel Id */
+            vessel_id: number;
+        };
+        /** VesselSummary */
+        VesselSummary: {
+            /** Name */
+            name: string;
+            /** Location */
+            location?: string | null;
+            /** Archived */
+            archived: boolean;
+            /** Id */
+            id: number;
+            /** Photos */
+            photos: components["schemas"]["VesselPhotoOut"][];
+        };
         /** VoidInput */
         VoidInput: {
             /** Expected Revision */
@@ -896,7 +1148,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                field: "product_line" | "location" | "cone";
+                field: "product_line" | "location" | "vessel_location" | "cone" | "application_note";
             };
             cookie?: never;
         };
@@ -1074,6 +1326,35 @@ export interface operations {
             };
         };
     };
+    delete_manufacturer_api_v1_manufacturers__identifier__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     patch_manufacturer_api_v1_manufacturers__identifier__patch: {
         parameters: {
             query?: never;
@@ -1178,6 +1459,26 @@ export interface operations {
             };
         };
     };
+    glaze_options_api_v1_glaze_options_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GlazeReference"][];
+                };
+            };
+        };
+    };
     glaze_api_v1_glazes__identifier__get: {
         parameters: {
             query?: never;
@@ -1195,7 +1496,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GlazeOut"];
+                    "application/json": components["schemas"]["GlazeDetailOut"];
                 };
             };
             /** @description Validation Error */
@@ -1232,6 +1533,35 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["GlazeOut"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_glaze_api_v1_glazes__identifier__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {
@@ -1432,6 +1762,303 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PresetOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    vessels_api_v1_vessels_get: {
+        parameters: {
+            query?: {
+                q?: string;
+                status?: "active" | "archived" | "all";
+                sort?: "id" | "name" | "location";
+                descending?: boolean;
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_VesselSummary_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_vessel_api_v1_vessels_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VesselInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VesselOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    vessel_detail_api_v1_vessels__identifier__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VesselOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_vessel_api_v1_vessels__identifier__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_vessel_api_v1_vessels__identifier__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecordPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VesselOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_application_api_v1_vessels__identifier__applications_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApplicationInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApplicationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_application_api_v1_vessels__identifier__applications__application_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: number;
+                application_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApplicationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_application_api_v1_vessels__identifier__applications__application_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: number;
+                application_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_application_api_v1_vessels__identifier__applications__application_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: number;
+                application_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecordPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApplicationOut"];
                 };
             };
             /** @description Validation Error */
@@ -2014,6 +2641,41 @@ export interface operations {
             };
         };
     };
+    upload_vessel_photo_api_v1_vessels__identifier__photos_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_vessel_photo_api_v1_vessels__identifier__photos_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VesselPhotoOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     photo_caption_api_v1_photos__identifier__caption_get: {
         parameters: {
             query?: never;
@@ -2132,6 +2794,36 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["PhotoOut"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_vessel_photo_api_v1_vessels__identifier__photos__photo_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: number;
+                photo_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

@@ -12,7 +12,7 @@ const DEFAULT_WIDTH = 470;
 const MIN_LIST_WIDTH = 360;
 const MIN_DETAIL_WIDTH = 360;
 const DIVIDER_WIDTH = 12;
-// Reuse Inventory's saved width as the preference for both sections.
+// Share Inventory's saved width across sections.
 const WIDTH_KEY = "glaze-manager.inventory-list-width";
 let unsavedWidth: number | undefined;
 
@@ -43,7 +43,7 @@ export function SplitWorkspace({
 }: {
   children: [ReactNode, ReactNode];
   hasSelection: boolean;
-  section?: "inventory" | "glazes";
+  section?: "inventory" | "glazes" | "vessels";
 }) {
   const sectionLabel = section[0].toUpperCase() + section.slice(1);
   const workspace = useRef<HTMLDivElement>(null);

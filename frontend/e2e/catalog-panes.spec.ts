@@ -198,7 +198,7 @@ test("glaze headings sort the filtered list and keep its order through detail na
   await expect(names).toHaveText(["amber", "Copper", "Blue"]);
 });
 
-test("manufacturers are listed, added, and edited inline in Settings", async ({
+test("add, edit, and delete manufacturers in Settings", async ({
   page,
   request,
 }) => {
@@ -223,6 +223,7 @@ test("manufacturers are listed, added, and edited inline in Settings", async ({
   const row = list.getByRole("group", { name, exact: true });
   await expect(row.getByLabel("Name")).toHaveValue(name);
   const notes = row.getByLabel("Notes");
+  await expect(notes).toHaveCSS("border-bottom-style", "solid");
   await notes.fill("Local supplier");
   await notes.blur();
   const id = await row.getAttribute("data-manufacturer-id");
@@ -236,4 +237,24 @@ test("manufacturers are listed, added, and edited inline in Settings", async ({
   await expect(page).toHaveURL(new RegExp(`/settings#manufacturer-${id}$`));
   await expect(row).toBeFocused();
   await expect(notes).toHaveValue("Local supplier");
+
+  const remove = row.getByRole("button", { name: `Delete manufacturer ${name}`, exact: true });
+  page.once("dialog", (dialog) => dialog.dismiss());
+  await remove.click();
+  await expect(row).toBeVisible();
+
+  const glaze = await create(request, "/glazes", { manufacturer_id: id, name: "Studio celadon" });
+  page.once("dialog", (dialog) => dialog.accept());
+  await remove.click();
+  await expect(row.getByRole("alert")).toContainText(glaze.name);
+
+  expect((await request.delete(`/api/v1/glazes/${glaze.id}`)).status()).toBe(204);
+  page.once("dialog", (dialog) => dialog.accept());
+  await remove.click();
+  await expect(row).toHaveCount(0);
+  await expect(page).toHaveURL(/\/settings#manufacturers$/);
+  await expect(list).toBeFocused();
+  await page.reload();
+  await expect(list).toBeVisible();
+  expect((await request.get(`/api/v1/manufacturers/${id}`)).status()).toBe(404);
 });

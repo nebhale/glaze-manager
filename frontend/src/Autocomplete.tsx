@@ -9,7 +9,14 @@ import {
 import { createPortal } from "react-dom";
 import { useApi } from "./api";
 
-export type SuggestionField = "product_line" | "location" | "cone";
+const suggestionLabels = {
+  product_line: "Product line",
+  location: "Location",
+  vessel_location: "Location",
+  cone: "Cone",
+  application_note: "Application note",
+};
+export type SuggestionField = keyof typeof suggestionLabels;
 type Props = Omit<
   ComponentProps<"input">,
   "value" | "defaultValue" | "onChange" | "type" | "list"
@@ -227,7 +234,7 @@ export function Autocomplete({
             ref={list}
             id={listId}
             role="listbox"
-            aria-label={`${source === "location" ? "Location" : "Product line"} suggestions`}
+            aria-label={`${suggestionLabels[source]} suggestions`}
             className="autocomplete-menu"
             style={position}
           >

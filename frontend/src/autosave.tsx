@@ -236,9 +236,12 @@ async function discard(draft: Draft) {
   }
   notify();
 }
-export function forgetJarDrafts(resource: string) {
+export function forgetDrafts(resource: string) {
   for (const [key, draft] of drafts) {
-    if (draft.options.resource === resource) {
+    if (
+      draft.options.resource === resource ||
+      draft.options.resource.startsWith(resource + "/")
+    ) {
       clearTimeout(draft.timer);
       draft.status = "idle";
       drafts.delete(key);
@@ -328,7 +331,7 @@ function Feedback({ draft, id }: { draft: Draft; id: string }) {
     </div>
   );
 }
-export function InlineField(options: Options) {
+export function InlineField(options: Options & { hideLabel?: boolean }) {
   const id = useId();
   const { draft, change, flush } = useDraft(options);
   const props = {
@@ -358,7 +361,9 @@ export function InlineField(options: Options) {
     );
   return (
     <div className="field inline-field" data-save-state={draft.status}>
-      <label htmlFor={id}>{options.label}</label>
+      <label htmlFor={id} className={options.hideLabel ? "sr-only" : undefined}>
+        {options.label}
+      </label>
       {options.children ? (
         <Select
           id={id}

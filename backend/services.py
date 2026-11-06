@@ -51,14 +51,54 @@ def fields(obj):
 
 
 def photo_view(photo):
+    owner = (
+        {"vessel_id": photo.vessel_id}
+        if isinstance(photo, m.VesselPhoto)
+        else {"glaze_id": photo.glaze_id}
+    )
     return {
         "id": photo.id,
-        "glaze_id": photo.glaze_id,
+        **owner,
         "url": f"/media/{photo.filename}",
         "thumbnail_url": f"/media/{photo.thumbnail}",
         "caption": photo.caption,
         "cover": photo.cover,
     }
+
+
+def vessel_summary(vessel):
+    return {**fields(vessel), "photos": [photo_view(photo) for photo in vessel.photos]}
+
+
+def glaze_references():
+    return select(
+        m.Glaze.id.label("glaze_id"),
+        m.Glaze.name.label("glaze_name"),
+        m.Manufacturer.name.label("manufacturer_name"),
+        m.Glaze.product_code,
+    ).join(m.Manufacturer, m.Manufacturer.id == m.Glaze.manufacturer_id)
+
+
+def applications_query():
+    return (
+        glaze_references()
+        .join(m.GlazeApplication, m.GlazeApplication.glaze_id == m.Glaze.id)
+        .add_columns(m.GlazeApplication.id, m.GlazeApplication.application_note)
+    )
+
+
+def application_view(db, application):
+    query = applications_query().where(m.GlazeApplication.id == application.id)
+    return db.execute(query).mappings().one()
+
+
+def vessel_view(db, vessel):
+    query = (
+        applications_query()
+        .where(m.GlazeApplication.vessel_id == vessel.id)
+        .order_by(m.GlazeApplication.created_at, m.GlazeApplication.id)
+    )
+    return {**vessel_summary(vessel), "applications": db.execute(query).mappings().all()}
 
 
 def glaze_view(db, glaze):

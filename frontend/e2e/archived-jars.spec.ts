@@ -90,7 +90,7 @@ test("show archived includes searchable jars that can be reopened and restored",
   );
   await rows.first().getByRole("link").click();
   await pane.getByRole("button", { name: "Restore jar", exact: true }).click();
-  await expect(pane.getByRole("button", { name: "Archive jar" })).toBeVisible();
+  await expect(pane.getByRole("button", { name: "Archive", exact: true })).toBeVisible();
   await expect(page.locator(".jar-archive-marker")).toHaveCount(0);
   await pane
     .getByRole("button", {

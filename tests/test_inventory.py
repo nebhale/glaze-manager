@@ -361,6 +361,31 @@ def test_snapshot_restore_retains_inventory_media_tags_and_history(tmp_path):
         assert client.get(photo["url"]).status_code == 200
 
 
+def test_delete_manufacturer_after_reassigning_its_glazes(client, catalog, jar):
+    maker = catalog["manufacturer"]
+    glaze = catalog["glaze"]
+    path = f"/api/v1/manufacturers/{maker['id']}"
+    blocked = client.delete(path)
+    assert blocked.status_code == 409
+    assert glaze["name"] in blocked.json()["detail"]
+    assert client.get(path).json() == maker
+
+    replacement = client.post("/api/v1/manufacturers", json={"name": "Other studio"}).json()
+    glaze_path = f"/api/v1/glazes/{glaze['id']}"
+    client.patch(
+        glaze_path,
+        json={
+            "changes": {"manufacturer_id": replacement["id"]},
+            "expected": {"manufacturer_id": maker["id"]},
+        },
+    ).raise_for_status()
+    assert client.delete(path).status_code == 204
+    assert client.get(path).status_code == client.delete(path).status_code == 404
+    assert client.get("/api/v1/manufacturers").json()["items"] == [replacement]
+    assert client.get(glaze_path).json()["manufacturer_id"] == replacement["id"]
+    assert client.get(f"/api/v1/containers/{jar['id']}").json()["glaze_id"] == glaze["id"]
+
+
 def test_missing_references_and_invalid_urls(client, catalog):
     assert client.post("/api/v1/containers", json={"glaze_id": "missing"}).status_code == 404
     assert (

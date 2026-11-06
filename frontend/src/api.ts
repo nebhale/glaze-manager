@@ -4,10 +4,16 @@ import type { components } from "./generated/api";
 
 export type Jar = components["schemas"]["ContainerOut"];
 export type Glaze = components["schemas"]["GlazeOut"];
+export type GlazeRecord = components["schemas"]["GlazeDetailOut"];
+export type GlazeReference = components["schemas"]["GlazeReference"];
+export type Vessel = components["schemas"]["VesselOut"];
+export type VesselSummary = components["schemas"]["VesselSummary"];
+export type Application = components["schemas"]["ApplicationOut"];
 export type Manufacturer = components["schemas"]["ManufacturerOut"];
 export type Preset = components["schemas"]["PresetOut"];
 export type Measurement = components["schemas"]["MeasurementOut"];
-export type Photo = components["schemas"]["PhotoOut"];
+export type Photo =
+  components["schemas"]["PhotoOut"] | components["schemas"]["VesselPhotoOut"];
 export type Page<T> = {
   items: T[];
   total: number;

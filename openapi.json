@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Glaze Manager",
-    "version": "1.2.0"
+    "version": "1.3.0"
   },
   "paths": {
     "/healthz": {
@@ -34,7 +34,9 @@
               "enum": [
                 "product_line",
                 "location",
-                "cone"
+                "vessel_location",
+                "cone",
+                "application_note"
               ],
               "type": "string",
               "title": "Field"
@@ -225,6 +227,36 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Manufacturer",
+        "operationId": "delete_manufacturer_api_v1_manufacturers__identifier__delete",
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identifier"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
           },
           "422": {
             "description": "Validation Error",
@@ -462,6 +494,28 @@
         }
       }
     },
+    "/api/v1/glaze-options": {
+      "get": {
+        "summary": "Glaze Options",
+        "operationId": "glaze_options_api_v1_glaze_options_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/GlazeReference"
+                  },
+                  "type": "array",
+                  "title": "Response Glaze Options Api V1 Glaze Options Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/glazes/{identifier}": {
       "get": {
         "summary": "Glaze",
@@ -483,7 +537,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GlazeOut"
+                  "$ref": "#/components/schemas/GlazeDetailOut"
                 }
               }
             }
@@ -534,6 +588,36 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Glaze",
+        "operationId": "delete_glaze_api_v1_glazes__identifier__delete",
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Identifier"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
           },
           "422": {
             "description": "Validation Error",
@@ -803,6 +887,468 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vessels": {
+      "get": {
+        "summary": "Vessels",
+        "operationId": "vessels_api_v1_vessels_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Q"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "active",
+                "archived",
+                "all"
+              ],
+              "type": "string",
+              "default": "active",
+              "title": "Status"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "id",
+                "name",
+                "location"
+              ],
+              "type": "string",
+              "default": "name",
+              "title": "Sort"
+            }
+          },
+          {
+            "name": "descending",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Descending"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 2147483647,
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000,
+              "minimum": 1,
+              "default": 50,
+              "title": "Page Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_VesselSummary_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Vessel",
+        "operationId": "create_vessel_api_v1_vessels_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VesselInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VesselOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{identifier}": {
+      "get": {
+        "summary": "Vessel Detail",
+        "operationId": "vessel_detail_api_v1_vessels__identifier__get",
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "title": "Identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VesselOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Patch Vessel",
+        "operationId": "patch_vessel_api_v1_vessels__identifier__patch",
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "title": "Identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VesselOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Vessel",
+        "operationId": "delete_vessel_api_v1_vessels__identifier__delete",
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "title": "Identifier"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{identifier}/applications": {
+      "post": {
+        "summary": "Add Application",
+        "operationId": "add_application_api_v1_vessels__identifier__applications_post",
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "title": "Identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{identifier}/applications/{application_id}": {
+      "get": {
+        "summary": "Get Application",
+        "operationId": "get_application_api_v1_vessels__identifier__applications__application_id__get",
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "title": "Identifier"
+            }
+          },
+          {
+            "name": "application_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Application Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Patch Application",
+        "operationId": "patch_application_api_v1_vessels__identifier__applications__application_id__patch",
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "title": "Identifier"
+            }
+          },
+          {
+            "name": "application_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Application Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Application",
+        "operationId": "delete_application_api_v1_vessels__identifier__applications__application_id__delete",
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "title": "Identifier"
+            }
+          },
+          {
+            "name": "application_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Application Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
           },
           "422": {
             "description": "Validation Error",
@@ -1641,6 +2187,57 @@
         }
       }
     },
+    "/api/v1/vessels/{identifier}/photos": {
+      "post": {
+        "summary": "Upload Vessel Photo",
+        "operationId": "upload_vessel_photo_api_v1_vessels__identifier__photos_post",
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "title": "Identifier"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_vessel_photo_api_v1_vessels__identifier__photos_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VesselPhotoOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/photos/{identifier}/caption": {
       "get": {
         "summary": "Photo Caption",
@@ -1806,6 +2403,49 @@
         }
       }
     },
+    "/api/v1/vessels/{identifier}/photos/{photo_id}": {
+      "delete": {
+        "summary": "Delete Vessel Photo",
+        "operationId": "delete_vessel_photo_api_v1_vessels__identifier__photos__photo_id__delete",
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "title": "Identifier"
+            }
+          },
+          {
+            "name": "photo_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Photo Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/events": {
       "get": {
         "summary": "Event Stream",
@@ -1825,6 +2465,85 @@
   },
   "components": {
     "schemas": {
+      "ApplicationInput": {
+        "properties": {
+          "glaze_id": {
+            "type": "string",
+            "title": "Glaze Id"
+          },
+          "application_note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Application Note"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "glaze_id"
+        ],
+        "title": "ApplicationInput"
+      },
+      "ApplicationOut": {
+        "properties": {
+          "glaze_id": {
+            "type": "string",
+            "title": "Glaze Id"
+          },
+          "glaze_name": {
+            "type": "string",
+            "title": "Glaze Name"
+          },
+          "manufacturer_name": {
+            "type": "string",
+            "title": "Manufacturer Name"
+          },
+          "product_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Code"
+          },
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "application_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Application Note"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "glaze_id",
+          "glaze_name",
+          "manufacturer_name",
+          "product_code",
+          "id",
+          "application_note"
+        ],
+        "title": "ApplicationOut"
+      },
       "BindInput": {
         "properties": {
           "container_id": {
@@ -1867,6 +2586,20 @@
           "file"
         ],
         "title": "Body_upload_photo_api_v1_glazes__identifier__photos_post"
+      },
+      "Body_upload_vessel_photo_api_v1_vessels__identifier__photos_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_vessel_photo_api_v1_vessels__identifier__photos_post"
       },
       "ContainerEdit": {
         "properties": {
@@ -2401,6 +3134,131 @@
         ],
         "title": "DeviceJar"
       },
+      "GlazeDetailOut": {
+        "properties": {
+          "manufacturer_id": {
+            "type": "string",
+            "title": "Manufacturer Id"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "product_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Code"
+          },
+          "product_line": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Line"
+          },
+          "cone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cone"
+          },
+          "classification": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "glaze",
+                  "underglaze",
+                  "other"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classification"
+          },
+          "product_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Url"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "manufacturer_name": {
+            "type": "string",
+            "title": "Manufacturer Name"
+          },
+          "photos": {
+            "items": {
+              "$ref": "#/components/schemas/PhotoOut"
+            },
+            "type": "array",
+            "title": "Photos"
+          },
+          "vessels": {
+            "items": {
+              "$ref": "#/components/schemas/VesselSummary"
+            },
+            "type": "array",
+            "title": "Vessels"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "manufacturer_id",
+          "name",
+          "id",
+          "manufacturer_name",
+          "photos",
+          "vessels"
+        ],
+        "title": "GlazeDetailOut"
+      },
       "GlazeInput": {
         "properties": {
           "manufacturer_id": {
@@ -2616,6 +3474,42 @@
           "photos"
         ],
         "title": "GlazeOut"
+      },
+      "GlazeReference": {
+        "properties": {
+          "glaze_id": {
+            "type": "string",
+            "title": "Glaze Id"
+          },
+          "glaze_name": {
+            "type": "string",
+            "title": "Glaze Name"
+          },
+          "manufacturer_name": {
+            "type": "string",
+            "title": "Manufacturer Name"
+          },
+          "product_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Code"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "glaze_id",
+          "glaze_name",
+          "manufacturer_name",
+          "product_code"
+        ],
+        "title": "GlazeReference"
       },
       "HTTPValidationError": {
         "properties": {
@@ -3087,6 +3981,37 @@
         ],
         "title": "Page[PresetOut]"
       },
+      "Page_VesselSummary_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/VesselSummary"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "title": "Page[VesselSummary]"
+      },
       "PhotoEdit": {
         "properties": {
           "caption": {
@@ -3117,10 +4042,6 @@
             "type": "string",
             "title": "Id"
           },
-          "glaze_id": {
-            "type": "string",
-            "title": "Glaze Id"
-          },
           "url": {
             "type": "string",
             "title": "Url"
@@ -3143,17 +4064,21 @@
           "cover": {
             "type": "boolean",
             "title": "Cover"
+          },
+          "glaze_id": {
+            "type": "string",
+            "title": "Glaze Id"
           }
         },
         "additionalProperties": false,
         "type": "object",
         "required": [
           "id",
-          "glaze_id",
           "url",
           "thumbnail_url",
           "caption",
-          "cover"
+          "cover",
+          "glaze_id"
         ],
         "title": "PhotoOut"
       },
@@ -3492,6 +4417,183 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "VesselInput": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "VesselInput"
+      },
+      "VesselOut": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          },
+          "archived": {
+            "type": "boolean",
+            "title": "Archived"
+          },
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "photos": {
+            "items": {
+              "$ref": "#/components/schemas/VesselPhotoOut"
+            },
+            "type": "array",
+            "title": "Photos"
+          },
+          "applications": {
+            "items": {
+              "$ref": "#/components/schemas/ApplicationOut"
+            },
+            "type": "array",
+            "title": "Applications"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "archived",
+          "id",
+          "photos",
+          "applications"
+        ],
+        "title": "VesselOut"
+      },
+      "VesselPhotoOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "thumbnail_url": {
+            "type": "string",
+            "title": "Thumbnail Url"
+          },
+          "caption": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Caption"
+          },
+          "cover": {
+            "type": "boolean",
+            "title": "Cover"
+          },
+          "vessel_id": {
+            "type": "integer",
+            "title": "Vessel Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "url",
+          "thumbnail_url",
+          "caption",
+          "cover",
+          "vessel_id"
+        ],
+        "title": "VesselPhotoOut"
+      },
+      "VesselSummary": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          },
+          "archived": {
+            "type": "boolean",
+            "title": "Archived"
+          },
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "photos": {
+            "items": {
+              "$ref": "#/components/schemas/VesselPhotoOut"
+            },
+            "type": "array",
+            "title": "Photos"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "archived",
+          "id",
+          "photos"
+        ],
+        "title": "VesselSummary"
       },
       "VoidInput": {
         "properties": {

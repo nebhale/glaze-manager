@@ -28,7 +28,7 @@ test("warn by remaining grams without a full weight and edit gram thresholds", a
 
   try {
     await page.goto("/settings");
-    const threshold = page.getByLabel("Studio low-stock threshold (g)");
+    const threshold = page.getByLabel("Low-stock warning threshold (g)", { exact: true });
     await expect(threshold).toHaveValue("150");
     await threshold.fill("250");
     await threshold.blur();
@@ -40,14 +40,14 @@ test("warn by remaining grams without a full weight and edit gram thresholds", a
     await expect(page.locator(".remaining-weight")).toHaveText("100 g");
     await expect(page.locator(".stock-table .low-stock-weight")).toBeVisible();
     await page.goto(`/glazes/${glaze.id}`);
-    const jars = page.getByRole("table", { name: "Active jars" });
+    const jars = page.getByRole("table", { name: "Jars" });
     await expect(jars.locator(".low-stock-weight")).toBeVisible();
     await expect(jars.locator(".stock-meter")).toHaveClass(/low/);
-    await expect(page.getByText(/low-stock threshold/i)).toHaveCount(0);
+    await expect(page.getByText(/low-stock warning threshold/i)).toHaveCount(0);
     await jars.locator(".jar-select").click();
     const pane = page.getByRole("complementary", { name: "Jar details" });
     await expect(pane.locator(".big-weight .low-stock-weight")).toBeVisible();
-    await expect(pane.getByText(/low-stock threshold/i)).toHaveCount(0);
+    await expect(pane.getByText(/low-stock warning threshold/i)).toHaveCount(0);
     await expect(pane.getByText("Needs setup", { exact: true })).toHaveCount(0);
     const currentJar = await (await request.get(`/api/v1/containers/${jar.id}`)).json();
     await create(`/containers/${jar.id}/measurements`, {

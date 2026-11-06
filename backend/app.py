@@ -10,7 +10,8 @@ from pathlib import Path
 from typing import Annotated, Literal
 from uuid import uuid4
 
-from fastapi import Depends, FastAPI, File, HTTPException, Query, Request, UploadFile
+from fastapi import Depends, FastAPI, HTTPException, Query, Request, UploadFile
+from fastapi import Path as PathParam
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from PIL import Image, ImageOps, UnidentifiedImageError
@@ -18,7 +19,7 @@ from pillow_heif import register_heif_opener
 from pydantic import ValidationError
 from sqlalchemy import delete, func, inspect, select, text
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from . import models as m
 from . import schemas as s
@@ -26,9 +27,11 @@ from .database import Base, data_directory, make_engine, session_factory
 from .domain import cents, grams, matches_cone, milligrams, normalize_uid, revision_check
 from .services import (
     Events,
+    application_view,
     container_stock,
     container_view,
     fields,
+    glaze_references,
     glaze_view,
     initialize_starting_weight,
     lookup,
@@ -37,12 +40,15 @@ from .services import (
     photo_view,
     preset_view,
     require,
+    vessel_summary,
+    vessel_view,
 )
 
 register_heif_opener()
 log = logging.getLogger("glaze")
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 ROOT = Path(__file__).resolve().parent.parent
+VesselId = Annotated[int, PathParam(ge=1, le=9223372036854775807)]
 
 
 def create_app(data_dir: Path | None = None):
@@ -61,6 +67,15 @@ def create_app(data_dir: Path | None = None):
             columns = inspect(connection).get_columns("containers")
             if not any(column["name"] == "cost_cents" for column in columns):
                 connection.exec_driver_sql("ALTER TABLE containers ADD COLUMN cost_cents INTEGER")
+            vessel_columns = {
+                column["name"] for column in inspect(connection).get_columns("vessels")
+            }
+            if "location" not in vessel_columns:
+                connection.exec_driver_sql("ALTER TABLE vessels ADD COLUMN location VARCHAR")
+            if "archived" not in vessel_columns:
+                connection.exec_driver_sql(
+                    "ALTER TABLE vessels ADD COLUMN archived BOOLEAN NOT NULL DEFAULT 0"
+                )
         with sessions() as db:
             if db.get(m.Setting, 1) is None:
                 db.add(m.Setting(id=1))
@@ -68,7 +83,7 @@ def create_app(data_dir: Path | None = None):
         yield
         engine.dispose()
 
-    app = FastAPI(title="Glaze Manager", version="1.2.0", lifespan=lifespan)
+    app = FastAPI(title="Glaze Manager", version="1.3.0", lifespan=lifespan)
     app.state.engine = engine
     app.state.sessions = sessions
 
@@ -122,14 +137,18 @@ def create_app(data_dir: Path | None = None):
         return {"status": "ok"}
 
     @app.get("/api/v1/suggestions/{field}", response_model=list[str])
-    def suggestions(field: Literal["product_line", "location", "cone"], db: DB):
+    def suggestions(
+        field: Literal["product_line", "location", "vessel_location", "cone", "application_note"],
+        db: DB,
+    ):
         column = {
             "product_line": m.Glaze.product_line,
             "location": m.Container.location,
+            "vessel_location": m.Vessel.location,
             "cone": m.Glaze.cone,
+            "application_note": m.GlazeApplication.application_note,
         }[field]
-        # Include all stored values, including archived jars, without depending
-        # on the inventory's filters or pagination. Preserve the stored spelling.
+        # Include historical values from this field and preserve the stored spelling.
         values = {
             value.strip()
             for value in db.scalars(select(column).where(column.is_not(None)).distinct())
@@ -168,6 +187,23 @@ def create_app(data_dir: Path | None = None):
             setattr(item, key, value)
         commit(db)
         return fields(item)
+
+    @app.delete("/api/v1/manufacturers/{identifier}", status_code=204)
+    def delete_manufacturer(identifier: str, db: DB):
+        manufacturer = require(db, m.Manufacturer, identifier)
+        glaze_name = db.scalar(
+            select(m.Glaze.name)
+            .where(m.Glaze.manufacturer_id == identifier)
+            .order_by(m.Glaze.name, m.Glaze.id)
+            .limit(1)
+        )
+        if glaze_name is not None:
+            raise HTTPException(
+                409,
+                f"“{glaze_name}” uses this manufacturer. Reassign the linked glazes first.",
+            )
+        db.delete(manufacturer)
+        commit(db)
 
     @app.get("/api/v1/glazes", response_model=s.Page[s.GlazeOut])
     def glazes(
@@ -212,9 +248,29 @@ def create_app(data_dir: Path | None = None):
             result = with_line + [glaze for glaze in result if not glaze["product_line"]]
         return page(result, number, size)
 
-    @app.get("/api/v1/glazes/{identifier}", response_model=s.GlazeOut)
+    @app.get("/api/v1/glaze-options", response_model=list[s.GlazeReference])
+    def glaze_options(db: DB):
+        query = glaze_references().order_by(
+            func.lower(m.Manufacturer.name),
+            func.lower(m.Glaze.name),
+            m.Glaze.product_code,
+            m.Glaze.id,
+        )
+        return db.execute(query).mappings().all()
+
+    @app.get("/api/v1/glazes/{identifier}", response_model=s.GlazeDetailOut)
     def glaze(identifier: str, db: DB):
-        return glaze_view(db, require(db, m.Glaze, identifier))
+        result = glaze_view(db, require(db, m.Glaze, identifier))
+        linked = select(m.GlazeApplication.vessel_id).where(
+            m.GlazeApplication.glaze_id == identifier
+        )
+        vessels = db.scalars(
+            select(m.Vessel)
+            .where(m.Vessel.id.in_(linked))
+            .order_by(func.lower(m.Vessel.name), m.Vessel.id)
+            .options(selectinload(m.Vessel.photos))
+        )
+        return {**result, "vessels": [vessel_summary(vessel) for vessel in vessels]}
 
     @app.post("/api/v1/glazes", response_model=s.GlazeOut, status_code=201)
     def create_glaze(body: s.GlazeInput, db: DB):
@@ -234,6 +290,42 @@ def create_app(data_dir: Path | None = None):
             container.revision += 1
         commit(db)
         return glaze_view(db, item)
+
+    @app.delete("/api/v1/glazes/{identifier}", status_code=204)
+    def delete_glaze(identifier: str, db: DB):
+        glaze = require(db, m.Glaze, identifier)
+        jar = db.scalar(
+            select(m.Container)
+            .where(m.Container.glaze_id == identifier)
+            .order_by(m.Container.archived, m.Container.number)
+            .limit(1)
+        )
+        if jar:
+            kind = "Archived jar" if jar.archived else "Jar"
+            raise HTTPException(
+                409,
+                f"{kind} #{jar.number} uses this glaze. Change the jar’s glaze or delete the jar first.",
+            )
+        vessel_id = db.scalar(
+            select(m.GlazeApplication.vessel_id)
+            .where(m.GlazeApplication.glaze_id == identifier)
+            .order_by(m.GlazeApplication.vessel_id)
+            .limit(1)
+        )
+        if vessel_id is not None:
+            raise HTTPException(
+                409,
+                f"Vessel #{vessel_id} uses this glaze. Remove the application from the vessel first.",
+            )
+
+        owned_photos = m.Photo.glaze_id == identifier
+        files = db.execute(select(m.Photo.filename, m.Photo.thumbnail).where(owned_photos)).all()
+        db.execute(delete(m.Photo).where(owned_photos))
+        db.delete(glaze)
+        commit(db)
+        for filename, thumbnail in files:
+            (media / filename).unlink(missing_ok=True)
+            (media / thumbnail).unlink(missing_ok=True)
 
     @app.get("/api/v1/presets", response_model=s.Page[s.PresetOut])
     def presets(
@@ -295,6 +387,125 @@ def create_app(data_dir: Path | None = None):
         if changed:
             return edit_glaze(identifier, s.GlazeInput(**values), db)
         return glaze_view(db, item)
+
+    @app.get("/api/v1/vessels", response_model=s.Page[s.VesselSummary])
+    def vessels(
+        db: DB,
+        q: str = "",
+        status: Literal["active", "archived", "all"] = "active",
+        sort: Literal["id", "name", "location"] = "name",
+        descending: bool = False,
+        number: int = Query(1, alias="page", ge=1, le=2147483647),
+        size: int = Query(50, alias="page_size", ge=1, le=1000),
+    ):
+        term = q.strip()
+        matching = m.Vessel.name.icontains(term, autoescape=True) | m.Vessel.location.icontains(
+            term, autoescape=True
+        )
+        digits = term.removeprefix("#")
+        if digits.isascii() and digits.isdigit():
+            # Compare as text so even an oversized search cannot overflow a SQLite integer.
+            by_number = m.Vessel.id == digits
+            matching = by_number if term.startswith("#") else matching | by_number
+        if status != "all":
+            matching &= m.Vessel.archived.is_(status == "archived")
+        column = {
+            "id": m.Vessel.id,
+            "name": func.lower(m.Vessel.name),
+            "location": func.lower(m.Vessel.location),
+        }[sort]
+        order = column.desc() if descending else column.asc()
+        rows = db.scalars(
+            select(m.Vessel)
+            .where(matching)
+            .order_by(order.nulls_last(), m.Vessel.id)
+            .offset((number - 1) * size)
+            .limit(size)
+            .options(selectinload(m.Vessel.photos))
+        )
+        return {
+            "items": [vessel_summary(row) for row in rows],
+            "total": db.scalar(select(func.count()).select_from(m.Vessel).where(matching)),
+            "page": number,
+            "page_size": size,
+        }
+
+    @app.post("/api/v1/vessels", response_model=s.VesselOut, status_code=201)
+    def create_vessel(body: s.VesselInput, db: DB):
+        vessel = m.Vessel(**body.model_dump())
+        db.add(vessel)
+        commit(db)
+        return vessel_view(db, vessel)
+
+    @app.get("/api/v1/vessels/{identifier}", response_model=s.VesselOut)
+    def vessel_detail(identifier: VesselId, db: DB):
+        return vessel_view(db, require(db, m.Vessel, identifier))
+
+    @app.patch("/api/v1/vessels/{identifier}", response_model=s.VesselOut)
+    def patch_vessel(identifier: VesselId, body: s.RecordPatch, db: DB):
+        vessel = require(db, m.Vessel, identifier)
+        values, changed = merge_edit(body, fields(vessel), s.VesselEdit)
+        if changed:
+            for key in body.changes:
+                setattr(vessel, key, values[key])
+            commit(db)
+        return vessel_view(db, vessel)
+
+    @app.delete("/api/v1/vessels/{identifier}", status_code=204)
+    def delete_vessel(identifier: VesselId, db: DB):
+        vessel = require(db, m.Vessel, identifier)
+        paths = [
+            media / name for photo in vessel.photos for name in (photo.filename, photo.thumbnail)
+        ]
+        db.delete(vessel)
+        commit(db)
+        for path in paths:
+            path.unlink(missing_ok=True)
+
+    @app.post(
+        "/api/v1/vessels/{identifier}/applications",
+        response_model=s.ApplicationOut,
+        status_code=201,
+    )
+    def add_application(identifier: VesselId, body: s.ApplicationInput, db: DB):
+        require(db, m.Vessel, identifier)
+        require(db, m.Glaze, body.glaze_id)
+        application = m.GlazeApplication(vessel_id=identifier, **body.model_dump())
+        db.add(application)
+        commit(db)
+        return application_view(db, application)
+
+    def vessel_application(identifier, application_id, db):
+        application = require(db, m.GlazeApplication, application_id)
+        if application.vessel_id != identifier:
+            raise HTTPException(404, "Glaze application not found on this vessel.")
+        return application
+
+    @app.get(
+        "/api/v1/vessels/{identifier}/applications/{application_id}",
+        response_model=s.ApplicationOut,
+    )
+    def get_application(identifier: VesselId, application_id: str, db: DB):
+        return application_view(db, vessel_application(identifier, application_id, db))
+
+    @app.patch(
+        "/api/v1/vessels/{identifier}/applications/{application_id}",
+        response_model=s.ApplicationOut,
+    )
+    def patch_application(identifier: VesselId, application_id: str, body: s.RecordPatch, db: DB):
+        application = vessel_application(identifier, application_id, db)
+        values, changed = merge_edit(body, fields(application), s.ApplicationInput)
+        if changed:
+            require(db, m.Glaze, values["glaze_id"])
+            application.glaze_id = values["glaze_id"]
+            application.application_note = values["application_note"]
+            commit(db)
+        return application_view(db, application)
+
+    @app.delete("/api/v1/vessels/{identifier}/applications/{application_id}", status_code=204)
+    def delete_application(identifier: VesselId, application_id: str, db: DB):
+        db.delete(vessel_application(identifier, application_id, db))
+        commit(db)
 
     @app.get("/api/v1/presets/{identifier}", response_model=s.PresetOut)
     def preset(identifier: str, db: DB):
@@ -594,9 +805,7 @@ def create_app(data_dir: Path | None = None):
         values, changed = merge_edit(body, settings(db), s.SettingsInput)
         return edit_settings(s.SettingsInput(**values), db) if changed else settings(db)
 
-    @app.post("/api/v1/glazes/{identifier}/photos", response_model=s.PhotoOut, status_code=201)
-    def upload_photo(identifier: str, db: DB, file: UploadFile = File()):
-        require(db, m.Glaze, identifier)
+    def store_photo(db, file, photo, siblings):
         content = file.file.read(25 * 1024 * 1024 + 1)
         if len(content) > 25 * 1024 * 1024:
             raise HTTPException(413, "Choose a photo smaller than 25 MB.")
@@ -608,27 +817,34 @@ def create_app(data_dir: Path | None = None):
             image.thumbnail((3000, 3000))
         except (UnidentifiedImageError, OSError, ValueError, Image.DecompressionBombError):
             raise HTTPException(422, "Choose a valid JPEG, PNG, WebP, or HEIC photo.") from None
-        photo_id = str(uuid4())
-        filename, thumbnail = f"{photo_id}.jpg", f"{photo_id}-thumb.jpg"
-        image.save(media / filename, quality=88)
-        image.thumbnail((480, 480))
-        image.save(media / thumbnail, quality=82)
-        existing = db.scalar(select(m.Photo).where(m.Photo.glaze_id == identifier))
-        photo = m.Photo(
-            id=photo_id,
-            glaze_id=identifier,
-            filename=filename,
-            thumbnail=thumbnail,
-            cover=existing is None,
-        )
-        db.add(photo)
+        photo.id = str(uuid4())
+        photo.filename, photo.thumbnail = f"{photo.id}.jpg", f"{photo.id}-thumb.jpg"
+        photo.cover = db.scalar(siblings.limit(1)) is None
         try:
+            image.save(media / photo.filename, quality=88)
+            image.thumbnail((480, 480))
+            image.save(media / photo.thumbnail, quality=82)
+            db.add(photo)
             commit(db)
         except Exception:
-            (media / filename).unlink(missing_ok=True)
-            (media / thumbnail).unlink(missing_ok=True)
+            (media / photo.filename).unlink(missing_ok=True)
+            (media / photo.thumbnail).unlink(missing_ok=True)
             raise
         return photo_view(photo)
+
+    @app.post("/api/v1/glazes/{identifier}/photos", response_model=s.PhotoOut, status_code=201)
+    def upload_photo(identifier: str, db: DB, file: UploadFile):
+        require(db, m.Glaze, identifier)
+        siblings = select(m.Photo.id).where(m.Photo.glaze_id == identifier)
+        return store_photo(db, file, m.Photo(glaze_id=identifier), siblings)
+
+    @app.post(
+        "/api/v1/vessels/{identifier}/photos", response_model=s.VesselPhotoOut, status_code=201
+    )
+    def upload_vessel_photo(identifier: VesselId, db: DB, file: UploadFile):
+        require(db, m.Vessel, identifier)
+        siblings = select(m.VesselPhoto.id).where(m.VesselPhoto.vessel_id == identifier)
+        return store_photo(db, file, m.VesselPhoto(vessel_id=identifier), siblings)
 
     @app.get("/api/v1/photos/{identifier}/caption", response_model=s.PhotoEdit)
     def photo_caption(identifier: str, db: DB):
@@ -655,15 +871,12 @@ def create_app(data_dir: Path | None = None):
         commit(db)
         return photo_view(photo)
 
-    @app.delete("/api/v1/photos/{identifier}", status_code=204)
-    def delete_photo(identifier: str, db: DB):
-        photo = require(db, m.Photo, identifier)
+    def remove_photo(db, photo, siblings):
         paths = [media / photo.filename, media / photo.thumbnail]
         if photo.cover:
+            model = type(photo)
             sibling = db.scalar(
-                select(m.Photo)
-                .where(m.Photo.glaze_id == photo.glaze_id, m.Photo.id != photo.id)
-                .order_by(m.Photo.created_at)
+                siblings.where(model.id != photo.id).order_by(model.created_at, model.id).limit(1)
             )
             if sibling:
                 sibling.cover = True
@@ -671,6 +884,18 @@ def create_app(data_dir: Path | None = None):
         commit(db)
         for path in paths:
             path.unlink(missing_ok=True)
+
+    @app.delete("/api/v1/photos/{identifier}", status_code=204)
+    def delete_photo(identifier: str, db: DB):
+        photo = require(db, m.Photo, identifier)
+        remove_photo(db, photo, select(m.Photo).where(m.Photo.glaze_id == photo.glaze_id))
+
+    @app.delete("/api/v1/vessels/{identifier}/photos/{photo_id}", status_code=204)
+    def delete_vessel_photo(identifier: VesselId, photo_id: str, db: DB):
+        photo = require(db, m.VesselPhoto, photo_id)
+        if photo.vessel_id != identifier:
+            raise HTTPException(404, "Photo not found on this vessel.")
+        remove_photo(db, photo, select(m.VesselPhoto).where(m.VesselPhoto.vessel_id == identifier))
 
     @app.get("/api/v1/events")
     async def event_stream(request: Request):

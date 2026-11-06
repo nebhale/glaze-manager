@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useMatch, useNavigate, useSearchParams } from "react-router-dom";
-import { Plus, Search, X } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useApi, type Jar, type Page } from "../api";
 import {
   Empty,
   ErrorMessage,
+  ListHeading,
   Loading,
   InlinePanel,
   JarList,
@@ -22,10 +23,6 @@ export function Inventory() {
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
   const [adding, setAdding] = useState(false);
-  const [searchExpanded, setSearchExpanded] = useState(
-    Boolean(params.get("q")),
-  );
-  const searchOpen = searchExpanded || Boolean(params.get("q"));
   const showArchived = params.get("show_archived") === "true";
   const tableScroll = useRef<HTMLDivElement>(null);
   const apiParams = new URLSearchParams({
@@ -83,56 +80,23 @@ export function Inventory() {
         className="inventory-list"
         aria-label="Jar inventory"
       >
-        <div className="inventory-heading">
-          <h1>Inventory</h1>
-          <div className="inventory-actions">
-            <button
-              className={`icon-button ${searchOpen ? "selected" : ""}`}
-              aria-label="Search inventory"
-              title="Search inventory"
-              aria-expanded={searchOpen}
-              onClick={() => {
-                if (searchOpen) update({ q: "" });
-                setSearchExpanded(!searchOpen);
-              }}
-            >
-              <Search size={18} />
-            </button>
-            <button
-              className="button primary add-jar-button"
-              aria-label="Add a jar"
-              title="Add a jar"
-              onClick={() => setAdding(true)}
-            >
-              <Plus size={18} />
-              <span>Add</span>
-            </button>
-          </div>
-        </div>
-        {searchOpen && (
-          <div className="inventory-search">
-            <label className="search-box">
-              <Search size={16} />
-              <input
-                aria-label="Search jars"
-                placeholder="Search name, code, location, or #ID…"
-                autoFocus
-                value={params.get("q") || ""}
-                onChange={(e) => update({ q: e.target.value })}
-              />
-              <button
-                className="icon-button"
-                aria-label="Clear and close search"
-                onClick={() => {
-                  update({ q: "" });
-                  setSearchExpanded(false);
-                }}
-              >
-                <X size={15} />
-              </button>
-            </label>
-          </div>
-        )}
+        <ListHeading
+          title="Inventory"
+          query={params.get("q") || ""}
+          onQueryChange={(value) => update({ q: value })}
+          inputLabel="Search jars"
+          placeholder="Search name, code, location, or #ID…"
+        >
+          <button
+            className="button primary list-add-button"
+            aria-label="Add a jar"
+            title="Add a jar"
+            onClick={() => setAdding(true)}
+          >
+            <Plus size={18} />
+            <span>Add</span>
+          </button>
+        </ListHeading>
         <ErrorMessage error={jars.error} />
         <div className="inventory-table-scroll" ref={tableScroll}>
           {jars.isPending ? (

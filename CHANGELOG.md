@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.0](https://github.com/nebhale/glaze-manager/releases/tag/v1.3.0) · 2026-11-05
+
+- Track pottery vessels by permanent number, name, location, and photos. Record each glaze application with an optional note and revisit archived pieces.
+- Browse vessel photos alongside glaze reference images and follow them back to the finished piece.
+- Delete unused glazes and manufacturers. Linked records identify what needs to be reassigned or removed first.
+
 ## [1.2.0](https://github.com/nebhale/glaze-manager/releases/tag/v1.2.0) · 2026-11-05
 
 - Record an optional cost in US dollars for each jar. The Cost field appears between Location and Notes when adding or editing a jar. Existing jars start with a blank cost.

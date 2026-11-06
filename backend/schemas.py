@@ -62,19 +62,65 @@ class GlazeInput(Schema):
         return ManufacturerInput.url(value)
 
 
-class PhotoOut(Schema):
+class PhotoAsset(Schema):
     id: str
-    glaze_id: str
     url: str
     thumbnail_url: str
     caption: str | None
     cover: bool
 
 
+class PhotoOut(PhotoAsset):
+    glaze_id: str
+
+
+class VesselPhotoOut(PhotoAsset):
+    vessel_id: int
+
+
+class VesselInput(Schema):
+    name: Name
+    location: Name | None = None
+
+
+class VesselEdit(VesselInput):
+    archived: bool
+
+
+class VesselSummary(VesselEdit):
+    id: int
+    photos: list[VesselPhotoOut]
+
+
+class ApplicationInput(Schema):
+    glaze_id: str
+    application_note: Annotated[str, Field(max_length=2000)] | None = None
+
+
+class GlazeReference(Schema):
+    glaze_id: str
+    glaze_name: str
+    manufacturer_name: str
+    product_code: str | None
+
+
+class ApplicationOut(GlazeReference):
+    id: str
+    application_note: str | None
+
+
+class VesselOut(VesselSummary):
+    applications: list[ApplicationOut]
+
+
 class GlazeOut(GlazeInput):
     id: str
     manufacturer_name: str
     photos: list[PhotoOut]
+
+
+class GlazeDetailOut(GlazeOut):
+    vessels: list[VesselSummary]
 
 
 class PresetInput(Schema):

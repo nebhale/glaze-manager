@@ -7,11 +7,11 @@ import {
   useLocation,
   useParams,
 } from "react-router-dom";
-import { BookOpen, Settings2 } from "lucide-react";
+import { Amphora, BookOpen, Settings2 } from "lucide-react";
 import { useLiveUpdates } from "./api";
 import { AutosaveStatus } from "./autosave";
 import { JarIcon } from "./components";
-import { Inventory, Catalog, Settings } from "./pages";
+import { Inventory, Catalog, Settings, Vessels } from "./pages";
 
 function ManufacturerRedirect() {
   const { id } = useParams();
@@ -23,6 +23,7 @@ export default function App() {
   const { pathname, search } = useLocation();
   const inventory = pathname === "/" || pathname.startsWith("/containers/");
   const catalog = pathname === "/catalog" || pathname.startsWith("/glazes/");
+  const vessels = pathname === "/vessels" || pathname.startsWith("/vessels/");
   const oldManufacturerList =
     new URLSearchParams(search).get("tab") === "manufacturers";
   const links = [
@@ -32,6 +33,12 @@ export default function App() {
       icon: <BookOpen size={17} />,
       label: "Glazes",
       active: catalog,
+    },
+    {
+      to: "/vessels",
+      icon: <Amphora size={17} />,
+      label: "Vessels",
+      active: vessels,
     },
     {
       to: "/settings",
@@ -70,7 +77,9 @@ export default function App() {
         </div>
       </header>
       <main
-        className={inventory || catalog ? "inventory-main" : "standard-main"}
+        className={
+          inventory || catalog || vessels ? "inventory-main" : "standard-main"
+        }
       >
         <Routes>
           <Route element={<Inventory />}>
@@ -91,6 +100,7 @@ export default function App() {
             <Route path="/glazes/:id" />
           </Route>
           <Route path="/manufacturers/:id" element={<ManufacturerRedirect />} />
+          <Route path="/vessels/:id?" element={<Vessels />} />
           <Route path="/register" element={<Navigate to="/" replace />} />
           <Route path="/settings" element={<Settings />} />
           <Route
