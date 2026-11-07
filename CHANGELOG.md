@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.3.2](https://github.com/nebhale/glaze-manager/releases/tag/v1.3.2) · 2026-11-07
+
+- When adding or editing a jar, the glaze dropdown shows the glaze name and product code, such as Honey Flux (PC-17). Glazes without a code show only their name.
+
 ## [1.3.1](https://github.com/nebhale/glaze-manager/releases/tag/v1.3.1) · 2026-11-05
 
 - Vessel glaze notes now use “3 coats” as the example. The vessel photo upload tile shows a camera icon and retains its accessible label.

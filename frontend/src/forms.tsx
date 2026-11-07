@@ -202,7 +202,7 @@ export function ContainerForm({
             </option>
             {glazes.data?.items.map((g) => (
               <option key={g.id} value={g.id}>
-                {g.manufacturer_name} · {g.name}
+                {g.name}
                 {g.product_code ? ` (${g.product_code})` : ""}
               </option>
             ))}
