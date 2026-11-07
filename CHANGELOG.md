@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.0](https://github.com/nebhale/glaze-manager/releases/tag/v1.5.0) · 2026-11-07
+
+- A connected scale can look up jars by number, browse catalog choices, and create a jar, link its tag, and save the first reading together. Retrying the same setup returns the original result.
+- Scales can record a reading for a manually selected jar.
+- Manufacturer is optional when creating or editing a glaze. Existing manufacturer assignments are preserved during upgrade.
+
 ## [1.4.0](https://github.com/nebhale/glaze-manager/releases/tag/v1.4.0) · 2026-11-07
 
 - Clear a linked NFC tag from Jar details. The confirmation shows the tag ID, glaze name, and jar number.
