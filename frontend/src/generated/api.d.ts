@@ -347,6 +347,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/device/jars/{number}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Device Jar */
+        get: operations["device_jar_api_v1_device_jars__number__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/device/options/{kind}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Device Options */
+        get: operations["device_options_api_v1_device_options__kind__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/device/jar-setups": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Setup Jar */
+        post: operations["setup_jar_api_v1_device_jar_setups_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/tags/{uid}": {
         parameters: {
             query?: never;
@@ -557,7 +608,7 @@ export interface components {
             /** Glaze Name */
             glaze_name: string;
             /** Manufacturer Name */
-            manufacturer_name: string;
+            manufacturer_name: string | null;
             /** Product Code */
             product_code: string | null;
             /** Id */
@@ -694,6 +745,8 @@ export interface components {
             below_tare: boolean;
             /** Threshold G */
             threshold_g: number;
+            /** Number */
+            number: number;
             /** Container Id */
             container_id: string;
             /** Revision */
@@ -701,7 +754,7 @@ export interface components {
             /** Glaze Name */
             glaze_name: string;
             /** Manufacturer Name */
-            manufacturer_name: string;
+            manufacturer_name: string | null;
             /** Tare G */
             tare_g: number | null;
             /** Full Weight G */
@@ -709,10 +762,99 @@ export interface components {
             /** Archived */
             archived: boolean;
         };
+        /** DeviceJarDetails */
+        DeviceJarDetails: {
+            /** Gross G */
+            gross_g: number | null;
+            /** Remaining G */
+            remaining_g: number | null;
+            /** Percentage */
+            percentage: number | null;
+            /** Low Stock */
+            low_stock: boolean;
+            /** Incomplete */
+            incomplete: boolean;
+            /** Below Tare */
+            below_tare: boolean;
+            /** Threshold G */
+            threshold_g: number;
+            /** Number */
+            number: number;
+            /** Container Id */
+            container_id: string;
+            /** Revision */
+            revision: number;
+            /** Glaze Name */
+            glaze_name: string;
+            /** Manufacturer Name */
+            manufacturer_name: string | null;
+            /** Tare G */
+            tare_g: number | null;
+            /** Full Weight G */
+            full_weight_g: number | null;
+            /** Archived */
+            archived: boolean;
+            /** Location */
+            location: string | null;
+            /** Product Code */
+            product_code: string | null;
+            /** Cone */
+            cone: string | null;
+            /** Tag Uid */
+            tag_uid: string | null;
+        };
+        /** DeviceJarSetup */
+        DeviceJarSetup: {
+            /** Device Id */
+            device_id: string;
+            /** Uid */
+            uid: string;
+            /** Request Id */
+            request_id: string;
+            /** Glaze Id */
+            glaze_id?: string | null;
+            new_glaze?: components["schemas"]["GlazeInput"] | null;
+            /** Preset Id */
+            preset_id?: string | null;
+            /** Location */
+            location?: string | null;
+            /** Cost Usd */
+            cost_usd?: number | string | null;
+            /** Gross G */
+            gross_g: number;
+        };
+        /** DeviceOption */
+        DeviceOption: {
+            /** Value */
+            value: string;
+            /** Label */
+            label: string;
+            /** Code */
+            code?: string | null;
+        };
+        /** DeviceOptions */
+        DeviceOptions: {
+            /** Items */
+            items: components["schemas"]["DeviceOption"][];
+            /** Next Offset */
+            next_offset: number | null;
+        };
+        /** DeviceSetupResult */
+        DeviceSetupResult: {
+            /** Measurement Id */
+            measurement_id: string;
+            /** Container Id */
+            container_id: string;
+            /** Revision */
+            revision: number;
+            stock: components["schemas"]["StockOut"];
+            /** Number */
+            number: number;
+        };
         /** GlazeDetailOut */
         GlazeDetailOut: {
             /** Manufacturer Id */
-            manufacturer_id: string;
+            manufacturer_id?: string | null;
             /** Name */
             name: string;
             /** Product Code */
@@ -730,7 +872,7 @@ export interface components {
             /** Id */
             id: string;
             /** Manufacturer Name */
-            manufacturer_name: string;
+            manufacturer_name: string | null;
             /** Photos */
             photos: components["schemas"]["PhotoOut"][];
             /** Vessels */
@@ -739,7 +881,7 @@ export interface components {
         /** GlazeInput */
         GlazeInput: {
             /** Manufacturer Id */
-            manufacturer_id: string;
+            manufacturer_id?: string | null;
             /** Name */
             name: string;
             /** Product Code */
@@ -758,7 +900,7 @@ export interface components {
         /** GlazeOut */
         GlazeOut: {
             /** Manufacturer Id */
-            manufacturer_id: string;
+            manufacturer_id?: string | null;
             /** Name */
             name: string;
             /** Product Code */
@@ -776,7 +918,7 @@ export interface components {
             /** Id */
             id: string;
             /** Manufacturer Name */
-            manufacturer_name: string;
+            manufacturer_name: string | null;
             /** Photos */
             photos: components["schemas"]["PhotoOut"][];
         };
@@ -787,7 +929,7 @@ export interface components {
             /** Glaze Name */
             glaze_name: string;
             /** Manufacturer Name */
-            manufacturer_name: string;
+            manufacturer_name: string | null;
             /** Product Code */
             product_code: string | null;
         };
@@ -840,6 +982,11 @@ export interface components {
             device_id?: string | null;
             /** Tag Uid */
             tag_uid?: string | null;
+            /**
+             * Manual Selection
+             * @default false
+             */
+            manual_selection: boolean;
             /** Note */
             note?: string | null;
         };
@@ -2353,6 +2500,105 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ContainerOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    device_jar_api_v1_device_jars__number__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                number: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeviceJarDetails"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    device_options_api_v1_device_options__kind__get: {
+        parameters: {
+            query?: {
+                manufacturer_id?: string | null;
+                q?: string;
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                kind: "manufacturers" | "glazes" | "presets" | "locations" | "cones" | "product-lines" | "jars" | "unlinked-jars";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeviceOptions"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    setup_jar_api_v1_device_jar_setups_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeviceJarSetup"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeviceSetupResult"];
                 };
             };
             /** @description Validation Error */

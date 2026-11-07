@@ -6,6 +6,7 @@ import logging
 import os
 import time
 from contextlib import asynccontextmanager
+from itertools import islice
 from pathlib import Path
 from typing import Annotated, Literal
 from uuid import uuid4
@@ -23,13 +24,14 @@ from sqlalchemy.orm import Session, selectinload
 
 from . import models as m
 from . import schemas as s
-from .database import Base, data_directory, make_engine, session_factory
+from .database import Base, allow_unassigned_manufacturer, data_directory, make_engine, session_factory
 from .domain import cents, grams, matches_cone, milligrams, normalize_uid, revision_check
 from .services import (
     Events,
     application_view,
     container_stock,
     container_view,
+    device_view,
     fields,
     glaze_references,
     glaze_view,
@@ -61,6 +63,7 @@ def create_app(data_dir: Path | None = None):
 
     @asynccontextmanager
     async def lifespan(app):
+        allow_unassigned_manufacturer(engine)
         with engine.begin() as connection:
             connection.exec_driver_sql("BEGIN IMMEDIATE")
             Base.metadata.create_all(connection)
@@ -274,7 +277,8 @@ def create_app(data_dir: Path | None = None):
 
     @app.post("/api/v1/glazes", response_model=s.GlazeOut, status_code=201)
     def create_glaze(body: s.GlazeInput, db: DB):
-        require(db, m.Manufacturer, body.manufacturer_id)
+        if body.manufacturer_id is not None:
+            require(db, m.Manufacturer, body.manufacturer_id)
         item = m.Glaze(**body.model_dump())
         db.add(item)
         commit(db)
@@ -283,7 +287,8 @@ def create_app(data_dir: Path | None = None):
     @app.put("/api/v1/glazes/{identifier}", response_model=s.GlazeOut)
     def edit_glaze(identifier: str, body: s.GlazeInput, db: DB):
         item = require(db, m.Glaze, identifier)
-        require(db, m.Manufacturer, body.manufacturer_id)
+        if body.manufacturer_id is not None:
+            require(db, m.Manufacturer, body.manufacturer_id)
         for key, value in body.model_dump().items():
             setattr(item, key, value)
         for container in db.scalars(select(m.Container).where(m.Container.glaze_id == identifier)):
@@ -605,8 +610,7 @@ def create_app(data_dir: Path | None = None):
             "incomplete": sum(x["incomplete"] for x in active),
         }
 
-    @app.post("/api/v1/containers", response_model=s.ContainerOut, status_code=201)
-    def create_container(body: s.ContainerInput, db: DB):
+    def new_container(body: s.ContainerInput, db: Session):
         require(db, m.Glaze, body.glaze_id)
         values = body.model_dump(exclude={"tare_g", "full_weight_g", "cost_usd"})
         values["cost_cents"] = cents(body.cost_usd)
@@ -621,6 +625,12 @@ def create_app(data_dir: Path | None = None):
         number = max(highest_current, highest_retired) + 1
         item = m.Container(**values, number=number, tare_mg=tare, full_weight_mg=full)
         db.add(item)
+        db.flush()
+        return item
+
+    @app.post("/api/v1/containers", response_model=s.ContainerOut, status_code=201)
+    def create_container(body: s.ContainerInput, db: DB):
+        item = new_container(body, db)
         commit(db)
         return container_view(db, item)
 
@@ -673,28 +683,12 @@ def create_app(data_dir: Path | None = None):
             )
         ]
 
-    @app.post("/api/v1/containers/{identifier}/measurements", response_model=s.SaveResult)
-    def weigh(identifier: str, body: s.MeasurementInput, db: DB):
-        payload = json.dumps({"container_id": identifier, **body.model_dump()}, sort_keys=True)
-        digest = hashlib.sha256(payload.encode()).hexdigest()
-        prior = db.scalar(select(m.Measurement).where(m.Measurement.request_id == body.request_id))
-        if prior:
-            if prior.request_hash != digest:
-                raise HTTPException(
-                    409, "That request identifier was already used for a different reading."
-                )
-            return json.loads(prior.response_json)
-        item = require(db, m.Container, identifier)
-        revision_check(item, body.expected_revision)
-        if item.archived:
-            raise HTTPException(409, "Restore this jar before weighing it.")
-        if body.source == "device" and item.tag_uid != body.tag_uid:
-            raise HTTPException(409, "The tag association changed. Scan the jar again.")
+    def record_weight(db: Session, item: m.Container, body: s.MeasurementInput, digest: str):
         gross_mg = milligrams(body.gross_g)
         if body.source == "device":
             initialize_starting_weight(db, item, gross_mg)
         measurement = m.Measurement(
-            container_id=identifier,
+            container_id=item.id,
             gross_mg=gross_mg,
             tare_mg=item.tare_mg,
             full_weight_mg=item.full_weight_mg,
@@ -714,6 +708,29 @@ def create_app(data_dir: Path | None = None):
             "stock": container_stock(db, item),
         }
         measurement.response_json = json.dumps(response)
+        return response
+
+    @app.post("/api/v1/containers/{identifier}/measurements", response_model=s.SaveResult)
+    def weigh(identifier: str, body: s.MeasurementInput, db: DB):
+        fields = body.model_dump(exclude=set() if body.manual_selection else {"manual_selection"})
+        payload = json.dumps({"container_id": identifier, **fields}, sort_keys=True)
+        digest = hashlib.sha256(payload.encode()).hexdigest()
+        prior = db.scalar(select(m.Measurement).where(m.Measurement.request_id == body.request_id))
+        if prior:
+            if prior.request_hash != digest:
+                raise HTTPException(
+                    409, "That request identifier was already used for a different reading."
+                )
+            return json.loads(prior.response_json)
+        if db.get(m.JarSetupReceipt, body.request_id):
+            raise HTTPException(409, "This request identifier already belongs to a jar setup.")
+        item = require(db, m.Container, identifier)
+        revision_check(item, body.expected_revision)
+        if item.archived:
+            raise HTTPException(409, "Restore this jar before weighing it.")
+        if body.source == "device" and not body.manual_selection and item.tag_uid != body.tag_uid:
+            raise HTTPException(409, "The tag association changed. Scan the jar again.")
+        response = record_weight(db, item, body, digest)
         commit(db)
         return response
 
@@ -728,6 +745,142 @@ def create_app(data_dir: Path | None = None):
         item.revision += 1
         commit(db)
         return container_view(db, item)
+
+    @app.get("/api/v1/device/jars/{number}", response_model=s.DeviceJarDetails)
+    def device_jar(number: Annotated[int, PathParam(ge=1, le=9223372036854775807)], db: DB):
+        item = db.scalar(select(m.Container).where(m.Container.number == number))
+        if item is None:
+            raise HTTPException(404, "Jar number not found.")
+        glaze = require(db, m.Glaze, item.glaze_id)
+        return {
+            **device_view(db, item),
+            "location": item.location,
+            "product_code": glaze.product_code,
+            "cone": glaze.cone,
+            "tag_uid": item.tag_uid,
+        }
+
+    @app.get("/api/v1/device/options/{kind}", response_model=s.DeviceOptions)
+    def device_options(
+        kind: Literal["manufacturers", "glazes", "presets", "locations", "cones", "product-lines", "jars", "unlinked-jars"],
+        db: DB,
+        manufacturer_id: str | None = None,
+        q: str = "",
+        offset: int = Query(0, ge=0, le=2147483647),
+    ):
+        if kind == "jars":
+            stmt = (
+                select(m.Container.number, m.Glaze.name)
+                .join(m.Glaze, m.Container.glaze_id == m.Glaze.id)
+                .where(m.Container.archived.is_(False))
+                .order_by(m.Container.number)
+            )
+            if q:
+                match = m.Glaze.name.icontains(q, autoescape=True)
+                number_query = q.removeprefix("#")
+                if number_query.isascii() and number_query.isdecimal() and len(number_query) <= 19:
+                    number = int(number_query)
+                    if number <= 9223372036854775807:
+                        match |= m.Container.number == number
+                stmt = stmt.where(match)
+            rows = [
+                {"value": str(number), "label": f"#{number}  {name}"}
+                for number, name in db.execute(stmt.offset(offset).limit(5))
+            ]
+        elif kind == "unlinked-jars":
+            label = m.Glaze.name + func.coalesce(" (" + m.Glaze.product_code + ")", "")
+            stmt = (
+                select(m.Container.number, label)
+                .join(m.Glaze, m.Container.glaze_id == m.Glaze.id)
+                .where(m.Container.archived.is_(False), m.Container.tag_uid.is_(None))
+                .order_by(func.lower(label), m.Container.number)
+            )
+            if q:
+                stmt = stmt.where(label.icontains(q, autoescape=True))
+            rows = [
+                {"value": str(number), "label": caption}
+                for number, caption in db.execute(stmt.offset(offset).limit(5))
+            ]
+        elif kind in {"locations", "cones", "product-lines"}:
+            field = {"locations": "location", "cones": "cone", "product-lines": "product_line"}[kind]
+            options = (
+                {"value": value, "label": value}
+                for value in suggestions(field, db)
+                if q.casefold() in value.casefold()
+            )
+            rows = list(islice(options, offset, offset + 5))
+        else:
+            model = {"manufacturers": m.Manufacturer, "glazes": m.Glaze, "presets": m.Preset}[kind]
+            columns = [model.id, model.name]
+            if kind == "glazes":
+                columns.append(m.Glaze.product_code)
+            stmt = select(*columns)
+            if kind == "glazes" and manufacturer_id is not None:
+                stmt = stmt.where(m.Glaze.manufacturer_id == manufacturer_id)
+            if q:
+                match = model.name.icontains(q, autoescape=True)
+                if kind == "glazes":
+                    match |= m.Glaze.product_code.icontains(q, autoescape=True)
+                stmt = stmt.where(match)
+            stmt = stmt.order_by(func.lower(model.name), model.id).offset(offset).limit(5)
+            rows = [
+                {"value": row[0], "label": row[1], "code": row[2] if kind == "glazes" else None}
+                for row in db.execute(stmt)
+            ]
+        # Leave room in the 4 KiB response buffer for the envelope and escaping.
+        items, size = [], 0
+        for row in rows[:4]:
+            size += len(json.dumps(row, ensure_ascii=False).encode()) + 16
+            if size > 3800:
+                break
+            items.append(row)
+        next_offset = offset + len(items) if len(rows) > len(items) else None
+        return {"items": items, "next_offset": next_offset}
+
+    @app.post("/api/v1/device/jar-setups", response_model=s.DeviceSetupResult)
+    def setup_jar(body: s.DeviceJarSetup, db: DB):
+        fields = body.model_dump(mode="json", exclude={"new_glaze"} if body.new_glaze is None else set())
+        payload = json.dumps(fields, sort_keys=True)
+        digest = hashlib.sha256(payload.encode()).hexdigest()
+        receipt = db.get(m.JarSetupReceipt, body.request_id)
+        if receipt:
+            if receipt.request_hash != digest:
+                raise HTTPException(409, "This request identifier belongs to another jar setup.")
+            return json.loads(receipt.response_json)
+        if db.scalar(select(m.Measurement.id).where(m.Measurement.request_id == body.request_id)):
+            raise HTTPException(409, "This request identifier already belongs to a measurement.")
+        if db.scalar(select(m.Container.id).where(m.Container.tag_uid == body.uid)):
+            raise HTTPException(409, "This tag is already linked. Scan the jar again.")
+        glaze_id = body.glaze_id
+        if body.new_glaze is not None:
+            if body.new_glaze.manufacturer_id is not None:
+                require(db, m.Manufacturer, body.new_glaze.manufacturer_id)
+            glaze = m.Glaze(**body.new_glaze.model_dump())
+            db.add(glaze)
+            db.flush()
+            glaze_id = glaze.id
+        jar = s.ContainerInput(
+            glaze_id=glaze_id,
+            preset_id=body.preset_id,
+            location=body.location,
+            cost_usd=body.cost_usd,
+        )
+        item = new_container(jar, db)
+        item.tag_uid = body.uid
+        reading = s.MeasurementInput(
+            request_id=body.request_id,
+            gross_g=body.gross_g,
+            expected_revision=item.revision,
+            source="device",
+            device_id=body.device_id,
+            tag_uid=body.uid,
+        )
+        result = {"number": item.number, **record_weight(db, item, reading, digest)}
+        db.add(m.JarSetupReceipt(
+            request_id=body.request_id, request_hash=digest, response_json=json.dumps(result)
+        ))
+        commit(db)
+        return result
 
     @app.get("/api/v1/tags/{uid}", response_model=s.LookupOut)
     def tag_lookup(uid: str, db: DB):

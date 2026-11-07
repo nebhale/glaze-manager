@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-test("opaque menus support validation, keyboard selection, clearing, and dismissal", async ({
+test("opaque menus support keyboard selection, clearing, and dismissal", async ({
   page,
   request,
 }, testInfo) => {
@@ -19,12 +19,9 @@ test("opaque menus support validation, keyboard selection, clearing, and dismiss
     name: "Manufacturer",
     exact: true,
   });
-  await page.getByLabel("Name", { exact: true }).fill("Opaque menu check");
-  await dialog.getByRole("button", { name: "Add", exact: true }).click();
-  await expect(manufacturer).toBeFocused();
-  await expect(manufacturer).toHaveAttribute("aria-invalid", "true");
-  await expect(page.getByText("Please choose an option.")).toBeVisible();
-
+  const name = `Unassigned ${testInfo.project.name} ${Date.now()}`;
+  await page.getByLabel("Name", { exact: true }).fill(name);
+  await expect(manufacturer).toHaveText("Not set");
   await manufacturer.press("ArrowDown");
   const menu = page.getByRole("listbox");
   await expect(menu).toBeVisible();
@@ -80,4 +77,10 @@ test("opaque menus support validation, keyboard selection, clearing, and dismiss
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBeTruthy();
+  await manufacturer.click();
+  await page.getByRole("option", { name: "Not set", exact: true }).click();
+  await dialog.getByRole("button", { name: "Add", exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  const saved = await request.get("/api/v1/glazes", { params: { q: name } });
+  expect((await saved.json()).items[0].manufacturer_id).toBeNull();
 });

@@ -86,14 +86,6 @@ export function GlazeForm({ done }: { done: () => void }) {
   return (
     <form className="record-form" onSubmit={submit}>
       <ErrorMessage error={manufacturers.error} />
-      {manufacturers.data?.total === 0 && (
-        <p className="notice">
-          Add a manufacturer in Settings first.{" "}
-          <Link to="/settings#manufacturers" onClick={done}>
-            Open manufacturers →
-          </Link>
-        </p>
-      )}
       <div className="editable-grid">
         <Field label="Name">
           <input
@@ -119,10 +111,8 @@ export function GlazeForm({ done }: { done: () => void }) {
           </Select>
         </Field>
         <Field label="Manufacturer">
-          <Select name="manufacturer_id" required defaultValue="">
-            <option value="" disabled>
-              Choose a manufacturer
-            </option>
+          <Select name="manufacturer_id" defaultValue="">
+            <option value="">Not set</option>
             {manufacturers.data?.items.map((m) => (
               <option key={m.id} value={m.id}>
                 {m.name}

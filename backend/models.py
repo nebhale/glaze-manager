@@ -28,7 +28,7 @@ class Manufacturer(Base):
 class Glaze(Base):
     __tablename__ = "glazes"
     id: Mapped[str] = mapped_column(primary_key=True, default=identity)
-    manufacturer_id: Mapped[str] = mapped_column(ForeignKey("manufacturers.id"), index=True)
+    manufacturer_id: Mapped[str | None] = mapped_column(ForeignKey("manufacturers.id"), index=True)
     name: Mapped[str] = mapped_column(String(200))
     product_code: Mapped[str | None]
     product_line: Mapped[str | None]
@@ -66,6 +66,14 @@ class Container(Base):
 class RetiredJarNumber(Base):
     __tablename__ = "retired_jar_numbers"
     number: Mapped[int] = mapped_column(primary_key=True)
+
+
+class JarSetupReceipt(Base):
+    # Survive jar deletion so a delayed retry cannot recreate a retired jar.
+    __tablename__ = "jar_setup_receipts"
+    request_id: Mapped[str] = mapped_column(primary_key=True)
+    request_hash: Mapped[str]
+    response_json: Mapped[str] = mapped_column(Text)
 
 
 class Measurement(Base):
