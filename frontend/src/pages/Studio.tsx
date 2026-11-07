@@ -99,7 +99,7 @@ export function Settings() {
                   resource={`/presets/${p.id}`}
                   field="tare_g"
                   value={p.tare_g ?? null}
-                  label="Empty weight (g)"
+                  label="Weight (g)"
                   type="number"
                   placeholder="Unknown"
                 />

@@ -107,7 +107,7 @@ test("create a catalog and jar, weigh, archive and restore while retaining readi
   ).toBeTruthy();
 });
 
-test("register unknown NFC tag and receive live device measurements", async ({
+test("link an NFC tag, receive a device measurement, and confirm before clearing the tag", async ({
   page,
   request,
 }, testInfo) => {
@@ -136,7 +136,10 @@ test("register unknown NFC tag and receive live device measurements", async ({
   await expect(page).toHaveURL(/\/$/);
   await expect(page.getByRole("link", { name: "Tag setup" })).toHaveCount(0);
   await page.goto(`/containers/${jar.id}`);
-  await expect(page.getByLabel("NFC Tag")).toHaveText("Not linked");
+  const tag = page.getByLabel("NFC Tag", { exact: true });
+  const clearTag = page.getByRole("button", { name: "Clear NFC tag" });
+  await expect(tag).toHaveText("Not linked");
+  await expect(clearTag).toHaveCount(0);
   await request.post("/api/v1/scans", {
     data: { device_id: `scale-${suffix}`, uid },
   });
@@ -144,8 +147,9 @@ test("register unknown NFC tag and receive live device measurements", async ({
     data: { container_id: jar.id, expected_revision: jar.revision },
   });
   expect(binding.ok()).toBeTruthy();
-  await expect(page.getByLabel("NFC Tag")).toHaveText(uid);
-  const lookup = await (await request.get(`/api/v1/tags/${uid}`)).json();
+  await expect(tag).toHaveText(uid);
+  const lookupTag = async () => (await request.get(`/api/v1/tags/${uid}`)).json();
+  const lookup = await lookupTag();
   const body = {
     request_id: `${suffix}-reading`,
     gross_g: 250,
@@ -167,6 +171,23 @@ test("register unknown NFC tag and receive live device measurements", async ({
     source: "device",
     device_id: body.device_id,
   });
+  page.once("dialog", async (dialog) => {
+    expect(dialog.type()).toBe("confirm");
+    expect(dialog.message()).toContain(uid);
+    expect(dialog.message()).toContain(`jar #${jar.number}`);
+    await dialog.dismiss();
+  });
+  await clearTag.click();
+  await expect(tag).toHaveText(uid);
+  expect((await lookupTag()).container.container_id).toBe(jar.id);
+
+  page.once("dialog", (dialog) => dialog.accept());
+  await clearTag.click();
+  await expect(tag).toHaveText("Not linked");
+  await expect(clearTag).toHaveCount(0);
+  await page.reload();
+  await expect(tag).toHaveText("Not linked");
+  expect((await lookupTag()).container).toBeNull();
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= window.innerWidth,

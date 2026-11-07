@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.4.0](https://github.com/nebhale/glaze-manager/releases/tag/v1.4.0) · 2026-11-07
+
+- Clear a linked NFC tag from Jar details. The confirmation shows the tag ID, glaze name, and jar number.
+- Container weights are labeled **Weight (g)** when adding or editing a container in Settings.
+
 ## [1.3.2](https://github.com/nebhale/glaze-manager/releases/tag/v1.3.2) · 2026-11-07
 
 - When adding or editing a jar, the glaze dropdown shows the glaze name and product code, such as Honey Flux (PC-17). Glazes without a code show only their name.

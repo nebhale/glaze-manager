@@ -88,8 +88,9 @@ test("idle, blur and navigation save directly editable fields", async ({
   const presetRow = page
     .locator(".settings-preset-row")
     .filter({ has: page.locator(`input[value="${preset.name}"]`) });
-  await presetRow.getByLabel("Empty weight (g)").fill("85");
-  await presetRow.getByLabel("Empty weight (g)").blur();
+  const weight = presetRow.getByLabel("Weight (g)", { exact: true });
+  await weight.fill("85");
+  await weight.blur();
   await expect
     .poll(async () => (await read(`/presets/${preset.id}`)).tare_g)
     .toBe(85);
@@ -288,6 +289,7 @@ test("create a container preset inline and edit it in place", async ({
   await add.click();
   const form = presets.getByRole("form", { name: "New container" });
   await expect(form.getByLabel("Name", { exact: true })).toBeFocused();
+  await expect(form.getByLabel("Weight (g)", { exact: true })).toBeVisible();
   await expect(presets.getByText("No containers yet.")).toHaveCount(0);
   await expect(form.getByRole("heading")).toHaveCount(0);
   await form.getByRole("button", { name: "Cancel" }).click();
@@ -298,7 +300,7 @@ test("create a container preset inline and edit it in place", async ({
   const saved = presets
     .locator(".settings-preset-row")
     .filter({ has: page.locator(`input[value="${name}"]`) });
-  const weight = saved.getByLabel("Empty weight (g)");
+  const weight = saved.getByLabel("Weight (g)", { exact: true });
   await expect(weight).toHaveValue("");
   await weight.fill("75");
   await weight.blur();

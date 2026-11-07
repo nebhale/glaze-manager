@@ -263,7 +263,7 @@ export function PresetForm({ done }: { done: () => void }) {
             autoFocus
           />
         </Field>
-        <Field label="Empty weight (g)">
+        <Field label="Weight (g)">
           <input
             name="tare_g"
             placeholder="Unknown"
