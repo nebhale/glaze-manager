@@ -21,6 +21,7 @@ test("add a jar without a starting weight and update its container and glaze in 
   const secondGlaze = await create("/glazes", {
     manufacturer_id: maker.id,
     name: `Green ${suffix}`,
+    product_code: "G-02",
   });
   const firstPreset = await create("/presets", {
     name: `Small jar ${suffix}`,
@@ -58,23 +59,18 @@ test("add a jar without a starting weight and update its container and glaze in 
     "e.g. Studio, Home",
   );
   await expect(dialog.getByLabel("Starting Weight (g)")).toHaveCount(0);
-  await selectOption(
-    page,
-    "Glaze",
-    `${maker.name} · ${firstGlaze.name}`,
-  );
+  await selectOption(page, "Glaze", firstGlaze.name);
   await selectOption(page, "Container", firstPreset.name);
   await expect(dialog.getByLabel("Container Weight (g)")).toHaveCount(0);
-  await selectOption(
-    page,
-    "Glaze",
-    `${maker.name} · ${secondGlaze.name}`,
-  );
+  const secondGlazeLabel = `${secondGlaze.name} (G-02)`;
+  await selectOption(page, "Glaze", secondGlazeLabel);
+  await expect(dialog.getByLabel("Glaze", { exact: true })).toHaveText(secondGlazeLabel);
   await selectOption(page, "Container", secondPreset.name);
   await dialog.getByLabel("Cost", { exact: true }).fill("18.50");
   await dialog.getByRole("button", { name: "Add", exact: true }).click();
   await expect(dialog).toBeHidden();
   const pane = page.getByRole("complementary", { name: "Jar details" });
+  await expect(pane.getByLabel("Glaze", { exact: true })).toHaveText(secondGlazeLabel);
   await expect(pane.getByLabel("Container", { exact: true })).toHaveText(secondPreset.name);
   const readJar = async () => (await request.get(`/api/v1${new URL(page.url()).pathname}`)).json();
   expect(await readJar()).toMatchObject({ tare_g: 100, full_weight_g: null, cost_usd: "18.50" });
@@ -92,7 +88,7 @@ test("add a jar without a starting weight and update its container and glaze in 
   await expect(pane.getByLabel("Empty jar (g)")).toHaveCount(0);
   await selectOption(page, "Container", firstPreset.name);
   await expect.poll(readJar).toMatchObject({ preset_id: firstPreset.id, tare_g: 80 });
-  await selectOption(page, "Glaze", `${maker.name} · ${firstGlaze.name}`);
+  await selectOption(page, "Glaze", firstGlaze.name);
   await expect.poll(readJar).toMatchObject({ glaze_id: firstGlaze.id });
   await expect(pane.getByRole("heading", { level: 2 })).toContainText(firstGlaze.name);
   expect(retiredRequests).toEqual([]);

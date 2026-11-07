@@ -172,7 +172,7 @@ export function JarFields({ jar }: { jar: Jar }) {
         >
           {(glazes.data?.items ?? [jar.glaze]).map((glaze) => (
             <option key={glaze.id} value={glaze.id}>
-              {glaze.manufacturer_name} · {glaze.name}
+              {glaze.name}
               {glaze.product_code ? ` (${glaze.product_code})` : ""}
             </option>
           ))}
