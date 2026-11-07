@@ -1,0 +1,71 @@
+docs/device-api.md
+  s_bf5d8793b3bf4a::t_f8b27dad674d3e 172,178,196
+  s_32349825ecc957::t_854c80ef088af4 31,106-107,114-115,156-161,164-171,173-177,179-195,197-203
+frontend/e2e/select.spec.ts
+  s_bf5d8793b3bf4a::t_4f051d8373754b 4,22-24,80-85
+openapi.json
+  s_32349825ecc957::t_854c80ef088af4 1856-1911,1914-2021,3247-3250,3311,3322,3324,3327,3333,3335,3338,3344,3346,3349,3355,3357-3391,3400,3402,3405,3411,3413,3416,3422,3424-3426,3428-3683,3685,4272-4276
+  s_32349825ecc957::t_27d7b4c1c31b1c 1912-1913,2671-2678,3264-3271,3394,3687-3781,3783-3793,3825-3832,3930-3937,4029-4036,4068-4075
+  s_32349825ecc957::t_446a6fb4ccfe5f 3684,3686
+tests/test_optional_manufacturer.py
+  s_bf5d8793b3bf4a::t_4f051d8373754b 18-42
+  s_bf5d8793b3bf4a::t_4ac7c9261a1716 1-17
+frontend/src/pages/Inventory.tsx
+  s_bf5d8793b3bf4a::t_f8b27dad674d3e 128
+backend/database.py
+  s_bf5d8793b3bf4a::t_e221df128e3b64 6
+  s_bf5d8793b3bf4a::t_4f051d8373754b 4,35-79
+backend/models.py
+  s_32349825ecc957::t_854c80ef088af4 71-78
+  s_bf5d8793b3bf4a::t_f8b27dad674d3e 31
+backend/schemas.py
+  s_bf5d8793b3bf4a::t_f8b27dad674d3e 50,103,118,239
+  s_32349825ecc957::t_854c80ef088af4 186,196-199,235,245-280
+  s_bf5d8793b3bf4a::t_080a496dc1e644 281-282
+backend/services.py
+  s_bf5d8793b3bf4a::t_f8b27dad674d3e 79,104-109,113,183
+  s_32349825ecc957::t_854c80ef088af4 180
+frontend/src/editors.tsx
+  s_bf5d8793b3bf4a::t_f8b27dad674d3e 116,119
+frontend/src/components.tsx
+  s_bf5d8793b3bf4a::t_f8b27dad674d3e 425-431
+frontend/src/generated/api.d.ts
+  s_32349825ecc957::t_27d7b4c1c31b1c 611,757,790,857,875,884,903,921,932,2556
+  s_32349825ecc957::t_854c80ef088af4 350-400,748-749,765-786,797-853,985-989,2516-2555,2557-2614
+  s_32349825ecc957::t_0bf87fc6efc7c3 787-789,791-796
+frontend/src/pages/Vessels.tsx
+  s_bf5d8793b3bf4a::t_f8b27dad674d3e 115,159
+backend/app.py
+  s_32349825ecc957::t_854c80ef088af4 9,34,613,628-633,686,691,711-733,749-764,766-803,806-807,809-855,858-883
+  s_32349825ecc957::t_27d7b4c1c31b1c 27,66
+  s_bf5d8793b3bf4a::t_f8b27dad674d3e 280-281,290-291,765,804-805,808,856-857
+  s_32349825ecc957::t_4b589798791f77 884
+frontend/src/forms.tsx
+  s_bf5d8793b3bf4a::t_f8b27dad674d3e 114-115
+tests/test_scale_setup.py
+  s_bf5d8793b3bf4a::t_fb15a0d91e7e67 1-190
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "35bc1136fdc0aea6dc6c045c70c9d6329da59040",
+  "prompts": {},
+  "sessions": {
+    "s_32349825ecc957": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1b71c-8bf9-7d63-8a80-4ce19f57a3f3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    },
+    "s_bf5d8793b3bf4a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1acd5-6277-70f2-bbc3-1fe6a9e75f0d",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}
