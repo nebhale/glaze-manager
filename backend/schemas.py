@@ -47,7 +47,7 @@ class ManufacturerOut(ManufacturerInput):
 
 
 class GlazeInput(Schema):
-    manufacturer_id: str
+    manufacturer_id: str | None = None
     name: Name
     product_code: Name | None = None
     product_line: Name | None = None
@@ -100,7 +100,7 @@ class ApplicationInput(Schema):
 class GlazeReference(Schema):
     glaze_id: str
     glaze_name: str
-    manufacturer_name: str
+    manufacturer_name: str | None
     product_code: str | None
 
 
@@ -115,7 +115,7 @@ class VesselOut(VesselSummary):
 
 class GlazeOut(GlazeInput):
     id: str
-    manufacturer_name: str
+    manufacturer_name: str | None
     photos: list[PhotoOut]
 
 
@@ -183,6 +183,7 @@ class MeasurementInput(Schema):
     source: Literal["web", "device"] = "web"
     device_id: Annotated[str, Field(min_length=1, max_length=64)] | None = None
     tag_uid: str | None = None
+    manual_selection: bool = False
     note: Text | None = None
 
     @field_validator("tag_uid")
@@ -192,7 +193,10 @@ class MeasurementInput(Schema):
 
     @model_validator(mode="after")
     def device(self):
-        if self.source == "device" and (not self.device_id or not self.tag_uid):
+        if self.manual_selection:
+            if self.source != "device" or not self.device_id or self.tag_uid is not None:
+                raise ValueError("Manual jar selection requires a device ID and no scanned tag.")
+        elif self.source == "device" and (not self.device_id or not self.tag_uid):
             raise ValueError("Device measurements require device_id and tag_uid.")
         return self
 
@@ -228,13 +232,52 @@ class ScanInput(Schema):
 
 
 class DeviceJar(StockOut):
+    number: int
     container_id: str
     revision: int
     glaze_name: str
-    manufacturer_name: str
+    manufacturer_name: str | None
     tare_g: float | None
     full_weight_g: float | None
     archived: bool
+
+
+class DeviceJarDetails(DeviceJar):
+    location: str | None
+    product_code: str | None
+    cone: str | None
+    tag_uid: str | None
+
+
+class DeviceJarSetup(ScanInput):
+    request_id: Annotated[str, Field(min_length=8, max_length=100)]
+    glaze_id: str | None = None
+    new_glaze: GlazeInput | None = None
+    preset_id: str | None = None
+    location: Name | None = None
+    cost_usd: DollarAmount | None = None
+    gross_g: Weight
+
+    @model_validator(mode="after")
+    def choose_glaze(self):
+        if (self.glaze_id is None) == (self.new_glaze is None):
+            raise ValueError("Choose an existing glaze or supply a new glaze.")
+        return self
+
+
+class DeviceSetupResult(SaveResult):
+    number: int
+
+
+class DeviceOption(Schema):
+    value: str
+    label: str
+    code: str | None = None
+
+
+class DeviceOptions(Schema):
+    items: list[DeviceOption]
+    next_offset: int | None
 
 
 class LookupOut(Schema):

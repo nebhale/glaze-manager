@@ -112,7 +112,7 @@ function AddApplication({
           </option>
           {choices.data?.map((glaze) => (
             <option key={glaze.glaze_id} value={glaze.glaze_id}>
-              {glaze.manufacturer_name} · {glaze.glaze_name}
+              {[glaze.manufacturer_name, glaze.glaze_name].filter(Boolean).join(" · ")}
               {glaze.product_code ? ` (${glaze.product_code})` : ""}
             </option>
           ))}
@@ -156,8 +156,7 @@ function ApplicationRow({
             {application.glaze_name}
           </Link>
           <div className="detail-code">
-            {application.manufacturer_name}
-            {application.product_code && ` · ${application.product_code}`}
+            {[application.manufacturer_name, application.product_code].filter(Boolean).join(" · ")}
           </div>
         </div>
         <button

@@ -422,10 +422,13 @@ export function GlazeHeading({ glaze, jar }: { glaze: Glaze; jar?: Jar }) {
           )}
         </h2>
         <div className="detail-code">
-          <Link to={`/settings#manufacturer-${glaze.manufacturer_id}`}>
-            {glaze.manufacturer_name}
-          </Link>
-          {glaze.product_code && ` · ${glaze.product_code}`}
+          {glaze.manufacturer_id && (
+            <Link to={`/settings#manufacturer-${glaze.manufacturer_id}`}>
+              {glaze.manufacturer_name}
+            </Link>
+          )}
+          {glaze.manufacturer_name && glaze.product_code && " · "}
+          {glaze.product_code}
         </div>
       </div>
     </div>

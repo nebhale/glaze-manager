@@ -125,7 +125,7 @@ export function Inventory() {
                       ? "Try a different search to see more jars."
                       : "Try a different search or turn on Show archived."
                     : showArchived
-                      ? "Add a manufacturer and glaze, then create your first jar."
+                      ? "Add a glaze, then create your first jar."
                       : "Add a jar, or turn on Show archived to see archived jars."
                 }
               >

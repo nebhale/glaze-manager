@@ -28,6 +28,7 @@ A bound container has these compact fields:
 ```json
 {
   "container_id": "a-container-uuid",
+  "number": 128,
   "revision": 2,
   "glaze_name": "Blue Rutile",
   "manufacturer_name": "AMACO",
@@ -102,16 +103,16 @@ own saved tare and starting weight to calculate percentages.
 
 1. **Idle:** no jar/tag; no pending reading.
 2. **Lookup:** report a new tag, or retry lookup after a connection failure.
-3. **Unknown:** let the user choose a jar on the scale and confirm the binding.
-   Refresh lookup after the binding succeeds.
+3. **Unknown:** link an existing jar by permanent number, or create, link and weigh
+   a new jar with the setup operation below. Refresh lookup after linking.
 4. **Ready:** display identity, current weight, and setup/low-stock status.
 5. **Confirm:** show the stable gross weight and proposed difference. A tap creates
    an immutable pending payload using the revision from the displayed lookup.
 6. **Saving:** send the payload. A transport failure retains it in RAM only while
    that jar remains present. Retry the identical payload with bounded backoff
    (1, 2, 4, then 8 seconds) or an explicit Retry button.
-7. **Saved:** acknowledge the committed response. A new save requires another
-   deliberate confirmation and a new identifier.
+7. **Saved:** show the committed result until removal. A new weigh-in requires
+   a fresh lookup, a deliberate tap and a new request identifier.
 
 On removal or tag change, clear the pending state and return to lookup/idle.
 Clearing local state cannot cancel a request already received by the server;
@@ -152,6 +153,51 @@ from another container; `replace` authorizes removing the destination's old tag.
 The normal web flow asks the user to select these explicitly. Both containers'
 revisions change when a tag moves. Archive keeps the association intact.
 
-Manual readings use the same measurement endpoint with `source: "web"` and no
+When someone selects a jar from the scale dropdown, send `source: "device"`,
+`device_id`, and `manual_selection: true`, and omit `tag_uid`. The server
+checks the selected jar’s revision and active status. Scanned measurements
+still require the current tag binding.
+
+Web readings use the same measurement endpoint with `source: "web"` and no
 device fields. The web interface supports incomplete jars and manual correction;
 firmware need not implement catalog editing, photos, tag writing, or history.
+
+## Scale-side jar setup
+
+`GET /api/v1/device/jars/{number}` looks up the exact permanent jar number and
+returns the compact jar plus `location`, `product_code`, `cone`, and `tag_uid`.
+Use an 8192-byte response buffer for details. An unknown number returns 404.
+
+`GET /api/v1/device/options/{kind}` accepts `manufacturers`, `glazes`,
+`presets`, `locations`, `cones`, `product-lines`, `jars`, or `unlinked-jars`. The `jars` list includes active jars
+in permanent-number order. For tag assignment, `unlinked-jars` includes only active jars
+without a tag, sorted by glaze name and product code. Both lists use jar numbers as values. Pass `manufacturer_id` when browsing its glazes.
+Optional `q` filters names and glaze codes. The response contains `items`
+with `value`, `label`, and optional `code`. Pass `next_offset` as `offset` for
+the next page, and stop at null. Each page fits the 4096-byte picker buffer.
+Location, cone, and product line values are free text. Catalog choices use IDs.
+
+With an unknown tag still on the scale and a stable gross reading, submit one
+confirmed setup to `POST /api/v1/device/jar-setups`:
+
+```json
+{
+  "request_id": "16a88d63-c381-4dd5-b5f7-333fd1f04089",
+  "device_id": "studio-scale",
+  "uid": "04010203",
+  "glaze_id": "a-glaze-uuid",
+  "preset_id": "a-preset-uuid",
+  "location": "Studio",
+  "cost_usd": "18.50",
+  "gross_g": 756
+}
+```
+
+Supply either `glaze_id` or `new_glaze` with a `name` and an optional `manufacturer_id`. A
+new glaze is created in the same transaction as the jar and measurement.
+Preset, location and cost may be omitted. The server allocates
+the number, copies the selected preset tare, binds the UID, and records the first
+measurement together. It returns the measurement acknowledgement plus `number`.
+A repeated identical request returns the original result, including after jar
+deletion. A changed payload or an already-claimed UID returns 409. Use the same
+in-memory retry and tag-presence rules as an ordinary measurement.

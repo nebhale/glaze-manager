@@ -76,7 +76,7 @@ def glaze_references():
         m.Glaze.name.label("glaze_name"),
         m.Manufacturer.name.label("manufacturer_name"),
         m.Glaze.product_code,
-    ).join(m.Manufacturer, m.Manufacturer.id == m.Glaze.manufacturer_id)
+    ).outerjoin(m.Manufacturer, m.Manufacturer.id == m.Glaze.manufacturer_id)
 
 
 def applications_query():
@@ -101,10 +101,16 @@ def vessel_view(db, vessel):
     return {**vessel_summary(vessel), "applications": db.execute(query).mappings().all()}
 
 
+def manufacturer_name(db, glaze):
+    if glaze.manufacturer_id is None:
+        return None
+    return require(db, m.Manufacturer, glaze.manufacturer_id).name
+
+
 def glaze_view(db, glaze):
     return {
         **fields(glaze),
-        "manufacturer_name": require(db, m.Manufacturer, glaze.manufacturer_id).name,
+        "manufacturer_name": manufacturer_name(db, glaze),
         "photos": [
             photo_view(p)
             for p in db.scalars(
@@ -169,12 +175,12 @@ def container_view(db, container):
 
 def device_view(db, container):
     glaze = require(db, m.Glaze, container.glaze_id)
-    manufacturer = require(db, m.Manufacturer, glaze.manufacturer_id)
     return {
         "container_id": container.id,
+        "number": container.number,
         "revision": container.revision,
         "glaze_name": glaze.name,
-        "manufacturer_name": manufacturer.name,
+        "manufacturer_name": manufacturer_name(db, glaze),
         "tare_g": grams(container.tare_mg),
         "full_weight_g": grams(container.full_weight_mg),
         "archived": container.archived,

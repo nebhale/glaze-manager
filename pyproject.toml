@@ -1,6 +1,6 @@
 [project]
 name = "glaze-manager"
-version = "1.4.0"
+version = "1.5.0"
 description = "A small studio inventory for pottery glazes"
 license = "Apache-2.0"
 license-files = ["LICENSE"]

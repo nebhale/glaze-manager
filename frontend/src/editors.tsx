@@ -113,13 +113,10 @@ export function GlazeFields({ glaze }: { glaze: Glaze }) {
         <InlineField
           resource={resource}
           field="manufacturer_id"
-          value={glaze.manufacturer_id}
+          value={glaze.manufacturer_id ?? null}
           label="Manufacturer"
-          required
         >
-          <option value="" disabled>
-            Choose a manufacturer
-          </option>
+          <option value="">Not set</option>
           {manufacturers.data?.items.map((m) => (
             <option key={m.id} value={m.id}>
               {m.name}

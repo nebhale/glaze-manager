@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Glaze Manager",
-    "version": "1.4.0"
+    "version": "1.5.0"
   },
   "paths": {
     "/healthz": {
@@ -1853,6 +1853,172 @@
         }
       }
     },
+    "/api/v1/device/jars/{number}": {
+      "get": {
+        "summary": "Device Jar",
+        "operationId": "device_jar_api_v1_device_jars__number__get",
+        "parameters": [
+          {
+            "name": "number",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "title": "Number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceJarDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/device/options/{kind}": {
+      "get": {
+        "summary": "Device Options",
+        "operationId": "device_options_api_v1_device_options__kind__get",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "enum": [
+                "manufacturers",
+                "glazes",
+                "presets",
+                "locations",
+                "cones",
+                "product-lines",
+                "jars",
+                "unlinked-jars"
+              ],
+              "type": "string",
+              "title": "Kind"
+            }
+          },
+          {
+            "name": "manufacturer_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Manufacturer Id"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Q"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 2147483647,
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceOptions"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/device/jar-setups": {
+      "post": {
+        "summary": "Setup Jar",
+        "operationId": "setup_jar_api_v1_device_jar_setups_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceJarSetup"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceSetupResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/tags/{uid}": {
       "get": {
         "summary": "Tag Lookup",
@@ -2502,7 +2668,14 @@
             "title": "Glaze Name"
           },
           "manufacturer_name": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Manufacturer Name"
           },
           "product_code": {
@@ -3071,6 +3244,10 @@
             "minimum": 0.0,
             "title": "Threshold G"
           },
+          "number": {
+            "type": "integer",
+            "title": "Number"
+          },
           "container_id": {
             "type": "string",
             "title": "Container Id"
@@ -3084,7 +3261,14 @@
             "title": "Glaze Name"
           },
           "manufacturer_name": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Manufacturer Name"
           },
           "tare_g": {
@@ -3124,6 +3308,7 @@
           "incomplete",
           "below_tare",
           "threshold_g",
+          "number",
           "container_id",
           "revision",
           "glaze_name",
@@ -3134,10 +3319,379 @@
         ],
         "title": "DeviceJar"
       },
+      "DeviceJarDetails": {
+        "properties": {
+          "gross_g": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gross G"
+          },
+          "remaining_g": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remaining G"
+          },
+          "percentage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Percentage"
+          },
+          "low_stock": {
+            "type": "boolean",
+            "title": "Low Stock"
+          },
+          "incomplete": {
+            "type": "boolean",
+            "title": "Incomplete"
+          },
+          "below_tare": {
+            "type": "boolean",
+            "title": "Below Tare"
+          },
+          "threshold_g": {
+            "type": "number",
+            "maximum": 10000000.0,
+            "minimum": 0.0,
+            "title": "Threshold G"
+          },
+          "number": {
+            "type": "integer",
+            "title": "Number"
+          },
+          "container_id": {
+            "type": "string",
+            "title": "Container Id"
+          },
+          "revision": {
+            "type": "integer",
+            "title": "Revision"
+          },
+          "glaze_name": {
+            "type": "string",
+            "title": "Glaze Name"
+          },
+          "manufacturer_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Manufacturer Name"
+          },
+          "tare_g": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tare G"
+          },
+          "full_weight_g": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Weight G"
+          },
+          "archived": {
+            "type": "boolean",
+            "title": "Archived"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          },
+          "product_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Code"
+          },
+          "cone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cone"
+          },
+          "tag_uid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tag Uid"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "gross_g",
+          "remaining_g",
+          "percentage",
+          "low_stock",
+          "incomplete",
+          "below_tare",
+          "threshold_g",
+          "number",
+          "container_id",
+          "revision",
+          "glaze_name",
+          "manufacturer_name",
+          "tare_g",
+          "full_weight_g",
+          "archived",
+          "location",
+          "product_code",
+          "cone",
+          "tag_uid"
+        ],
+        "title": "DeviceJarDetails"
+      },
+      "DeviceJarSetup": {
+        "properties": {
+          "device_id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_.:-]{1,64}$",
+            "title": "Device Id"
+          },
+          "uid": {
+            "type": "string",
+            "title": "Uid"
+          },
+          "request_id": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 8,
+            "title": "Request Id"
+          },
+          "glaze_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Glaze Id"
+          },
+          "new_glaze": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GlazeInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "preset_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preset Id"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          },
+          "cost_usd": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Usd"
+          },
+          "gross_g": {
+            "type": "number",
+            "maximum": 10000000.0,
+            "minimum": 0.0,
+            "title": "Gross G"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "device_id",
+          "uid",
+          "request_id",
+          "gross_g"
+        ],
+        "title": "DeviceJarSetup"
+      },
+      "DeviceOption": {
+        "properties": {
+          "value": {
+            "type": "string",
+            "title": "Value"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "value",
+          "label"
+        ],
+        "title": "DeviceOption"
+      },
+      "DeviceOptions": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/DeviceOption"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "next_offset": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Offset"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "items",
+          "next_offset"
+        ],
+        "title": "DeviceOptions"
+      },
+      "DeviceSetupResult": {
+        "properties": {
+          "measurement_id": {
+            "type": "string",
+            "title": "Measurement Id"
+          },
+          "container_id": {
+            "type": "string",
+            "title": "Container Id"
+          },
+          "revision": {
+            "type": "integer",
+            "title": "Revision"
+          },
+          "stock": {
+            "$ref": "#/components/schemas/StockOut"
+          },
+          "number": {
+            "type": "integer",
+            "title": "Number"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "measurement_id",
+          "container_id",
+          "revision",
+          "stock",
+          "number"
+        ],
+        "title": "DeviceSetupResult"
+      },
       "GlazeDetailOut": {
         "properties": {
           "manufacturer_id": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Manufacturer Id"
           },
           "name": {
@@ -3229,7 +3783,14 @@
             "title": "Id"
           },
           "manufacturer_name": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Manufacturer Name"
           },
           "photos": {
@@ -3250,7 +3811,6 @@
         "additionalProperties": false,
         "type": "object",
         "required": [
-          "manufacturer_id",
           "name",
           "id",
           "manufacturer_name",
@@ -3262,7 +3822,14 @@
       "GlazeInput": {
         "properties": {
           "manufacturer_id": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Manufacturer Id"
           },
           "name": {
@@ -3353,7 +3920,6 @@
         "additionalProperties": false,
         "type": "object",
         "required": [
-          "manufacturer_id",
           "name"
         ],
         "title": "GlazeInput"
@@ -3361,7 +3927,14 @@
       "GlazeOut": {
         "properties": {
           "manufacturer_id": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Manufacturer Id"
           },
           "name": {
@@ -3453,7 +4026,14 @@
             "title": "Id"
           },
           "manufacturer_name": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Manufacturer Name"
           },
           "photos": {
@@ -3467,7 +4047,6 @@
         "additionalProperties": false,
         "type": "object",
         "required": [
-          "manufacturer_id",
           "name",
           "id",
           "manufacturer_name",
@@ -3486,7 +4065,14 @@
             "title": "Glaze Name"
           },
           "manufacturer_name": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Manufacturer Name"
           },
           "product_code": {
@@ -3682,6 +4268,11 @@
               }
             ],
             "title": "Tag Uid"
+          },
+          "manual_selection": {
+            "type": "boolean",
+            "title": "Manual Selection",
+            "default": false
           },
           "note": {
             "anyOf": [
