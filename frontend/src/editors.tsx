@@ -1,4 +1,4 @@
-import { Trash2 } from "lucide-react";
+import { Trash2, Unlink } from "lucide-react";
 import {
   useApi,
   type Glaze,
@@ -157,6 +157,7 @@ export function GlazeFields({ glaze }: { glaze: Glaze }) {
 }
 export function JarFields({ jar }: { jar: Jar }) {
   const resource = `/containers/${jar.id}`;
+  const unlink = useSave();
   const presets = useApi<Page<Preset>>("/presets?page_size=1000");
   const glazes = useApi<Page<Glaze>>("/glazes?page_size=1000");
   return (
@@ -215,7 +216,32 @@ export function JarFields({ jar }: { jar: Jar }) {
         />
         <div className="field inline-field">
           <label htmlFor="jar-nfc-tag">NFC Tag</label>
-          <output id="jar-nfc-tag">{jar.tag_uid || "Not linked"}</output>
+          <div className="field-with-action">
+            <output id="jar-nfc-tag">{jar.tag_uid || "Not linked"}</output>
+            {jar.tag_uid && (
+              <button
+                type="button"
+                className="icon-button"
+                aria-label="Clear NFC tag"
+                title="Clear NFC tag"
+                disabled={unlink.isPending}
+                onClick={() => {
+                  if (window.confirm(
+                    `Unlink NFC tag ${jar.tag_uid} from ${jar.glaze.name} jar #${jar.number}?`,
+                  )) {
+                    unlink.mutate({
+                      path: `${resource}/tag`,
+                      method: "DELETE",
+                      body: { expected_revision: jar.revision },
+                    });
+                  }
+                }}
+              >
+                <Unlink size={16} aria-hidden="true" />
+              </button>
+            )}
+          </div>
+          <ErrorMessage error={unlink.error} />
         </div>
       </div>
     </>

@@ -28,7 +28,7 @@ export function UrlInput({ label, value, onChange, ...props }: Props) {
       : undefined;
   const action = `Open ${label.toLowerCase()} in a new tab`;
   return (
-    <div className="inline-url">
+    <div className="field-with-action">
       <input
         {...props}
         type="url"
@@ -40,7 +40,7 @@ export function UrlInput({ label, value, onChange, ...props }: Props) {
       />
       {href && (
         <a
-          className="icon-button open-url"
+          className="icon-button"
           href={href}
           target="_blank"
           rel="noopener noreferrer"

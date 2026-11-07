@@ -1896,7 +1896,7 @@ code {
 :is(.inline-field, .record-form) textarea {
   min-height: 56px;
 }
-.inline-url {
+.field-with-action {
   position: relative;
 }
 .cost-input {
@@ -1914,10 +1914,16 @@ code {
 .field .cost-input input {
   padding-left: 23px;
 }
-.inline-url input {
+.inline-field output {
+  display: grid;
+  align-items: center;
+  padding: 7px 8px;
+  overflow-wrap: anywhere;
+}
+.field-with-action > :is(input, output) {
   padding-right: 38px;
 }
-.inline-url .open-url {
+.field-with-action > .icon-button {
   position: absolute;
   right: 3px;
   top: 50%;
@@ -1951,11 +1957,6 @@ code {
 .field-recovery .text-button {
   font-size: 11px;
 }
-.inline-field output {
-  display: block;
-  padding: 7px 8px;
-  overflow-wrap: anywhere;
-}
 .inline-panel {
   margin: 0 0 18px;
 }
@@ -1987,10 +1988,11 @@ code {
     font-size: 16px;
     min-height: 44px;
   }
-  .inline-url input {
+  .field-with-action > :is(input, output) {
     padding-right: 48px;
+    min-height: 44px;
   }
-  .inline-url .open-url {
+  .field-with-action > .icon-button {
     right: 0;
     width: 44px;
     height: 44px;
