@@ -174,7 +174,7 @@ in permanent-number order. For tag assignment, `unlinked-jars` includes only act
 without a tag, sorted by glaze name and product code. Both lists use jar numbers as values. Pass `manufacturer_id` when browsing its glazes.
 Optional `q` filters names and glaze codes. The response contains `items`
 with `value`, `label`, and optional `code`. Pass `next_offset` as `offset` for
-the next page, and stop at null. Each page fits the 4096-byte picker buffer.
+the next page, and stop at null. Each page fits the 4096-byte picker buffer, including its JSON envelope. The number of entries varies. On the jars list, pass `details=true` for a compact `detail` on each entry. If an enriched entry cannot fit alone, use the jar number to fetch its full details.
 Location, cone, and product line values are free text. Catalog choices use IDs.
 
 With a stable gross reading, submit one confirmed setup to

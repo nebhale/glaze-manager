@@ -268,10 +268,24 @@ class DeviceSetupResult(SaveResult):
     number: int
 
 
+class PickerJar(Schema):
+    container_id: str
+    number: int
+    revision: int
+    glaze_name: str
+    product_code: str | None
+    manufacturer_name: str | None
+    tare_g: float | None
+    full_weight_g: float | None
+    threshold_g: float
+    tag_uid: str | None
+
+
 class DeviceOption(Schema):
     value: str
     label: str
     code: str | None = None
+    detail: PickerJar | None = None
 
 
 class DeviceOptions(Schema):

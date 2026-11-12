@@ -25,7 +25,8 @@ from sqlalchemy.orm import Session, selectinload
 from . import models as m
 from . import schemas as s
 from .database import Base, allow_unassigned_manufacturer, data_directory, make_engine, session_factory
-from .domain import cents, grams, matches_cone, milligrams, normalize_uid, revision_check
+from .device_options import option_page
+from .domain import DEFAULT_LOW_STOCK_THRESHOLD_MG, cents, grams, matches_cone, milligrams, normalize_uid, revision_check
 from .services import (
     Events,
     application_view,
@@ -86,7 +87,7 @@ def create_app(data_dir: Path | None = None):
         yield
         engine.dispose()
 
-    app = FastAPI(title="Glaze Manager", version="1.6.0", lifespan=lifespan)
+    app = FastAPI(title="Glaze Manager", version="1.7.0", lifespan=lifespan)
     app.state.engine = engine
     app.state.sessions = sessions
 
@@ -766,6 +767,7 @@ def create_app(data_dir: Path | None = None):
         db: DB,
         manufacturer_id: str | None = None,
         q: str = "",
+        details: bool = False,
         offset: int = Query(0, ge=0, le=2147483647),
     ):
         if kind == "jars":
@@ -783,10 +785,28 @@ def create_app(data_dir: Path | None = None):
                     if number <= 9223372036854775807:
                         match |= m.Container.number == number
                 stmt = stmt.where(match)
-            rows = [
-                {"value": str(number), "label": f"#{number}  {name}"}
-                for number, name in db.execute(stmt.offset(offset).limit(5))
-            ]
+            if details:
+                stmt = stmt.add_columns(
+                    m.Container.id, m.Container.revision, m.Container.tare_mg,
+                    m.Container.full_weight_mg, m.Container.tag_uid, m.Glaze.product_code,
+                    m.Manufacturer.name,
+                ).outerjoin(m.Manufacturer, m.Glaze.manufacturer_id == m.Manufacturer.id)
+                setting = db.get(m.Setting, 1)
+                threshold = grams(setting.low_stock_threshold_mg if setting else DEFAULT_LOW_STOCK_THRESHOLD_MG)
+
+            def jar_options():
+                for number, name, *extra in db.execute(stmt.offset(offset).execution_options(yield_per=32)):
+                    option = {"value": str(number), "label": f"#{number}  {name}", "code": None}
+                    if details:
+                        identifier, revision, tare, full, tag, code, maker = extra
+                        option["detail"] = {
+                            "container_id": identifier, "number": number, "revision": revision,
+                            "glaze_name": name, "product_code": code, "manufacturer_name": maker,
+                            "tare_g": grams(tare), "full_weight_g": grams(full),
+                            "threshold_g": threshold, "tag_uid": tag,
+                        }
+                    yield option
+            rows = jar_options()
         elif kind == "unlinked-jars":
             label = m.Glaze.name + func.coalesce(" (" + m.Glaze.product_code + ")", "")
             stmt = (
@@ -797,18 +817,18 @@ def create_app(data_dir: Path | None = None):
             )
             if q:
                 stmt = stmt.where(label.icontains(q, autoescape=True))
-            rows = [
-                {"value": str(number), "label": caption}
-                for number, caption in db.execute(stmt.offset(offset).limit(5))
-            ]
+            rows = (
+                {"value": str(number), "label": caption, "code": None}
+                for number, caption in db.execute(stmt.offset(offset).execution_options(yield_per=32))
+            )
         elif kind in {"locations", "cones", "product-lines"}:
             field = {"locations": "location", "cones": "cone", "product-lines": "product_line"}[kind]
             options = (
-                {"value": value, "label": value}
+                {"value": value, "label": value, "code": None}
                 for value in suggestions(field, db)
                 if q.casefold() in value.casefold()
             )
-            rows = list(islice(options, offset, offset + 5))
+            rows = islice(options, offset, None)
         else:
             model = {"manufacturers": m.Manufacturer, "glazes": m.Glaze, "presets": m.Preset}[kind]
             columns = [model.id, model.name]
@@ -822,20 +842,12 @@ def create_app(data_dir: Path | None = None):
                 if kind == "glazes":
                     match |= m.Glaze.product_code.icontains(q, autoescape=True)
                 stmt = stmt.where(match)
-            stmt = stmt.order_by(func.lower(model.name), model.id).offset(offset).limit(5)
-            rows = [
+            stmt = stmt.order_by(func.lower(model.name), model.id).offset(offset).execution_options(yield_per=32)
+            rows = (
                 {"value": row[0], "label": row[1], "code": row[2] if kind == "glazes" else None}
                 for row in db.execute(stmt)
-            ]
-        # Leave room in the 4 KiB response buffer for the envelope and escaping.
-        items, size = [], 0
-        for row in rows[:4]:
-            size += len(json.dumps(row, ensure_ascii=False).encode()) + 16
-            if size > 3800:
-                break
-            items.append(row)
-        next_offset = offset + len(items) if len(rows) > len(items) else None
-        return {"items": items, "next_offset": next_offset}
+            )
+        return option_page(rows, offset)
 
     @app.post("/api/v1/device/jar-setups", response_model=s.DeviceSetupResult)
     def setup_jar(body: s.DeviceJarSetup, db: DB):
