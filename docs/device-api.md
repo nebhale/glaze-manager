@@ -177,8 +177,9 @@ with `value`, `label`, and optional `code`. Pass `next_offset` as `offset` for
 the next page, and stop at null. Each page fits the 4096-byte picker buffer.
 Location, cone, and product line values are free text. Catalog choices use IDs.
 
-With an unknown tag still on the scale and a stable gross reading, submit one
-confirmed setup to `POST /api/v1/device/jar-setups`:
+With a stable gross reading, submit one confirmed setup to
+`POST /api/v1/device/jar-setups`. Include the UID when creating a jar for a scanned
+tag. Omit it when the user chooses to create an untagged jar from the inventory list.
 
 ```json
 {
@@ -196,7 +197,7 @@ confirmed setup to `POST /api/v1/device/jar-setups`:
 Supply either `glaze_id` or `new_glaze` with a `name` and an optional `manufacturer_id`. A
 new glaze is created in the same transaction as the jar and measurement.
 Preset, location and cost may be omitted. The server allocates
-the number, copies the selected preset tare, binds the UID, and records the first
+the number, copies the selected preset tare, binds the UID if supplied, and records the first
 measurement together. It returns the measurement acknowledgement plus `number`.
 A repeated identical request returns the original result, including after jar
 deletion. A changed payload or an already-claimed UID returns 409. Use the same

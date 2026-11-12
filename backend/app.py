@@ -86,7 +86,7 @@ def create_app(data_dir: Path | None = None):
         yield
         engine.dispose()
 
-    app = FastAPI(title="Glaze Manager", version="1.5.0", lifespan=lifespan)
+    app = FastAPI(title="Glaze Manager", version="1.6.0", lifespan=lifespan)
     app.state.engine = engine
     app.state.sessions = sessions
 
@@ -849,7 +849,7 @@ def create_app(data_dir: Path | None = None):
             return json.loads(receipt.response_json)
         if db.scalar(select(m.Measurement.id).where(m.Measurement.request_id == body.request_id)):
             raise HTTPException(409, "This request identifier already belongs to a measurement.")
-        if db.scalar(select(m.Container.id).where(m.Container.tag_uid == body.uid)):
+        if body.uid is not None and db.scalar(select(m.Container.id).where(m.Container.tag_uid == body.uid)):
             raise HTTPException(409, "This tag is already linked. Scan the jar again.")
         glaze_id = body.glaze_id
         if body.new_glaze is not None:
@@ -874,6 +874,7 @@ def create_app(data_dir: Path | None = None):
             source="device",
             device_id=body.device_id,
             tag_uid=body.uid,
+            manual_selection=body.uid is None,
         )
         result = {"number": item.number, **record_weight(db, item, reading, digest)}
         db.add(m.JarSetupReceipt(

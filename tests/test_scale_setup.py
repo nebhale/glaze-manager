@@ -61,6 +61,26 @@ def test_atomic_setup_and_replay(client, catalog):
     assert response.status_code == 409
 
 
+def test_untagged_setup_can_be_replayed_and_linked_later(client, catalog):
+    payload = setup_body(catalog)
+    del payload["uid"]
+    path = "/api/v1/device/jar-setups"
+    first = client.post(path, json=payload)
+    first.raise_for_status()
+    saved = first.json()
+    assert client.post(path, json=payload).json() == saved
+    detail = client.get(f"/api/v1/device/jars/{saved['number']}").json()
+    assert detail["tag_uid"] is None
+    assert detail["full_weight_g"] == 756
+    assert len(client.get(f"/api/v1/containers/{saved['container_id']}/measurements").json()) == 1
+    assert client.post(path, json={**payload, "uid": "ABCD"}).status_code == 409
+    second = client.post(path, json={**payload, "request_id": "another-untagged-jar"}).json()
+    assert second["number"] != saved["number"]
+    binding = {"container_id": saved["container_id"], "expected_revision": saved["revision"]}
+    client.put("/api/v1/tags/ABCD/binding", json=binding).raise_for_status()
+    assert client.get("/api/v1/tags/ABCD").json()["container"]["number"] == saved["number"]
+
+
 def test_setup_without_container_or_with_invalid_preset(client, catalog):
     payload = setup_body(catalog)
     assert (

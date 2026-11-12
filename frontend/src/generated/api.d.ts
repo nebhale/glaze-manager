@@ -808,7 +808,7 @@ export interface components {
             /** Device Id */
             device_id: string;
             /** Uid */
-            uid: string;
+            uid?: string | null;
             /** Request Id */
             request_id: string;
             /** Glaze Id */

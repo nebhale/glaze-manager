@@ -1,11 +1,13 @@
 from decimal import Decimal
 from typing import Annotated, Generic, Literal, TypeVar
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from .domain import normalize_uid
 
 Name = Annotated[str, Field(min_length=1, max_length=200)]
+DeviceID = Annotated[str, Field(pattern=r"^[a-zA-Z0-9_.:-]{1,64}$")]
+TagUID = Annotated[str, AfterValidator(normalize_uid)]
 DollarAmount = Annotated[Decimal, Field(ge=0, max_digits=12, decimal_places=2)]
 Text = Annotated[str, Field(max_length=20000)]
 Weight = Annotated[float, Field(ge=0, le=10000000, allow_inf_nan=False)]
@@ -222,13 +224,8 @@ class SaveResult(Schema):
 
 
 class ScanInput(Schema):
-    device_id: Annotated[str, Field(pattern=r"^[a-zA-Z0-9_.:-]{1,64}$")]
-    uid: str
-
-    @field_validator("uid")
-    @classmethod
-    def tag(cls, value):
-        return normalize_uid(value)
+    device_id: DeviceID
+    uid: TagUID
 
 
 class DeviceJar(StockOut):
@@ -249,7 +246,9 @@ class DeviceJarDetails(DeviceJar):
     tag_uid: str | None
 
 
-class DeviceJarSetup(ScanInput):
+class DeviceJarSetup(Schema):
+    device_id: DeviceID
+    uid: TagUID | None = None
     request_id: Annotated[str, Field(min_length=8, max_length=100)]
     glaze_id: str | None = None
     new_glaze: GlazeInput | None = None
