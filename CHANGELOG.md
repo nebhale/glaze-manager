@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.6.0](https://github.com/nebhale/glaze-manager/releases/tag/v1.6.0) · 2026-11-11
+
+- A scale can create an untagged jar and save its first weigh-in together. The jar can be linked to an NFC tag later.
+
 ## [1.5.0](https://github.com/nebhale/glaze-manager/releases/tag/v1.5.0) · 2026-11-07
 
 - A connected scale can look up jars by number, browse catalog choices, and create a jar, link its tag, and save the first reading together. Retrying the same setup returns the original result.
