@@ -1,0 +1,44 @@
+backend/schemas.py
+  s_bf5d8793b3bf4a::t_2a6d2ac2dbbd0a 4,9-10,227-228,249-251
+compose.yaml
+  s_bf5d8793b3bf4a::t_c23985fc326805 3
+frontend/package.json
+  s_bf5d8793b3bf4a::t_c23985fc326805 4
+tests/test_scale_setup.py
+  s_bf5d8793b3bf4a::t_2a6d2ac2dbbd0a 64-83
+backend/app.py
+  s_bf5d8793b3bf4a::t_c23985fc326805 89
+  s_bf5d8793b3bf4a::t_2a6d2ac2dbbd0a 852,877
+frontend/src/generated/api.d.ts
+  s_bf5d8793b3bf4a::t_976573df89472f 811
+pyproject.toml
+  s_bf5d8793b3bf4a::t_c23985fc326805 3
+README.md
+  s_bf5d8793b3bf4a::t_c23985fc326805 12,18
+CHANGELOG.md
+  s_bf5d8793b3bf4a::t_c23985fc326805 3-6
+docs/device-api.md
+  s_bf5d8793b3bf4a::t_2a6d2ac2dbbd0a 180-182,200
+openapi.json
+  s_bf5d8793b3bf4a::t_c23985fc326805 5,3506-3513
+frontend/package-lock.json
+  s_bf5d8793b3bf4a::t_d40c9a5f3359f9 3,9
+uv.lock
+  s_bf5d8793b3bf4a::t_32dc2cb4b32f90 82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "48a32ca5996cf16de3911a12cd810f75103dacdf",
+  "prompts": {},
+  "sessions": {
+    "s_bf5d8793b3bf4a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1acd5-6277-70f2-bbc3-1fe6a9e75f0d",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}
