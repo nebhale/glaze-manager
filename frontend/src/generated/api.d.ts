@@ -831,6 +831,7 @@ export interface components {
             label: string;
             /** Code */
             code?: string | null;
+            detail?: components["schemas"]["PickerJar"] | null;
         };
         /** DeviceOptions */
         DeviceOptions: {
@@ -1106,6 +1107,29 @@ export interface components {
             cover: boolean;
             /** Glaze Id */
             glaze_id: string;
+        };
+        /** PickerJar */
+        PickerJar: {
+            /** Container Id */
+            container_id: string;
+            /** Number */
+            number: number;
+            /** Revision */
+            revision: number;
+            /** Glaze Name */
+            glaze_name: string;
+            /** Product Code */
+            product_code: string | null;
+            /** Manufacturer Name */
+            manufacturer_name: string | null;
+            /** Tare G */
+            tare_g: number | null;
+            /** Full Weight G */
+            full_weight_g: number | null;
+            /** Threshold G */
+            threshold_g: number;
+            /** Tag Uid */
+            tag_uid: string | null;
         };
         /** PresetInput */
         PresetInput: {
@@ -2549,6 +2573,7 @@ export interface operations {
             query?: {
                 manufacturer_id?: string | null;
                 q?: string;
+                details?: boolean;
                 offset?: number;
             };
             header?: never;

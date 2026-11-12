@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Glaze Manager",
-    "version": "1.6.0"
+    "version": "1.7.0"
   },
   "paths": {
     "/healthz": {
@@ -1945,6 +1945,16 @@
             }
           },
           {
+            "name": "details",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Details"
+            }
+          },
+          {
             "name": "offset",
             "in": "query",
             "required": false,
@@ -3615,6 +3625,16 @@
               }
             ],
             "title": "Code"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PickerJar"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "additionalProperties": false,
@@ -4678,6 +4698,100 @@
           "glaze_id"
         ],
         "title": "PhotoOut"
+      },
+      "PickerJar": {
+        "properties": {
+          "container_id": {
+            "type": "string",
+            "title": "Container Id"
+          },
+          "number": {
+            "type": "integer",
+            "title": "Number"
+          },
+          "revision": {
+            "type": "integer",
+            "title": "Revision"
+          },
+          "glaze_name": {
+            "type": "string",
+            "title": "Glaze Name"
+          },
+          "product_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Code"
+          },
+          "manufacturer_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Manufacturer Name"
+          },
+          "tare_g": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tare G"
+          },
+          "full_weight_g": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Weight G"
+          },
+          "threshold_g": {
+            "type": "number",
+            "title": "Threshold G"
+          },
+          "tag_uid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tag Uid"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "container_id",
+          "number",
+          "revision",
+          "glaze_name",
+          "product_code",
+          "manufacturer_name",
+          "tare_g",
+          "full_weight_g",
+          "threshold_g",
+          "tag_uid"
+        ],
+        "title": "PickerJar"
       },
       "PresetInput": {
         "properties": {

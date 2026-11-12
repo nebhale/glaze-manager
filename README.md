@@ -9,13 +9,13 @@ Glaze Manager keeps a pottery studio’s glaze jars, shelf locations, and remain
 
 ## Quick start
 
-Run the published Linux image on an AMD64 or ARM64 host with Docker Compose. Download the [1.6.0 Compose file](https://raw.githubusercontent.com/nebhale/glaze-manager/v1.6.0/compose.yaml) into a directory for the studio, then run:
+Run the published Linux image on an AMD64 or ARM64 host with Docker Compose. Download the [1.7.0 Compose file](https://raw.githubusercontent.com/nebhale/glaze-manager/v1.7.0/compose.yaml) into a directory for the studio, then run:
 
 ```sh
 docker compose up -d
 ```
 
-Open [Glaze Manager](http://localhost:8000). The Compose file pins the image to `ghcr.io/nebhale/glaze-manager:1.6.0`. A named volume stores the SQLite database, glaze photos, and weight history between restarts.
+Open [Glaze Manager](http://localhost:8000). The Compose file pins the image to `ghcr.io/nebhale/glaze-manager:1.7.0`. A named volume stores the SQLite database, glaze photos, and weight history between restarts.
 
 The default address is loopback. To connect phones and scales, set `GLAZE_BIND_ADDRESS` to your server’s trusted LAN address and run Compose again. Anyone who can reach the app can change inventory. Restrict remote access to a VPN or an authenticated HTTPS proxy.
 

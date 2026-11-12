@@ -161,10 +161,8 @@ def test_unlinked_jar_picker_filters_before_paging_and_sorts_labels(client, cata
             ).raise_for_status()
     path = "/api/v1/device/options/unlinked-jars"
     page = client.get(path).json()
-    assert page["next_offset"] == 4
-    last = client.get(path, params={"offset": page["next_offset"]}).json()
-    assert last["next_offset"] is None
-    rows = page["items"] + last["items"]
+    assert page["next_offset"] is None
+    rows = page["items"]
     assert [row["label"] for row in rows] == [
         "amber (PC-12)",
         "Blue Rutile",

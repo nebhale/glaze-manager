@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.7.0](https://github.com/nebhale/glaze-manager/releases/tag/v1.7.0) · 2026-11-12
+
+- Scale option lists fit as many choices as possible into each 4 KiB page. Scales can request jar details with the list for immediate selection.
+
 ## [1.6.0](https://github.com/nebhale/glaze-manager/releases/tag/v1.6.0) · 2026-11-11
 
 - A scale can create an untagged jar and save its first weigh-in together. The jar can be linked to an NFC tag later.
