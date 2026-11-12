@@ -1,0 +1,38 @@
+frontend/src/components.tsx
+  s_67887bbda6ca7f::t_e439c53ed175ec 13,15,325-335,339-341,345-346,349-352
+  s_67887bbda6ca7f::t_e2cace3b657694 336-338,342-344,347-348
+  s_67887bbda6ca7f::t_38115c72b6e5be 353-354
+frontend/src/generated/api.d.ts
+  s_67887bbda6ca7f::t_4a6ff233eb90c4 1111-1112
+frontend/src/pages/Inventory.tsx
+  s_67887bbda6ca7f::t_e439c53ed175ec 3,11,146
+backend/app.py
+  s_67887bbda6ca7f::t_e8ac36d1049542 172-173,177,197-207
+tests/test_inventory.py
+  s_67887bbda6ca7f::t_e2cace3b657694 286-290,301-306
+  s_67887bbda6ca7f::t_98586c03998a0a 282-285,291-300,307-311
+openapi.json
+  s_67887bbda6ca7f::t_4a6ff233eb90c4 357-380
+frontend/e2e/catalog-panes.spec.ts
+  s_67887bbda6ca7f::t_821109cdd7d300 154-165,171-189,196-200
+  s_67887bbda6ca7f::t_e2cace3b657694 166-170,190-195
+frontend/src/pages/Catalog.tsx
+  s_67887bbda6ca7f::t_d4c533090509b5 14,25-26,31-38,40,42,46-49,86,112,118,129,136,145,200
+  s_67887bbda6ca7f::t_e2cace3b657694 137-141
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "31bce52048d31dce46f09d001eb7455dd741b83f",
+  "prompts": {},
+  "sessions": {
+    "s_67887bbda6ca7f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1abcc-dd55-7f22-8537-9ff76d21860d",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}

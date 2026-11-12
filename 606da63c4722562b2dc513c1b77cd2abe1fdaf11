@@ -1,0 +1,190 @@
+SECURITY.md
+  s_41659c77223350::t_c632fd73c0487e 1-7
+.github/dependabot.yml
+  s_41659c77223350::t_41e11d06da25a4 1-46
+THIRD_PARTY.md
+  s_41659c77223350::t_c632fd73c0487e 1-7
+.github/workflows/ci.yaml
+  s_41659c77223350::t_41e11d06da25a4 1-71
+.github/ISSUE_TEMPLATE/config.yml
+  s_41659c77223350::t_41e11d06da25a4 1-5
+Dockerfile
+  s_41659c77223350::t_41e11d06da25a4 15-22
+  s_41659c77223350::t_f6c088b2db6266 1-14,23-28
+.dockerignore
+  s_41659c77223350::t_41e11d06da25a4 17-21
+  s_41659c77223350::t_63022f35d5e9b0 1-16
+.github/workflows/release.yaml
+  s_41659c77223350::t_41e11d06da25a4 1-108
+scripts/release_tags.py
+  s_41659c77223350::t_41e11d06da25a4 1-52
+backend/app.py
+  s_41659c77223350::t_41e11d06da25a4 66
+  s_41659c77223350::t_a05c306d0ab7c1 1-65,67-695
+openapi.json
+  s_41659c77223350::t_c632fd73c0487e 5
+  s_41659c77223350::t_7f818e4ef4cb46 1-4,6-3454
+CONTRIBUTING.md
+  s_41659c77223350::t_c632fd73c0487e 1-32
+.github/pull_request_template.md
+  s_41659c77223350::t_c632fd73c0487e 1-7
+.github/ISSUE_TEMPLATE/bug.yml
+  s_41659c77223350::t_41e11d06da25a4 1-35
+.gitignore
+  s_41659c77223350::t_41e11d06da25a4 21-25
+  s_41659c77223350::t_f94b77020aa6b0 1-20
+frontend/vite.config.ts
+  s_41659c77223350::t_41e11d06da25a4 5
+  s_41659c77223350::t_1777e4c27f2384 1-4,6-14
+CHANGELOG.md
+  s_41659c77223350::t_c632fd73c0487e 1-12
+docs/operations.md
+  s_41659c77223350::t_c632fd73c0487e 3-79
+  s_41659c77223350::t_b98e66a6915255 1-2,80-86
+LICENSE
+  s_41659c77223350::t_41e11d06da25a4 1-201
+compose.build.yaml
+  s_41659c77223350::t_41e11d06da25a4 1-4
+compose.yaml
+  s_41659c77223350::t_41e11d06da25a4 3
+  s_41659c77223350::t_f0698ebf96d498 1-2,4-13
+frontend/package.json
+  s_41659c77223350::t_41e11d06da25a4 4
+  s_41659c77223350::t_f3ebb16d1b0773 1-3,5-35
+pyproject.toml
+  s_41659c77223350::t_41e11d06da25a4 3-6
+  s_41659c77223350::t_e45576898bf724 1-2,7-32
+README.md
+  s_41659c77223350::t_c632fd73c0487e 3-40
+  s_41659c77223350::t_429ce7987f20ad 1-2
+.github/ISSUE_TEMPLATE/feature.yml
+  s_41659c77223350::t_1c37e9c232fda8 1-15
+backend/database.py
+  s_41659c77223350::t_e949045f1e30f0 1-33
+backend/domain.py
+  s_41659c77223350::t_336817a7738b78 1-70
+backend/models.py
+  s_41659c77223350::t_de9ba6435ad941 1-110
+backend/schemas.py
+  s_41659c77223350::t_390fe8db056884 1-231
+backend/services.py
+  s_41659c77223350::t_8fe3ee170f44ab 1-175
+design/detail-layout-concepts.html
+  s_41659c77223350::t_14c1677e5cb6d7 1-165
+docs/device-api.md
+  s_41659c77223350::t_3677200c8f686e 1-157
+docs/scale-interface-inventory.md
+  s_41659c77223350::t_1fd14c7061b12b 1-326
+frontend/e2e/accessibility.spec.ts
+  s_41659c77223350::t_c74ddf123ab78e 1-34
+frontend/e2e/archived-jars.spec.ts
+  s_41659c77223350::t_8237a0b81ebece 1-115
+frontend/e2e/autocomplete.spec.ts
+  s_41659c77223350::t_522c02bf9a3ed7 1-211
+frontend/e2e/autosave.spec.ts
+  s_41659c77223350::t_d0821d3199560b 1-310
+frontend/e2e/catalog-panes.spec.ts
+  s_41659c77223350::t_fc6aa6f46db662 1-192
+frontend/e2e/field-alignment.spec.ts
+  s_41659c77223350::t_057da0ec8993a2 1-106
+frontend/e2e/first-scan.spec.ts
+  s_41659c77223350::t_6db7f9c40b7532 1-95
+frontend/e2e/inventory.spec.ts
+  s_41659c77223350::t_34fb616f52bdf3 1-426
+frontend/e2e/jar-weights.spec.ts
+  s_41659c77223350::t_612f05937d2eec 1-134
+frontend/e2e/pane-resize.spec.ts
+  s_41659c77223350::t_80ef2ff002d77a 1-165
+frontend/e2e/select.spec.ts
+  s_41659c77223350::t_c1b9113f2dc915 1-84
+frontend/e2e/studio.spec.ts
+  s_41659c77223350::t_66a81672e90b99 1-256
+frontend/e2e/website-field.spec.ts
+  s_41659c77223350::t_ae61d8909e1aff 1-77
+frontend/e2e/weight-warnings.spec.ts
+  s_41659c77223350::t_4c4d62c54b2182 1-69
+frontend/package-lock.json
+  s_41659c77223350::t_ea34eab33c22fb 1-3090
+frontend/playwright.config.ts
+  s_41659c77223350::t_fc1ff0b48bc1f1 1-21
+frontend/public/favicon.svg
+  s_41659c77223350::t_9f832ee011990a 1
+frontend/src/App.tsx
+  s_41659c77223350::t_6a83db2a91ed67 1-109
+frontend/src/Autocomplete.tsx
+  s_41659c77223350::t_8f6b3f61694fbb 1-280
+frontend/src/Select.tsx
+  s_41659c77223350::t_ee8430229bacb5 1-166
+frontend/src/SplitWorkspace.tsx
+  s_41659c77223350::t_4eb4663463fa1d 1-190
+frontend/src/UrlInput.tsx
+  s_41659c77223350::t_c6432491d08be1 1-55
+frontend/src/api.ts
+  s_41659c77223350::t_fc1653dd4eafd9 1-122
+frontend/src/autosave.tsx
+  s_41659c77223350::t_2257123508d597 1-445
+frontend/src/components.tsx
+  s_41659c77223350::t_f5a11082db4bb7 1-426
+frontend/src/editors.tsx
+  s_41659c77223350::t_49b979605b1b25 1-191
+frontend/src/forms.tsx
+  s_41659c77223350::t_fd8beb7a71d880 1-278
+frontend/src/generated/api.d.ts
+  s_41659c77223350::t_26a34c7eb36fd5 1-2159
+frontend/src/main.tsx
+  s_41659c77223350::t_30da8fd463279e 1-19
+frontend/src/pages.tsx
+  s_41659c77223350::t_0c6c6129fe858e 1-4
+frontend/src/pages/Catalog.tsx
+  s_41659c77223350::t_e1e7a33a14c5fd 1-402
+frontend/src/pages/ContainerDetail.tsx
+  s_41659c77223350::t_58f3acb34a5e3f 1-237
+frontend/src/pages/Inventory.tsx
+  s_41659c77223350::t_82a47c385f5caa 1-258
+frontend/src/pages/Studio.tsx
+  s_41659c77223350::t_baa6d5587b675b 1-161
+frontend/src/styles.css
+  s_41659c77223350::t_d29c33ef025882 1-2043
+frontend/tsconfig.json
+  s_41659c77223350::t_83e26343fa03b1 1-17
+scripts/e2e_server.py
+  s_41659c77223350::t_a7795ad2303c0b 1-13
+scripts/export_openapi.py
+  s_41659c77223350::t_a011c7239e48ca 1-13
+scripts/scale_simulator.py
+  s_41659c77223350::t_1fea92077f5129 1-74
+tests/conftest.py
+  s_41659c77223350::t_625c5a194ad08c 1-41
+tests/test_first_scan_weight.py
+  s_41659c77223350::t_713ec97718481c 1-185
+tests/test_inline_edits.py
+  s_41659c77223350::t_9c3ea944aaedb9 1-103
+tests/test_inventory.py
+  s_41659c77223350::t_1d401af8c06e89 1-364
+tests/test_jar_numbers.py
+  s_41659c77223350::t_06747e60a4b1df 1-50
+tests/test_photos.py
+  s_41659c77223350::t_1e912dae05add3 1-32
+tests/test_suggestions.py
+  s_41659c77223350::t_5d5425fd2ea413 1-72
+tests/test_weight_thresholds.py
+  s_41659c77223350::t_99bda30ec2c150 1-97
+uv.lock
+  s_41659c77223350::t_9baf248e618ed2 1-835
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "606da63c4722562b2dc513c1b77cd2abe1fdaf11",
+  "prompts": {},
+  "sessions": {
+    "s_41659c77223350": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a19de3-d599-7230-ab2d-72efc4035651",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}

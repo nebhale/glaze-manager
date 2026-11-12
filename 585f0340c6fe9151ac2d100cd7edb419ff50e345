@@ -1,0 +1,35 @@
+pyproject.toml
+  s_67887bbda6ca7f::t_89567a76c3c09c 3
+openapi.json
+  s_67887bbda6ca7f::t_bc27b27f5c2638 5
+compose.yaml
+  s_67887bbda6ca7f::t_89567a76c3c09c 3
+backend/app.py
+  s_67887bbda6ca7f::t_89567a76c3c09c 66
+README.md
+  s_67887bbda6ca7f::t_89567a76c3c09c 12,18
+CHANGELOG.md
+  s_67887bbda6ca7f::t_89567a76c3c09c 3-6
+frontend/package.json
+  s_67887bbda6ca7f::t_89567a76c3c09c 4
+frontend/package-lock.json
+  s_67887bbda6ca7f::t_f662702b3de132 3,9
+uv.lock
+  s_67887bbda6ca7f::t_ef40b2b044eb97 82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "585f0340c6fe9151ac2d100cd7edb419ff50e345",
+  "prompts": {},
+  "sessions": {
+    "s_67887bbda6ca7f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1abcc-dd55-7f22-8537-9ff76d21860d",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}

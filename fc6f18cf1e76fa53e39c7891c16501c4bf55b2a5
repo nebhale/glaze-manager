@@ -1,0 +1,19 @@
+.github/workflows/ci.yaml
+  s_41659c77223350::t_1ed5431d336515 64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fc6f18cf1e76fa53e39c7891c16501c4bf55b2a5",
+  "prompts": {},
+  "sessions": {
+    "s_41659c77223350": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a19de3-d599-7230-ab2d-72efc4035651",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}

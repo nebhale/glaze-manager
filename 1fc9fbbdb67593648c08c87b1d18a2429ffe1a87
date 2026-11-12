@@ -1,0 +1,21 @@
+pyproject.toml
+  s_41659c77223350::t_32ceb6bfc4c00c 14
+uv.lock
+  s_41659c77223350::t_b87019c58f2405 104,257,259,261-307
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1fc9fbbdb67593648c08c87b1d18a2429ffe1a87",
+  "prompts": {},
+  "sessions": {
+    "s_41659c77223350": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a19de3-d599-7230-ab2d-72efc4035651",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}

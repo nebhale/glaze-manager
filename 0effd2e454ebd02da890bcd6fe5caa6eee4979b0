@@ -1,0 +1,49 @@
+CHANGELOG.md
+  s_32349825ecc957::t_d0e35afed96cc1 3-7
+README.md
+  s_32349825ecc957::t_fbebbcea987ab6 12,18
+backend/app.py
+  s_32349825ecc957::t_42d548ba2af8f7 86
+compose.yaml
+  s_32349825ecc957::t_f4752aac71db61 3
+frontend/e2e/autosave.spec.ts
+  s_32349825ecc957::t_ae6dd4957d3e15 91-93,292,303
+frontend/e2e/studio.spec.ts
+  s_32349825ecc957::t_b0787b6e2358ed 110,139-142,150-152,174-190
+frontend/package-lock.json
+  s_32349825ecc957::t_fc11a59a54b8d8 3,9
+frontend/package.json
+  s_32349825ecc957::t_80cd96b83d730b 4
+frontend/src/UrlInput.tsx
+  s_32349825ecc957::t_3413a4c59c8d99 31,43
+frontend/src/editors.tsx
+  s_32349825ecc957::t_bf5f92e2eaefb5 1,160,219-244
+frontend/src/forms.tsx
+  s_32349825ecc957::t_54c88188220c08 266
+frontend/src/pages/Studio.tsx
+  s_32349825ecc957::t_0cff0a1febf32d 102
+frontend/src/styles.css
+  s_32349825ecc957::t_14dbf1029a7577 1899,1917-1923,1926,1991,1993,1995
+openapi.json
+  s_32349825ecc957::t_01f3b266ddc4e1 5
+pyproject.toml
+  s_32349825ecc957::t_3609f401a669db 3
+uv.lock
+  s_32349825ecc957::t_d2fd081d978a5c 82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0effd2e454ebd02da890bcd6fe5caa6eee4979b0",
+  "prompts": {},
+  "sessions": {
+    "s_32349825ecc957": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1b71c-8bf9-7d63-8a80-4ce19f57a3f3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}
