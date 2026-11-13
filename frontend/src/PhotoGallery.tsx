@@ -1,4 +1,4 @@
-import { Camera, Plus, Trash2 } from "lucide-react";
+import { Camera, Plus, Star, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { GlazeRecord, Photo, VesselSummary } from "./api";
 import { ErrorMessage } from "./components";
@@ -13,9 +13,15 @@ function PhotoCard({
   source: string;
   linkedVessel?: VesselSummary;
 }) {
-  const deletion = useSave();
+  const save = useSave();
+  const resource = "vessel_id" in photo
+    ? `/vessels/${photo.vessel_id}/photos/${photo.id}`
+    : `/photos/${photo.id}`;
+  const keyLabel = linkedVessel
+    ? `Use as vessel key photo for ${source}`
+    : "Use as key photo";
   return (
-    <div className="photo-item">
+    <div className="photo-item" data-photo-id={photo.id}>
       <div className="photo-tile">
         <a
           href={photo.url}
@@ -29,22 +35,35 @@ function PhotoCard({
             loading="lazy"
           />
         </a>
+        <button
+          type="button"
+          className="icon-button photo-key"
+          aria-label={keyLabel}
+          aria-pressed={photo.cover}
+          title={photo.cover ? `Key photo for ${source}` : keyLabel}
+          disabled={save.isPending}
+          onClick={() => {
+            if (!photo.cover)
+              save.mutate({ path: resource, method: "PATCH", body: { cover: true } });
+          }}
+        >
+          <Star
+            size={15}
+            fill={photo.cover ? "currentColor" : "none"}
+            aria-hidden="true"
+          />
+          {photo.cover && <span>{linkedVessel ? "Vessel key" : "Key"}</span>}
+        </button>
         {!linkedVessel && (
           <button
             type="button"
             className="icon-button photo-delete"
             aria-label="Delete photo"
             title="Delete photo"
-            disabled={deletion.isPending}
+            disabled={save.isPending}
             onClick={() => {
               if (window.confirm("Delete this photo?"))
-                deletion.mutate({
-                  path:
-                    "vessel_id" in photo
-                      ? `/vessels/${photo.vessel_id}/photos/${photo.id}`
-                      : `/photos/${photo.id}`,
-                  method: "DELETE",
-                });
+                save.mutate({ path: resource, method: "DELETE" });
             }}
           >
             <Trash2 size={15} aria-hidden="true" />
@@ -56,7 +75,7 @@ function PhotoCard({
           {source}
         </Link>
       )}
-      <ErrorMessage error={deletion.error} />
+      <ErrorMessage error={save.error} />
     </div>
   );
 }

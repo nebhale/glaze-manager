@@ -234,8 +234,11 @@ test("manage photos as square tiles above the jar list", async ({
   await expect(photos.locator(".photo-tile")).toHaveCount(3);
   await expect(photos.getByLabel("Caption", { exact: true })).toHaveCount(0);
   await expect(
-    photos.getByRole("button", { name: /cover photo/i }),
-  ).toHaveCount(0);
+    photos.getByRole("button", { name: "Use as key photo", exact: true }),
+  ).toHaveCount(2);
+  await expect(
+    photos.getByRole("button", { name: "Use as key photo", exact: true, pressed: true }),
+  ).toHaveCount(1);
   await photos.scrollIntoViewIfNeeded();
   const tiles = await photos.locator(".photo-tile").evaluateAll((elements) =>
     elements.map((element) => {
