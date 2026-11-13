@@ -192,8 +192,13 @@ export function ContainerForm({
             </option>
             {glazes.data?.items.map((g) => (
               <option key={g.id} value={g.id}>
-                {g.name}
-                {g.product_code ? ` (${g.product_code})` : ""}
+                <strong className="glaze-option-name">{g.name}</strong>
+                {g.product_code && (
+                  <>
+                    {" "}
+                    <span className="jar-product-code">{g.product_code}</span>
+                  </>
+                )}
               </option>
             ))}
           </Select>

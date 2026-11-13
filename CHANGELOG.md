@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.7.1](https://github.com/nebhale/glaze-manager/releases/tag/v1.7.1) · 2026-11-12
+
+- Vessel and jar glaze pickers show the glaze name with a subdued product code to its right, matching the glaze list. The vessel picker no longer includes the manufacturer.
+
 ## [1.7.0](https://github.com/nebhale/glaze-manager/releases/tag/v1.7.0) · 2026-11-12
 
 - Scale option lists fit as many choices as possible into each 4 KiB page. Scales can request jar details with the list for immediate selection.

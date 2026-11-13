@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Glaze Manager",
-    "version": "1.7.0"
+    "version": "1.7.1"
   },
   "paths": {
     "/healthz": {

@@ -196,7 +196,7 @@ test("record a numbered vessel and navigate its photos from a glaze", async ({
       data: {
         manufacturer_id: maker.id,
         name: "Rutile blue",
-        product_code: "RB",
+        product_code: `RB-${testInfo.project.name}`,
       },
     })
   ).json();
@@ -229,7 +229,7 @@ test("record a numbered vessel and navigate its photos from a glaze", async ({
   expect(await add.evaluate(right)).toBe(await used.evaluate(right));
   await add.click();
   const form = used.getByRole("form", { name: "New glaze application" });
-  await selectOption(page, "Glaze", `${maker.name} · Rutile blue (RB)`);
+  await selectOption(page, "Glaze", `${glaze.name} ${glaze.product_code}`);
   await form.getByLabel("Application note").fill("3 coats");
   await form.getByRole("button", { name: "Save", exact: true }).click();
   await expect(used.getByLabel("Application note")).toHaveValue("3 coats");
