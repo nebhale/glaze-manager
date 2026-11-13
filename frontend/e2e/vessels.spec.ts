@@ -77,6 +77,10 @@ test("sort vessels by ID and name and keep the order when opening a vessel", asy
   const links = table.getByRole("link");
   const expected = (...suffixes: string[]) =>
     suffixes.map((suffix) => `${prefix} ${suffix}`);
+  await expect(id).toHaveAttribute("aria-sort", "ascending");
+  await expect(links).toHaveText(expected("Cup", "Bowl", "Vase"));
+  await name.getByRole("button").click();
+  await expect(name).toHaveAttribute("aria-sort", "ascending");
   await expect(links).toHaveText(expected("Bowl", "Cup", "Vase"));
   await name.getByRole("button").click();
   await expect(name).toHaveAttribute("aria-sort", "descending");

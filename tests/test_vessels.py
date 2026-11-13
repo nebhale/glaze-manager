@@ -48,6 +48,9 @@ def test_vessel_sorting_precedes_pagination(client):
     ):
         client.post(path, json={"name": name, "location": location}).raise_for_status()
 
+    result = client.get(path, params={"page_size": 2, "page": 2}).json()
+    assert [item["id"] for item in result["items"]] == [3, 4]
+
     def ids(sort, descending, page):
         result = client.get(
             path,

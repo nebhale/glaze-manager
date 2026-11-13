@@ -10,6 +10,7 @@ import { Autocomplete } from "../Autocomplete";
 import { PhotoGallery } from "../PhotoGallery";
 import { Select } from "../Select";
 import { SplitWorkspace } from "../SplitWorkspace";
+import { useListSort } from "../useListSort";
 import {
   formValues,
   useApi,
@@ -336,9 +337,12 @@ export function Vessels() {
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const q = params.get("q") || "";
-  const order = params.get("sort");
-  const sort = order === "id" || order === "location" ? order : "name";
-  const descending = params.get("descending") === "true";
+  const { sort, descending } = useListSort(
+    "vessels",
+    params,
+    ["id", "name", "location"],
+    "id",
+  );
   const showArchived = params.get("show_archived") === "true";
   const page = Math.max(1, Number.parseInt(params.get("page") || "1", 10) || 1);
   const search = params.size ? `?${params}` : "";

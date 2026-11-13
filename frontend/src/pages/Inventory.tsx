@@ -14,28 +14,34 @@ import {
 import { ContainerForm } from "../forms";
 import { ContainerDetail } from "./ContainerDetail";
 import { SplitWorkspace } from "../SplitWorkspace";
+import { useListSort } from "../useListSort";
 
-const queryKeys = ["q", "sort", "descending", "page"];
-const viewKeys = [...queryKeys, "show_archived"];
+const queryKeys = ["q", "page"];
+const viewKeys = [...queryKeys, "sort", "descending", "show_archived"];
 
 export function Inventory() {
   const selectedId = useMatch("/containers/:id")?.params.id;
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
   const [adding, setAdding] = useState(false);
+  const { sort, descending } = useListSort(
+    "inventory",
+    params,
+    ["number", "name", "percentage", "remaining_g", "location"],
+    "number",
+  );
   const showArchived = params.get("show_archived") === "true";
   const tableScroll = useRef<HTMLDivElement>(null);
   const apiParams = new URLSearchParams({
     page_size: "100",
     status: showArchived ? "all" : "active",
-    sort: "number",
+    sort,
+    descending: String(descending),
   });
   queryKeys.forEach((key) => {
     if (params.get(key)) apiParams.set(key, params.get(key)!);
   });
   const jars = useApi<Page<Jar>>(`/containers?${apiParams}`);
-  const sort = params.get("sort") || "number";
-  const descending = params.get("descending") === "true";
   const page = Math.max(1, Number(params.get("page")) || 1);
   const search = params.toString() ? `?${params}` : "";
   useEffect(() => {
