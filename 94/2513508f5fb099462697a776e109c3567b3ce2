@@ -1,0 +1,47 @@
+frontend/package.json
+  s_87d5c579fdfd40::t_e6c042b20a574b 4
+frontend/e2e/vessels.spec.ts
+  s_87d5c579fdfd40::t_b3e75f4fc311c2 199,232
+compose.yaml
+  s_87d5c579fdfd40::t_e6c042b20a574b 3
+backend/app.py
+  s_87d5c579fdfd40::t_e6c042b20a574b 90
+frontend/src/styles.css
+  s_87d5c579fdfd40::t_ffc8a55d622442 1096-1098
+frontend/src/forms.tsx
+  s_87d5c579fdfd40::t_ffc8a55d622442 195-201
+frontend/e2e/jar-weights.spec.ts
+  s_87d5c579fdfd40::t_ffc8a55d622442 65
+CHANGELOG.md
+  s_87d5c579fdfd40::t_e6c042b20a574b 3-6
+openapi.json
+  s_87d5c579fdfd40::t_4c6b8c72f2f46a 5
+frontend/src/editors.tsx
+  s_87d5c579fdfd40::t_ffc8a55d622442 173-179
+pyproject.toml
+  s_87d5c579fdfd40::t_e6c042b20a574b 3
+README.md
+  s_87d5c579fdfd40::t_e6c042b20a574b 12,18
+frontend/src/pages/Vessels.tsx
+  s_87d5c579fdfd40::t_ffc8a55d622442 115-121
+frontend/package-lock.json
+  s_87d5c579fdfd40::t_3b58a1f0429f3b 3,9
+uv.lock
+  s_87d5c579fdfd40::t_52d7441559441b 82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "942513508f5fb099462697a776e109c3567b3ce2",
+  "prompts": {},
+  "sessions": {
+    "s_87d5c579fdfd40": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1d329-4ba3-7f93-b896-41c43396e0e7",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}
