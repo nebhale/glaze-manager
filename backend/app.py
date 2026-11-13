@@ -103,7 +103,7 @@ def create_app(data_dir: Path | None = None):
         yield
         engine.dispose()
 
-    app = FastAPI(title="Glaze Manager", version="1.8.0", lifespan=lifespan)
+    app = FastAPI(title="Glaze Manager", version="1.8.1", lifespan=lifespan)
     app.state.engine = engine
     app.state.sessions = sessions
 
@@ -992,10 +992,12 @@ def create_app(data_dir: Path | None = None):
         full, thumb = encode_photo(content)
         photo.id = str(uuid4())
         photo.filename, photo.thumbnail = f"{photo.id}.jpg", f"{photo.id}-thumb.jpg"
-        photo.cover = db.scalar(siblings.limit(1)) is None
+        photo.cover = True
         try:
             (media / photo.filename).write_bytes(full)
             (media / photo.thumbnail).write_bytes(thumb)
+            for sibling in db.scalars(siblings):
+                sibling.cover = False
             db.add(photo)
             commit(db)
         except Exception:
@@ -1007,7 +1009,7 @@ def create_app(data_dir: Path | None = None):
     @app.post("/api/v1/glazes/{identifier}/photos", response_model=s.PhotoOut, status_code=201)
     def upload_photo(identifier: str, db: DB, file: UploadFile):
         require(db, m.Glaze, identifier)
-        siblings = select(m.Photo.id).where(m.Photo.glaze_id == identifier)
+        siblings = select(m.Photo).where(m.Photo.glaze_id == identifier)
         return store_photo(db, file, m.Photo(glaze_id=identifier), siblings)
 
     @app.post(
@@ -1015,7 +1017,7 @@ def create_app(data_dir: Path | None = None):
     )
     def upload_vessel_photo(identifier: VesselId, db: DB, file: UploadFile):
         require(db, m.Vessel, identifier)
-        siblings = select(m.VesselPhoto.id).where(m.VesselPhoto.vessel_id == identifier)
+        siblings = select(m.VesselPhoto).where(m.VesselPhoto.vessel_id == identifier)
         return store_photo(db, file, m.VesselPhoto(vessel_id=identifier), siblings)
 
     @app.get("/api/v1/photos/{identifier}/caption", response_model=s.PhotoEdit)
