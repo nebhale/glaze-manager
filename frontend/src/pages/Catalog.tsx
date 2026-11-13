@@ -26,14 +26,19 @@ import { forgetDrafts } from "../autosave";
 import { ContainerForm, GlazeForm, useSave } from "../forms";
 import { PhotoGallery } from "../PhotoGallery";
 import { SplitWorkspace } from "../SplitWorkspace";
+import { useListSort } from "../useListSort";
 
 export function Catalog() {
   const selectedId = useMatch("/glazes/:id")?.params.id;
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
   const q = params.get("q") || "";
-  const sort = params.get("sort") === "product_line" ? "product_line" : "name";
-  const descending = params.get("descending") === "true";
+  const { sort, descending } = useListSort(
+    "glazes",
+    params,
+    ["name", "product_line"],
+    "name",
+  );
   const [adding, setAdding] = useState(false);
   const listScroll = useRef<HTMLDivElement>(null);
   const apiParams = new URLSearchParams({

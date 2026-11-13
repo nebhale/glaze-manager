@@ -942,7 +942,7 @@
                 "location"
               ],
               "type": "string",
-              "default": "name",
+              "default": "id",
               "title": "Sort"
             }
           },

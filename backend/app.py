@@ -399,7 +399,7 @@ def create_app(data_dir: Path | None = None):
         db: DB,
         q: str = "",
         status: Literal["active", "archived", "all"] = "active",
-        sort: Literal["id", "name", "location"] = "name",
+        sort: Literal["id", "name", "location"] = "id",
         descending: bool = False,
         number: int = Query(1, alias="page", ge=1, le=2147483647),
         size: int = Query(50, alias="page_size", ge=1, le=1000),
