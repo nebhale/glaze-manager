@@ -112,8 +112,13 @@ function AddApplication({
           </option>
           {choices.data?.map((glaze) => (
             <option key={glaze.glaze_id} value={glaze.glaze_id}>
-              {[glaze.manufacturer_name, glaze.glaze_name].filter(Boolean).join(" · ")}
-              {glaze.product_code ? ` (${glaze.product_code})` : ""}
+              <strong className="glaze-option-name">{glaze.glaze_name}</strong>
+              {glaze.product_code && (
+                <>
+                  {" "}
+                  <span className="jar-product-code">{glaze.product_code}</span>
+                </>
+              )}
             </option>
           ))}
         </Select>

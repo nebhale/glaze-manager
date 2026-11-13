@@ -170,8 +170,13 @@ export function JarFields({ jar }: { jar: Jar }) {
         >
           {(glazes.data?.items ?? [jar.glaze]).map((glaze) => (
             <option key={glaze.id} value={glaze.id}>
-              {glaze.name}
-              {glaze.product_code ? ` (${glaze.product_code})` : ""}
+              <strong className="glaze-option-name">{glaze.name}</strong>
+              {glaze.product_code && (
+                <>
+                  {" "}
+                  <span className="jar-product-code">{glaze.product_code}</span>
+                </>
+              )}
             </option>
           ))}
         </InlineField>

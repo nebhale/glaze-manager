@@ -62,7 +62,7 @@ test("add a jar without a starting weight and update its container and glaze in 
   await selectOption(page, "Glaze", firstGlaze.name);
   await selectOption(page, "Container", firstPreset.name);
   await expect(dialog.getByLabel("Container Weight (g)")).toHaveCount(0);
-  const secondGlazeLabel = `${secondGlaze.name} (G-02)`;
+  const secondGlazeLabel = `${secondGlaze.name} G-02`;
   await selectOption(page, "Glaze", secondGlazeLabel);
   await expect(dialog.getByLabel("Glaze", { exact: true })).toHaveText(secondGlazeLabel);
   await selectOption(page, "Container", secondPreset.name);

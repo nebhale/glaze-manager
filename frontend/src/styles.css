@@ -1093,6 +1093,9 @@ code {
   color: var(--muted);
   cursor: default;
 }
+.glaze-option-name {
+  font-weight: 550;
+}
 .select-check {
   position: absolute;
   inset-inline-end: 8px;
