@@ -1,7 +1,15 @@
 from decimal import Decimal
 from typing import Annotated, Generic, Literal, TypeVar
 
-from pydantic import AfterValidator, BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    AfterValidator,
+    BaseModel,
+    ConfigDict,
+    Field,
+    SecretStr,
+    field_validator,
+    model_validator,
+)
 
 from .domain import normalize_uid
 
@@ -11,7 +19,15 @@ TagUID = Annotated[str, AfterValidator(normalize_uid)]
 DollarAmount = Annotated[Decimal, Field(ge=0, max_digits=12, decimal_places=2)]
 Text = Annotated[str, Field(max_length=20000)]
 Weight = Annotated[float, Field(ge=0, le=10000000, allow_inf_nan=False)]
-FullWeight = Annotated[float, Field(ge=0.001, le=10000000, allow_inf_nan=False, description="Gross starting weight in grams, including the container.")]
+FullWeight = Annotated[
+    float,
+    Field(
+        ge=0.001,
+        le=10000000,
+        allow_inf_nan=False,
+        description="Gross starting weight in grams, including the container.",
+    ),
+]
 
 
 class Schema(BaseModel):
@@ -91,6 +107,9 @@ class VesselEdit(VesselInput):
 
 class VesselSummary(VesselEdit):
     id: int
+    source_url: Annotated[
+        str | None, Field(max_length=2000, json_schema_extra={"readOnly": True})
+    ] = None
     photos: list[VesselPhotoOut]
 
 
@@ -111,8 +130,66 @@ class ApplicationOut(GlazeReference):
     application_note: str | None
 
 
+class KilnfireLink(Schema):
+    endpoint: str
+    piece_id: int
+
+
 class VesselOut(VesselSummary):
     applications: list[ApplicationOut]
+    kilnfire_link: KilnfireLink | None = None
+
+
+class KilnfireEndpoint(Schema):
+    endpoint: str
+
+    @field_validator("endpoint")
+    @classmethod
+    def studio_endpoint(cls, value):
+        from .kilnfire import normalize_endpoint
+
+        return normalize_endpoint(value)
+
+
+class KilnfireLogin(Schema):
+    email: Annotated[str, Field(min_length=1, max_length=254)]
+    password: SecretStr = Field(min_length=1, max_length=4096)
+
+
+class KilnfireStatus(Schema):
+    endpoint: str | None = None
+    state: Literal["not_configured", "signed_out", "connected", "needs_login"]
+    checked_at: str | None = None
+
+
+class KilnfireCandidate(Schema):
+    piece_id: int
+    name: str
+    firing_type: str | None
+    created_at: str | None
+    url: str
+    thumbnail_url: str | None
+    image_count: int
+    archived: bool
+
+
+class KilnfireRefresh(Schema):
+    count: int
+
+
+class KilnfireArchive(KilnfireEndpoint):
+    archived: bool
+
+
+class KilnfireImport(KilnfireEndpoint):
+    vessel_id: Annotated[int, Field(ge=1, le=9223372036854775807)] | None = None
+    expected_name: str | None = None
+
+
+class KilnfireVesselOption(Schema):
+    id: int
+    name: str
+    archived: bool
 
 
 class GlazeOut(GlazeInput):

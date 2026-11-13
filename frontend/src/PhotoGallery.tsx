@@ -52,7 +52,6 @@ function PhotoCard({
             fill={photo.cover ? "currentColor" : "none"}
             aria-hidden="true"
           />
-          {photo.cover && <span>{linkedVessel ? "Vessel key" : "Key"}</span>}
         </button>
         {!linkedVessel && (
           <button

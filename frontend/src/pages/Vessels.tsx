@@ -5,10 +5,19 @@ import {
   useParams,
   useSearchParams,
 } from "react-router-dom";
-import { Archive, Plus, RotateCcw, Trash2 } from "lucide-react";
+import {
+  Archive,
+  Download,
+  ExternalLink,
+  Plus,
+  RotateCcw,
+  Trash2,
+  Unlink,
+} from "lucide-react";
 import { Autocomplete } from "../Autocomplete";
 import { PhotoGallery } from "../PhotoGallery";
 import { Select } from "../Select";
+import { KilnfireImport } from "./KilnfireImport";
 import { SplitWorkspace } from "../SplitWorkspace";
 import { useListSort } from "../useListSort";
 import {
@@ -162,7 +171,9 @@ function ApplicationRow({
             {application.glaze_name}
           </Link>
           <div className="detail-code">
-            {[application.manufacturer_name, application.product_code].filter(Boolean).join(" · ")}
+            {[application.manufacturer_name, application.product_code]
+              .filter(Boolean)
+              .join(" · ")}
           </div>
         </div>
         <button
@@ -203,6 +214,7 @@ function VesselDetail({ id, onClose }: { id: string; onClose: () => void }) {
   const query = useApi<Vessel>(path);
   const [adding, setAdding] = useState(false);
   const archive = useSave();
+  const unlink = useSave();
   const deletion = useSave(() => {
     forgetDrafts(path);
     onClose();
@@ -293,7 +305,8 @@ function VesselDetail({ id, onClose }: { id: string; onClose: () => void }) {
           <section className="detail-section vessel-glazes" aria-label="Glazes">
             <div className="section-heading">
               <h3>
-                Glazes <span className="count">{vessel.applications.length}</span>
+                Glazes{" "}
+                <span className="count">{vessel.applications.length}</span>
               </h3>
               {!adding && (
                 <button
@@ -324,6 +337,46 @@ function VesselDetail({ id, onClose }: { id: string; onClose: () => void }) {
               />
             )}
           </section>
+          {vessel.kilnfire_link && (
+            <section
+              className="detail-section vessel-kilnfire"
+              aria-label="Kilnfire"
+            >
+              <div className="section-heading">
+                <h3>Kilnfire</h3>
+                <button
+                  type="button"
+                  className="button secondary"
+                  disabled={unlink.isPending}
+                  onClick={() =>
+                    unlink.mutate({
+                      path: `${path}/kilnfire`,
+                      method: "DELETE",
+                    })
+                  }
+                >
+                  <Unlink size={15} aria-hidden="true" />
+                  {unlink.isPending ? "Unlinking…" : "Unlink"}
+                </button>
+              </div>
+              {vessel.source_url && (
+                <div className="kilnfire-vessel-link">
+                  <span>{vessel.source_url}</span>
+                  <a
+                    className="icon-button"
+                    href={vessel.source_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Open kilnfire in a new tab"
+                    title="Open kilnfire in a new tab"
+                  >
+                    <ExternalLink size={16} aria-hidden="true" />
+                  </a>
+                </div>
+              )}
+              <ErrorMessage error={unlink.error} />
+            </section>
+          )}
         </>
       )}
     </DetailPane>
@@ -333,6 +386,11 @@ function VesselDetail({ id, onClose }: { id: string; onClose: () => void }) {
 const pageSize = 48;
 
 export function Vessels() {
+  const { id } = useParams();
+  return id === "import" ? <KilnfireImport /> : <VesselWorkspace />;
+}
+
+function VesselWorkspace() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
@@ -394,6 +452,15 @@ export function Vessels() {
           inputLabel="Search vessels"
           placeholder="Search by name, location, or #…"
         >
+          <Link
+            className="button secondary list-add-button"
+            aria-label="Import from Kilnfire"
+            title="Import from Kilnfire"
+            to="/vessels/import"
+          >
+            <Download size={18} aria-hidden="true" />
+            <span>Import</span>
+          </Link>
           <Link
             ref={addButton}
             className="button primary list-add-button"

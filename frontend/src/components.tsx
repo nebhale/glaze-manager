@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
   type ComponentProps,
+  type CSSProperties,
   type FormEvent,
   type ReactElement,
   type ReactNode,
@@ -23,7 +24,13 @@ import {
   X,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { grams, percent, type Jar, type Glaze, type VesselSummary } from "./api";
+import {
+  grams,
+  percent,
+  type Jar,
+  type Glaze,
+  type VesselSummary,
+} from "./api";
 
 export function JarIcon({ className = "" }: { className?: string }) {
   return (
@@ -197,10 +204,12 @@ export function Empty({
 }
 export function Submit({
   pending,
+  disabled = false,
   label = "Save changes",
   onCancel,
 }: {
   pending: boolean;
+  disabled?: boolean;
   label?: string;
   onCancel?: () => void;
 }) {
@@ -211,7 +220,7 @@ export function Submit({
           Cancel
         </button>
       )}
-      <button className="button primary" disabled={pending}>
+      <button className="button primary" disabled={pending || disabled}>
         {pending ? (
           "Saving…"
         ) : (
@@ -262,7 +271,7 @@ export function ListHeading({
             aria-label={toggleLabel}
             title={toggleLabel}
             aria-expanded={open}
-            onClick={() => open ? closeSearch() : setExpanded(true)}
+            onClick={() => (open ? closeSearch() : setExpanded(true))}
           >
             <Search size={18} />
           </button>
@@ -440,7 +449,11 @@ export function RemainingWeight({ jar }: { jar: Jar }) {
     <>
       {jar.low_stock && <span className="sr-only">Low stock: </span>}
       <span
-        className={jar.low_stock ? "remaining-weight low-stock-weight" : "remaining-weight"}
+        className={
+          jar.low_stock
+            ? "remaining-weight low-stock-weight"
+            : "remaining-weight"
+        }
         title={jar.low_stock ? "Low stock" : undefined}
       >
         {grams(jar.remaining_g)}
@@ -513,6 +526,11 @@ export function sortableHeadings(
   };
 }
 
+function idColumnStyle(ids: number[]): CSSProperties {
+  const characters = Math.max(3, ...ids.map((id) => String(id).length + 1));
+  return { "--stock-id-width": `${characters}ch` } as CSSProperties;
+}
+
 export function VesselList({
   vessels,
   selectedId,
@@ -529,7 +547,10 @@ export function VesselList({
   heading?: ReturnType<typeof sortableHeadings>;
 }) {
   return (
-    <table className="stock-table">
+    <table
+      className="stock-table"
+      style={idColumnStyle(vessels.map((vessel) => vessel.id))}
+    >
       <caption className="sr-only">Vessels</caption>
       <thead>
         <tr>
@@ -603,7 +624,10 @@ export function JarList({
       </th>
     ));
   return (
-    <table className="stock-table jar-table">
+    <table
+      className="stock-table jar-table"
+      style={idColumnStyle(jars.map((jar) => jar.number))}
+    >
       <caption className="sr-only">{caption}</caption>
       <thead>
         <tr>

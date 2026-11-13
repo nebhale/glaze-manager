@@ -8,6 +8,10 @@ export type GlazeRecord = components["schemas"]["GlazeDetailOut"];
 export type GlazeReference = components["schemas"]["GlazeReference"];
 export type Vessel = components["schemas"]["VesselOut"];
 export type VesselSummary = components["schemas"]["VesselSummary"];
+export type KilnfireStatus = components["schemas"]["KilnfireStatus"];
+export type KilnfireCandidate = components["schemas"]["KilnfireCandidate"];
+export type KilnfireVesselOption =
+  components["schemas"]["KilnfireVesselOption"];
 export type Application = components["schemas"]["ApplicationOut"];
 export type Manufacturer = components["schemas"]["ManufacturerOut"];
 export type Preset = components["schemas"]["PresetOut"];
@@ -47,11 +51,9 @@ export async function api<T>(
           : JSON.stringify(body),
   });
   if (!response.ok) {
-    const error = await response
-      .json()
-      .catch(() => ({
-        detail: "Unable to contact the studio. Please try again.",
-      }));
+    const error = await response.json().catch(() => ({
+      detail: "Unable to contact the studio. Please try again.",
+    }));
     const message = Array.isArray(error.detail)
       ? error.detail
           .map(
@@ -68,8 +70,12 @@ export async function api<T>(
   return response.status === 204 ? (undefined as T) : response.json();
 }
 
-export function useApi<T>(path: string) {
-  return useQuery<T>({ queryKey: [path], queryFn: () => api<T>(path) });
+export function useApi<T>(path: string, enabled = true) {
+  return useQuery<T>({
+    queryKey: [path],
+    queryFn: () => api<T>(path),
+    enabled,
+  });
 }
 
 export function useLiveUpdates(onStatus: (connected: boolean) => void) {

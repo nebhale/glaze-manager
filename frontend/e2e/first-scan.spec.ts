@@ -41,7 +41,9 @@ test("first scale reading sets full weight and later scans respect a manual over
   await expect(pane.getByText("Not used yet")).toBeVisible();
   const first = await create(path, firstBody);
   await expect(pane.locator(".big-weight")).toHaveText("500 g");
-  await expect(pane.locator(".stock-baseline")).toHaveText("of 500 g remaining");
+  await expect(pane.locator(".stock-baseline")).toHaveText(
+    "of 500 g remaining",
+  );
 
   const second = await create(path, {
     ...firstBody,
@@ -50,7 +52,9 @@ test("first scale reading sets full weight and later scans respect a manual over
     gross_g: 275,
   });
   await expect(pane.locator(".big-weight")).toHaveText("250 g");
-  await expect(pane.locator(".stock-baseline")).toHaveText("of 500 g remaining");
+  await expect(pane.locator(".stock-baseline")).toHaveText(
+    "of 500 g remaining",
+  );
   await expect(pane.locator(".last-used")).toHaveText(/Last used .* ago/);
   await expect(pane.getByRole("progressbar")).toHaveAttribute(
     "aria-valuenow",
@@ -65,11 +69,17 @@ test("first scale reading sets full weight and later scans respect a manual over
     page.getByRole("table", { name: "Jars" }).getByRole("progressbar"),
   ).toHaveAttribute("aria-valuenow", "50");
   await page.goto(`/containers/${jar.id}`);
-  await expect(page.getByText("Studio connected")).toBeAttached();
+  await expect(
+    page.getByRole("status", { name: "Studio connected", exact: true }),
+  ).toBeAttached();
   await expect(pane.locator(".big-weight")).toHaveText("250 g");
-  expect((await request.patch(`/api/v1/containers/${jar.id}`, {
-    data: { expected_revision: second.revision, full_weight_g: 1025 },
-  })).ok()).toBeTruthy();
+  expect(
+    (
+      await request.patch(`/api/v1/containers/${jar.id}`, {
+        data: { expected_revision: second.revision, full_weight_g: 1025 },
+      })
+    ).ok(),
+  ).toBeTruthy();
   await expect(pane.locator(".stock-baseline")).toContainText("1,000 g");
   const updated = await (
     await request.get(`/api/v1/containers/${jar.id}`)
@@ -81,7 +91,10 @@ test("first scale reading sets full weight and later scans respect a manual over
     gross_g: 225,
   });
   await expect(pane.locator(".big-weight")).toHaveText("200 g");
-  await expect(pane.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "20");
+  await expect(pane.getByRole("progressbar")).toHaveAttribute(
+    "aria-valuenow",
+    "20",
+  );
   expect(await create(path, firstBody)).toEqual(first);
   await page.reload();
   await expect(pane.locator(".big-weight")).toHaveText("200 g");

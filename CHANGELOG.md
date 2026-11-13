@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.8.0](https://github.com/nebhale/glaze-manager/releases/tag/v1.8.0) · 2026-11-13
+
+- Connect a Kilnfire studio with renewable session tokens, without storing login credentials. Compact connection status shows both the studio and Kilnfire.
+- Import Kilnfire pieces and their photos into new or existing vessels. Browse searchable image tiles newest first, archive unwanted candidates, and restore them later.
+- Imported vessels show a read-only Kilnfire link below Glazes. Unlinking or deleting a vessel returns its piece to the import candidates while retaining local photos when unlinking.
+- Choose key photos with star-only controls across glazes and vessels. ID columns expand to show their full numbers.
+- Includes remembered list sorting and the recent glaze picker and key-photo improvements.
+
 ## [1.7.1](https://github.com/nebhale/glaze-manager/releases/tag/v1.7.1) · 2026-11-12
 
 - Vessel and jar glaze pickers show the glaze name with a subdued product code to its right, matching the glaze list. The vessel picker no longer includes the manufacturer.

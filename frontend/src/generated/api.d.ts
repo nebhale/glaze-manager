@@ -591,6 +591,161 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/kilnfire": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Status */
+        get: operations["status_api_v1_kilnfire_get"];
+        /** Configure */
+        put: operations["configure_api_v1_kilnfire_put"];
+        post?: never;
+        /** Disconnect */
+        delete: operations["disconnect_api_v1_kilnfire_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kilnfire/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Login */
+        post: operations["login_api_v1_kilnfire_login_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kilnfire/check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Check */
+        post: operations["check_api_v1_kilnfire_check_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kilnfire/pieces/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Refresh */
+        post: operations["refresh_api_v1_kilnfire_pieces_refresh_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kilnfire/pieces": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Candidates */
+        get: operations["candidates_api_v1_kilnfire_pieces_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kilnfire/pieces/{piece_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Archive Piece */
+        patch: operations["archive_piece_api_v1_kilnfire_pieces__piece_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/kilnfire/vessel-options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Vessel Options */
+        get: operations["vessel_options_api_v1_kilnfire_vessel_options_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kilnfire/pieces/{piece_id}/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Import Piece */
+        post: operations["import_piece_api_v1_kilnfire_pieces__piece_id__import_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel_id}/kilnfire": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Unlink */
+        delete: operations["unlink_api_v1_vessels__vessel_id__kilnfire_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -940,6 +1095,89 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /** KilnfireArchive */
+        KilnfireArchive: {
+            /** Endpoint */
+            endpoint: string;
+            /** Archived */
+            archived: boolean;
+        };
+        /** KilnfireCandidate */
+        KilnfireCandidate: {
+            /** Piece Id */
+            piece_id: number;
+            /** Name */
+            name: string;
+            /** Firing Type */
+            firing_type: string | null;
+            /** Created At */
+            created_at: string | null;
+            /** Url */
+            url: string;
+            /** Thumbnail Url */
+            thumbnail_url: string | null;
+            /** Image Count */
+            image_count: number;
+            /** Archived */
+            archived: boolean;
+        };
+        /** KilnfireEndpoint */
+        KilnfireEndpoint: {
+            /** Endpoint */
+            endpoint: string;
+        };
+        /** KilnfireImport */
+        KilnfireImport: {
+            /** Endpoint */
+            endpoint: string;
+            /** Vessel Id */
+            vessel_id?: number | null;
+            /** Expected Name */
+            expected_name?: string | null;
+        };
+        /** KilnfireLink */
+        KilnfireLink: {
+            /** Endpoint */
+            endpoint: string;
+            /** Piece Id */
+            piece_id: number;
+        };
+        /** KilnfireLogin */
+        KilnfireLogin: {
+            /** Email */
+            email: string;
+            /**
+             * Password
+             * Format: password
+             */
+            password: string;
+        };
+        /** KilnfireRefresh */
+        KilnfireRefresh: {
+            /** Count */
+            count: number;
+        };
+        /** KilnfireStatus */
+        KilnfireStatus: {
+            /** Endpoint */
+            endpoint?: string | null;
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "not_configured" | "signed_out" | "connected" | "needs_login";
+            /** Checked At */
+            checked_at?: string | null;
+        };
+        /** KilnfireVesselOption */
+        KilnfireVesselOption: {
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+            /** Archived */
+            archived: boolean;
+        };
         /** LookupOut */
         LookupOut: {
             /** Uid */
@@ -1044,6 +1282,17 @@ export interface components {
         Page_GlazeOut_: {
             /** Items */
             items: components["schemas"]["GlazeOut"][];
+            /** Total */
+            total: number;
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+        };
+        /** Page[KilnfireCandidate] */
+        Page_KilnfireCandidate_: {
+            /** Items */
+            items: components["schemas"]["KilnfireCandidate"][];
             /** Total */
             total: number;
             /** Page */
@@ -1246,10 +1495,13 @@ export interface components {
             archived: boolean;
             /** Id */
             id: number;
+            /** Source Url */
+            readonly source_url?: string | null;
             /** Photos */
             photos: components["schemas"]["VesselPhotoOut"][];
             /** Applications */
             applications: components["schemas"]["ApplicationOut"][];
+            kilnfire_link?: components["schemas"]["KilnfireLink"] | null;
         };
         /** VesselPhotoOut */
         VesselPhotoOut: {
@@ -1276,6 +1528,8 @@ export interface components {
             archived: boolean;
             /** Id */
             id: number;
+            /** Source Url */
+            readonly source_url?: string | null;
             /** Photos */
             photos: components["schemas"]["VesselPhotoOut"][];
         };
@@ -3160,6 +3414,318 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+        };
+    };
+    status_api_v1_kilnfire_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KilnfireStatus"];
+                };
+            };
+        };
+    };
+    configure_api_v1_kilnfire_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["KilnfireEndpoint"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KilnfireStatus"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    disconnect_api_v1_kilnfire_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KilnfireStatus"];
+                };
+            };
+        };
+    };
+    login_api_v1_kilnfire_login_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["KilnfireLogin"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KilnfireStatus"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    check_api_v1_kilnfire_check_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KilnfireStatus"];
+                };
+            };
+        };
+    };
+    refresh_api_v1_kilnfire_pieces_refresh_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KilnfireRefresh"];
+                };
+            };
+        };
+    };
+    candidates_api_v1_kilnfire_pieces_get: {
+        parameters: {
+            query?: {
+                q?: string;
+                show_archived?: boolean;
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_KilnfireCandidate_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    archive_piece_api_v1_kilnfire_pieces__piece_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                piece_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["KilnfireArchive"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KilnfireCandidate"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    vessel_options_api_v1_kilnfire_vessel_options_get: {
+        parameters: {
+            query?: {
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KilnfireVesselOption"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    import_piece_api_v1_kilnfire_pieces__piece_id__import_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                piece_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["KilnfireImport"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VesselOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    unlink_api_v1_vessels__vessel_id__kilnfire_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VesselOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

@@ -101,6 +101,7 @@ class Vessel(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(200))
     location: Mapped[str | None]
+    source_url: Mapped[str | None]
     archived: Mapped[bool] = mapped_column(Boolean, default=False, server_default="0")
     photos: Mapped[list["VesselPhoto"]] = relationship(
         order_by=lambda: (VesselPhoto.cover.desc(), VesselPhoto.created_at, VesselPhoto.id),
@@ -142,6 +143,32 @@ class Setting(Base):
     id: Mapped[int] = mapped_column(primary_key=True, default=1)
     low_stock_threshold_mg: Mapped[int] = mapped_column(
         Integer, default=DEFAULT_LOW_STOCK_THRESHOLD_MG, server_default="150000"
+    )
+
+
+class KilnfireConnection(Base):
+    __tablename__ = "kilnfire_connection"
+    id: Mapped[int] = mapped_column(primary_key=True, default=1)
+    endpoint: Mapped[str]
+    # Only opaque authentication cookies are retained, never login credentials.
+    cookies: Mapped[str | None] = mapped_column(Text)
+    needs_login: Mapped[bool] = mapped_column(Boolean, default=False)
+    checked_at: Mapped[str | None]
+
+
+class KilnfirePiece(Base):
+    __tablename__ = "kilnfire_pieces"
+    endpoint: Mapped[str] = mapped_column(primary_key=True)
+    piece_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(Text)
+    firing_type: Mapped[str | None]
+    created_at: Mapped[str | None]
+    images: Mapped[str] = mapped_column(Text, default="[]")
+    # Preserve existing archive choices under the original column name.
+    hidden: Mapped[bool] = mapped_column(Boolean, default=False)
+    available: Mapped[bool] = mapped_column(Boolean, default=True)
+    vessel_id: Mapped[int | None] = mapped_column(
+        ForeignKey("vessels.id", ondelete="SET NULL"), unique=True, index=True
     )
 
 

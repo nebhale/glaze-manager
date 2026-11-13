@@ -30,7 +30,7 @@ def test_vessel_numbers_survive_renames_and_deletion_independently_of_jars(clien
     assert client.patch(f"{path}/1", json=edit).json()["id"] == 1
     assert client.patch(f"{path}/1", json={**edit, "changes": {"name": "Other"}}).status_code == 409
     assert client.get(path, params={"q": "#1"}).json()["items"] == [
-        {"id": 1, "name": "Small bowl", "location": None, "archived": False, "photos": []}
+        {"id": 1, "name": "Small bowl", "location": None, "source_url": None, "archived": False, "photos": []}
     ]
     assert (
         client.post("/api/v1/containers", json={"glaze_id": jar["glaze_id"]}).json()["number"] == 2
@@ -104,6 +104,7 @@ def test_existing_vessels_gain_location_and_archive_status(tmp_path):
     with TestClient(create_app(tmp_path)) as client:
         vessel = client.post("/api/v1/vessels", json={"name": "Original"}).json()
     with sqlite3.connect(tmp_path / "glaze.db") as db:
+        db.execute("ALTER TABLE vessels DROP COLUMN source_url")
         db.execute("ALTER TABLE vessels DROP COLUMN archived")
         db.execute("ALTER TABLE vessels DROP COLUMN location")
     path = f"/api/v1/vessels/{vessel['id']}"
@@ -154,6 +155,7 @@ def test_application_links_notes_and_shared_photos(client, catalog):
             "id": vessel["id"],
             "name": "Bowl",
             "location": None,
+            "source_url": None,
             "archived": True,
             "photos": [first, second],
         }

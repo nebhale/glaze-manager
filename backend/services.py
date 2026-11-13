@@ -98,7 +98,12 @@ def vessel_view(db, vessel):
         .where(m.GlazeApplication.vessel_id == vessel.id)
         .order_by(m.GlazeApplication.created_at, m.GlazeApplication.id)
     )
-    return {**vessel_summary(vessel), "applications": db.execute(query).mappings().all()}
+    link = db.scalar(select(m.KilnfirePiece).where(m.KilnfirePiece.vessel_id == vessel.id))
+    return {
+        **vessel_summary(vessel),
+        "applications": db.execute(query).mappings().all(),
+        "kilnfire_link": {"endpoint": link.endpoint, "piece_id": link.piece_id} if link else None,
+    }
 
 
 def manufacturer_name(db, glaze):
