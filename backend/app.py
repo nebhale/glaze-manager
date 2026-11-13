@@ -1026,16 +1026,32 @@ def create_app(data_dir: Path | None = None):
             return edit_photo(identifier, s.PhotoEdit(caption=values["caption"]), db)
         return photo_view(require(db, m.Photo, identifier))
 
-    @app.patch("/api/v1/photos/{identifier}", response_model=s.PhotoOut)
-    def edit_photo(identifier: str, body: s.PhotoEdit, db: DB):
-        photo = require(db, m.Photo, identifier)
+    def update_photo(db, photo, body, siblings):
         if "caption" in body.model_fields_set:
             photo.caption = body.caption
         if body.cover:
-            for sibling in db.scalars(select(m.Photo).where(m.Photo.glaze_id == photo.glaze_id)):
-                sibling.cover = sibling.id == identifier
+            for sibling in db.scalars(siblings):
+                sibling.cover = sibling.id == photo.id
         commit(db)
         return photo_view(photo)
+
+    @app.patch("/api/v1/photos/{identifier}", response_model=s.PhotoOut)
+    def edit_photo(identifier: str, body: s.PhotoEdit, db: DB):
+        photo = require(db, m.Photo, identifier)
+        return update_photo(
+            db, photo, body, select(m.Photo).where(m.Photo.glaze_id == photo.glaze_id)
+        )
+
+    @app.patch(
+        "/api/v1/vessels/{identifier}/photos/{photo_id}", response_model=s.VesselPhotoOut
+    )
+    def edit_vessel_photo(identifier: VesselId, photo_id: str, body: s.PhotoEdit, db: DB):
+        photo = require(db, m.VesselPhoto, photo_id)
+        if photo.vessel_id != identifier:
+            raise HTTPException(404, "Photo not found on this vessel.")
+        return update_photo(
+            db, photo, body, select(m.VesselPhoto).where(m.VesselPhoto.vessel_id == identifier)
+        )
 
     def remove_photo(db, photo, siblings):
         paths = [media / photo.filename, media / photo.thumbnail]

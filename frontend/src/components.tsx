@@ -364,7 +364,7 @@ function ArchiveMarker() {
 }
 
 function VesselThumb({ vessel }: { vessel: VesselSummary }) {
-  const photo = vessel.photos[0];
+  const photo = vessel.photos.find((photo) => photo.cover) || vessel.photos[0];
   return photo ? (
     <img
       className="glaze-thumb"

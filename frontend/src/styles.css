@@ -960,12 +960,29 @@ code {
   height: 100%;
   object-fit: cover;
 }
-.photo-tile .photo-delete {
+.photo-tile :is(.photo-key, .photo-delete) {
   position: absolute;
   top: 4px;
-  right: 4px;
   background: #fff;
   border: 1px solid var(--line);
+}
+.photo-tile .photo-delete {
+  right: 4px;
+}
+.photo-tile .photo-key {
+  left: 4px;
+  width: auto;
+  min-width: 30px;
+  gap: 4px;
+}
+.photo-key[aria-pressed="true"] {
+  color: var(--purple);
+  background: var(--lilac);
+}
+.photo-key span {
+  font-size: 11px;
+  font-weight: 550;
+  white-space: nowrap;
 }
 .photo-add-tile {
   display: flex;
@@ -1746,6 +1763,10 @@ code {
   }
   .photo-tile .photo-delete {
     width: 36px;
+    height: 36px;
+  }
+  .photo-tile .photo-key {
+    min-width: 36px;
     height: 36px;
   }
   .form-body {

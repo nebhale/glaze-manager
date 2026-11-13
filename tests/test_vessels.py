@@ -187,6 +187,43 @@ def test_application_links_notes_and_shared_photos(client, catalog):
     assert client.get("/api/v1/suggestions/application_note").json() == []
 
 
+def test_vessel_key_photo_is_scoped_to_its_owner_and_shared_in_glaze_views(client, catalog):
+    glaze_path = f"/api/v1/glazes/{catalog['glaze']['id']}"
+    glaze_photo = upload(client, f"{glaze_path}/photos", "blue")
+    vessel = client.post("/api/v1/vessels", json={"name": "Key photo bowl"}).json()
+    other = client.post("/api/v1/vessels", json={"name": "Other bowl"}).json()
+    path = f"/api/v1/vessels/{vessel['id']}"
+    other_path = f"/api/v1/vessels/{other['id']}"
+    first = upload(client, f"{path}/photos", "red")
+    second = upload(client, f"{path}/photos", "green")
+    other_photo = upload(client, f"{other_path}/photos", "purple")
+    client.post(f"{path}/applications", json={"glaze_id": catalog["glaze"]["id"]}).raise_for_status()
+
+    assert client.patch(f"{other_path}/photos/{second['id']}", json={"cover": True}).status_code == 404
+    assert client.patch(f"{path}/photos/{glaze_photo['id']}", json={"cover": True}).status_code == 404
+    assert client.patch(f"/api/v1/photos/{second['id']}", json={"cover": True}).status_code == 404
+    result = client.patch(
+        f"{path}/photos/{second['id']}", json={"cover": True, "caption": "Finished bowl"}
+    )
+    assert result.status_code == 200
+    selected = {**second, "cover": True, "caption": "Finished bowl"}
+    assert result.json() == selected
+    expected = [selected, {**first, "cover": False}]
+    assert client.get(path).json()["photos"] == expected
+    assert client.get("/api/v1/vessels", params={"q": "#1"}).json()["items"][0]["photos"] == expected
+    detail = client.get(glaze_path).json()
+    assert detail["photos"] == [glaze_photo]
+    assert detail["vessels"][0]["photos"] == expected
+    assert client.get(other_path).json()["photos"] == [other_photo]
+
+    client.patch(f"{path}/photos/{first['id']}", json={"caption": "Before firing"}).raise_for_status()
+    assert client.get(path).json()["photos"][0] == selected
+    assert client.delete(f"{path}/photos/{second['id']}").status_code == 204
+    fallback = [{**first, "cover": True, "caption": "Before firing"}]
+    assert client.get(path).json()["photos"] == fallback
+    assert client.get(glaze_path).json()["vessels"][0]["photos"] == fallback
+
+
 def test_delete_glaze_requires_unlinking_jars_and_vessels(client, catalog, jar):
     glaze = catalog["glaze"]
     path = f"/api/v1/glazes/{glaze['id']}"

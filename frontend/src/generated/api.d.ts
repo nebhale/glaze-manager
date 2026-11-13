@@ -570,7 +570,8 @@ export interface paths {
         delete: operations["delete_vessel_photo_api_v1_vessels__identifier__photos__photo_id__delete"];
         options?: never;
         head?: never;
-        patch?: never;
+        /** Edit Vessel Photo */
+        patch: operations["edit_vessel_photo_api_v1_vessels__identifier__photos__photo_id__patch"];
         trace?: never;
     };
     "/api/v1/events": {
@@ -3095,6 +3096,42 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    edit_vessel_photo_api_v1_vessels__identifier__photos__photo_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: number;
+                photo_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PhotoEdit"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VesselPhotoOut"];
+                };
             };
             /** @description Validation Error */
             422: {
