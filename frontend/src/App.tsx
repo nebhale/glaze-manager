@@ -11,6 +11,7 @@ import { Amphora, BookOpen, Settings2 } from "lucide-react";
 import { useLiveUpdates } from "./api";
 import { AutosaveStatus } from "./autosave";
 import { JarIcon } from "./components";
+import { ConnectionStatus } from "./ConnectionStatus";
 import { Inventory, Catalog, Settings, Vessels } from "./pages";
 
 function ManufacturerRedirect() {
@@ -70,10 +71,7 @@ export default function App() {
         </nav>
         <div className="header-status">
           <AutosaveStatus />
-          <span className={`connection ${connected ? "" : "offline"}`}>
-            <i />
-            {connected ? "Studio connected" : "Reconnecting…"}
-          </span>
+          <ConnectionStatus studioConnected={connected} />
         </div>
       </header>
       <main

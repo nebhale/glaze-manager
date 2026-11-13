@@ -48,13 +48,16 @@ export function Select({
   // well as aria-hidden so its controls cannot remain keyboard-accessible.
   useEffect(() => {
     if (!open) return;
+    // A native modal dialog already makes its background inert. Its menu
+    // must remain inside that dialog's top layer to accept focus and input.
+    if (trigger?.closest("dialog")) return;
     const root = document.getElementById("root");
     if (!root) return;
     root.inert = true;
     return () => {
       root.inert = false;
     };
-  }, [open]);
+  }, [open, trigger]);
   const errorId = useId();
   const selected = value ?? uncontrolledValue;
   const options = Children.toArray(children)
@@ -108,7 +111,9 @@ export function Select({
             <ChevronDown size={16} aria-hidden="true" />
           </SelectPrimitive.Icon>
         </SelectPrimitive.Trigger>
-        <SelectPrimitive.Portal>
+        <SelectPrimitive.Portal
+          container={trigger?.closest("dialog") ?? undefined}
+        >
           <SelectPrimitive.Content
             className="select-menu"
             position="popper"

@@ -25,6 +25,16 @@ test("vessels and inventory align their ID, thumbnail, and name", async ({
   const glaze = await create("glazes", { manufacturer_id: maker.id, name });
   await create("containers", { glaze_id: glaze.id });
   await create("vessels", { name });
+  // Exercise ID columns beyond the one-digit IDs in the test database.
+  await page.route(/\/api\/v1\/(containers|vessels)\?/, async (route) => {
+    const response = await route.fetch();
+    const body = await response.json();
+    const key = route.request().url().includes("/containers?")
+      ? "number"
+      : "id";
+    for (const item of body.items) item[key] = 123456;
+    await route.fulfill({ json: body });
+  });
 
   async function layout(path: string) {
     await page.goto(`${path}?q=${encodeURIComponent(name)}`);
@@ -36,7 +46,15 @@ test("vessels and inventory align their ID, thumbnail, and name", async ({
       const left = (node: Element) =>
         node.getBoundingClientRect().left -
         element.getBoundingClientRect().left;
+      const idText = document.createRange();
+      idText.selectNodeContents(cells[0]);
+      const idStyle = getComputedStyle(cells[0]);
       return {
+        idFits:
+          idText.getBoundingClientRect().width <=
+          cells[0].clientWidth -
+            parseFloat(idStyle.paddingLeft) -
+            parseFloat(idStyle.paddingRight),
         idWidth: headers[0].getBoundingClientRect().width,
         nameHeading: left(headers[1].querySelector("button")!),
         thumbnail: left(cells[1].querySelector(".glaze-thumb")!),
@@ -47,6 +65,7 @@ test("vessels and inventory align their ID, thumbnail, and name", async ({
     });
   }
   const inventory = await layout("/");
+  expect(inventory.idFits).toBe(true);
   expect(await layout("/vessels")).toEqual(inventory);
 });
 

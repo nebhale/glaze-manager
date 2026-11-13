@@ -1,6 +1,5 @@
 import asyncio
 import hashlib
-import io
 import json
 import logging
 import os
@@ -15,7 +14,6 @@ from fastapi import Depends, FastAPI, HTTPException, Query, Request, UploadFile
 from fastapi import Path as PathParam
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
-from PIL import Image, ImageOps, UnidentifiedImageError
 from pillow_heif import register_heif_opener
 from pydantic import ValidationError
 from sqlalchemy import delete, func, inspect, select, text
@@ -24,9 +22,25 @@ from sqlalchemy.orm import Session, selectinload
 
 from . import models as m
 from . import schemas as s
-from .database import Base, allow_unassigned_manufacturer, data_directory, make_engine, session_factory
+from .database import (
+    Base,
+    allow_unassigned_manufacturer,
+    data_directory,
+    make_engine,
+    session_factory,
+)
 from .device_options import option_page
-from .domain import DEFAULT_LOW_STOCK_THRESHOLD_MG, cents, grams, matches_cone, milligrams, normalize_uid, revision_check
+from .domain import (
+    DEFAULT_LOW_STOCK_THRESHOLD_MG,
+    cents,
+    grams,
+    matches_cone,
+    milligrams,
+    normalize_uid,
+    revision_check,
+)
+from .kilnfire_routes import install_kilnfire
+from .photos import encode_photo
 from .services import (
     Events,
     application_view,
@@ -80,6 +94,8 @@ def create_app(data_dir: Path | None = None):
                 connection.exec_driver_sql(
                     "ALTER TABLE vessels ADD COLUMN archived BOOLEAN NOT NULL DEFAULT 0"
                 )
+            if "source_url" not in vessel_columns:
+                connection.exec_driver_sql("ALTER TABLE vessels ADD COLUMN source_url VARCHAR")
         with sessions() as db:
             if db.get(m.Setting, 1) is None:
                 db.add(m.Setting(id=1))
@@ -87,7 +103,7 @@ def create_app(data_dir: Path | None = None):
         yield
         engine.dispose()
 
-    app = FastAPI(title="Glaze Manager", version="1.7.1", lifespan=lifespan)
+    app = FastAPI(title="Glaze Manager", version="1.8.0", lifespan=lifespan)
     app.state.engine = engine
     app.state.sessions = sessions
 
@@ -973,23 +989,13 @@ def create_app(data_dir: Path | None = None):
 
     def store_photo(db, file, photo, siblings):
         content = file.file.read(25 * 1024 * 1024 + 1)
-        if len(content) > 25 * 1024 * 1024:
-            raise HTTPException(413, "Choose a photo smaller than 25 MB.")
-        try:
-            original = Image.open(io.BytesIO(content))
-            if original.format not in {"JPEG", "PNG", "WEBP", "HEIF", "HEIC"}:
-                raise ValueError("Unsupported image format")
-            image = ImageOps.exif_transpose(original).convert("RGB")
-            image.thumbnail((3000, 3000))
-        except (UnidentifiedImageError, OSError, ValueError, Image.DecompressionBombError):
-            raise HTTPException(422, "Choose a valid JPEG, PNG, WebP, or HEIC photo.") from None
+        full, thumb = encode_photo(content)
         photo.id = str(uuid4())
         photo.filename, photo.thumbnail = f"{photo.id}.jpg", f"{photo.id}-thumb.jpg"
         photo.cover = db.scalar(siblings.limit(1)) is None
         try:
-            image.save(media / photo.filename, quality=88)
-            image.thumbnail((480, 480))
-            image.save(media / photo.thumbnail, quality=82)
+            (media / photo.filename).write_bytes(full)
+            (media / photo.thumbnail).write_bytes(thumb)
             db.add(photo)
             commit(db)
         except Exception:
@@ -1100,6 +1106,7 @@ def create_app(data_dir: Path | None = None):
             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
         )
 
+    install_kilnfire(app, sessions, media, events)
     app.mount("/media", StaticFiles(directory=media), name="media")
     frontend = Path(os.environ.get("GLAZE_FRONTEND_DIR", str(ROOT / "frontend" / "dist"))).resolve()
 

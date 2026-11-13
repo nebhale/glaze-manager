@@ -117,7 +117,10 @@ function operation(options: Options, value: string, baseline: string): Attempt {
             ...changes,
             expected_revision: current.revision,
           });
-          return readValue(result as unknown as Record<string, unknown>, options.field);
+          return readValue(
+            result as unknown as Record<string, unknown>,
+            options.field,
+          );
         } catch (error) {
           if (
             !(error instanceof ApiError) ||
@@ -149,7 +152,13 @@ function change(draft: Draft, value: string, nativeError = "") {
 }
 async function flush(draft: Draft) {
   clearTimeout(draft.timer);
-  if (drafts.get(draft.key) !== draft || draft.queued || draft.validation || draft.status === "error") return;
+  if (
+    drafts.get(draft.key) !== draft ||
+    draft.queued ||
+    draft.validation ||
+    draft.status === "error"
+  )
+    return;
   if (!draft.attempt && draft.value === draft.baseline) {
     draft.status = "idle";
     notify();
@@ -236,11 +245,12 @@ async function discard(draft: Draft) {
   }
   notify();
 }
-export function forgetDrafts(resource: string) {
+export function forgetDrafts(resource: string, fieldNames?: readonly string[]) {
   for (const [key, draft] of drafts) {
     if (
-      draft.options.resource === resource ||
-      draft.options.resource.startsWith(resource + "/")
+      (draft.options.resource === resource ||
+        draft.options.resource.startsWith(resource + "/")) &&
+      (!fieldNames || fieldNames.includes(draft.options.field))
     ) {
       clearTimeout(draft.timer);
       draft.status = "idle";

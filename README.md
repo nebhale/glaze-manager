@@ -9,13 +9,13 @@ Glaze Manager keeps a pottery studio’s glaze jars, shelf locations, and remain
 
 ## Quick start
 
-Run the published Linux image on an AMD64 or ARM64 host with Docker Compose. Download the [1.7.1 Compose file](https://raw.githubusercontent.com/nebhale/glaze-manager/v1.7.1/compose.yaml) into a directory for the studio, then run:
+Run the published Linux image on an AMD64 or ARM64 host with Docker Compose. Download the [1.8.0 Compose file](https://raw.githubusercontent.com/nebhale/glaze-manager/v1.8.0/compose.yaml) into a directory for the studio, then run:
 
 ```sh
 docker compose up -d
 ```
 
-Open [Glaze Manager](http://localhost:8000). The Compose file pins the image to `ghcr.io/nebhale/glaze-manager:1.7.1`. A named volume stores the SQLite database, glaze photos, and weight history between restarts.
+Open [Glaze Manager](http://localhost:8000). The Compose file pins the image to `ghcr.io/nebhale/glaze-manager:1.8.0`. A named volume stores the SQLite database, glaze photos, and weight history between restarts.
 
 The default address is loopback. To connect phones and scales, set `GLAZE_BIND_ADDRESS` to your server’s trusted LAN address and run Compose again. Anyone who can reach the app can change inventory. Restrict remote access to a VPN or an authenticated HTTPS proxy.
 
@@ -39,6 +39,14 @@ Open a glaze to see its reference photos alongside photos of the vessels that us
 **Archive** hides a vessel from the default list while keeping its photos and glaze history accessible. Turn on **Show archived** to find it and choose **Restore vessel** to return it to the active list.
 
 ![Vessel details with a test tile photo and its glaze applications](docs/images/vessels.png)
+
+## Import pieces from Kilnfire
+
+In **Settings → Kilnfire**, enter your studio address (for example, `https://marinpottery.kilnfire.com`) and sign in. Glaze Manager saves only the session and renewal tokens; it never saves your email or password. It renews the session when Kilnfire allows it and prompts you to sign in again when renewal fails. **Disconnect** removes the saved tokens while keeping existing imports and archived choices.
+
+Choose **Import** in **Vessels** to browse pieces as photo tiles. Items appear newest first. Use the header search to find a short description. An unassigned piece displays **Not assigned**. Import into a new vessel, or choose an existing vessel to update its name, add the Kilnfire photos, and set its read-only **Kilnfire** link. Existing photos, location, archive status, and glaze applications are preserved.
+
+Imported pieces disappear from the candidate list. **Archive** sets aside other items; use **Show archived** at the bottom and **Restore** to return them to the active list. The **Kilnfire** section below **Glazes** shows the piece URL and an **Unlink** action, which returns the piece to the candidates while keeping the vessel and photos. Deleting the vessel also releases the link. Each visit refreshes the member's piece list; importing a piece copies its photos locally without setting up ongoing synchronization.
 
 ## Run and integrate
 

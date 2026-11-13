@@ -1,20 +1,11 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  useApi,
-  type Manufacturer,
-  type Page,
-  type Preset,
-} from "../api";
-import {
-  AddButton,
-  ErrorMessage,
-  Loading,
-  PageHeading,
-} from "../components";
+import { useApi, type Manufacturer, type Page, type Preset } from "../api";
+import { AddButton, ErrorMessage, Loading, PageHeading } from "../components";
 import { InlineField } from "../autosave";
 import { ManufacturerFields } from "../editors";
 import { ManufacturerForm, PresetForm } from "../forms";
+import { KilnfireConnection } from "../KilnfireConnection";
 
 export function Settings() {
   const settings = useApi<{ low_stock_threshold_g: number }>("/settings");
@@ -41,6 +32,7 @@ export function Settings() {
       <PageHeading eyebrow="" title="Settings" />
       <ErrorMessage error={settings.error || presets.error} />
       <div className="settings-sections">
+        <KilnfireConnection />
         <section
           className="settings-section"
           aria-labelledby="inventory-settings-heading"
@@ -151,7 +143,9 @@ export function Settings() {
                     onDelete={() => {
                       if (hash === `#manufacturer-${manufacturer.id}`)
                         navigate("#manufacturers", { replace: true });
-                      document.getElementById("manufacturers")?.focus({ preventScroll: true });
+                      document
+                        .getElementById("manufacturers")
+                        ?.focus({ preventScroll: true });
                     }}
                   />
                 </div>

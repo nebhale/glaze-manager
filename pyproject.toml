@@ -1,6 +1,6 @@
 [project]
 name = "glaze-manager"
-version = "1.7.1"
+version = "1.8.0"
 description = "A small studio inventory for pottery glazes"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
@@ -13,10 +13,11 @@ dependencies = [
   "python-multipart>=0.0.20,<1",
   "pillow>=13,<14",
   "pillow-heif>=0.22,<2",
+  "httpx>=0.28,<1",
 ]
 
 [dependency-groups]
-dev = ["pytest>=8,<10", "httpx>=0.28,<1", "ruff>=0.9,<1"]
+dev = ["pytest>=8,<10", "ruff>=0.9,<1"]
 
 [build-system]
 requires = ["hatchling"]
