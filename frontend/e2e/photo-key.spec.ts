@@ -60,7 +60,7 @@ test("glazes and vessels keep separate key photos and use them in every thumbnai
     );
 
   await photo(vesselSecond.id).getByRole("button", {
-    name: `Use as key photo for ${vessel.name}`, exact: true,
+    name: `Use as vessel key photo for ${vessel.name}`, exact: true,
   }).click();
   await expect(photo(vesselSecond.id).getByRole("button")).toHaveAttribute("aria-pressed", "true");
   await expect(photo(vesselFirst.id).getByRole("button")).toHaveAttribute("aria-pressed", "false");

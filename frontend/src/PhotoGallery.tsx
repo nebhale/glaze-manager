@@ -18,7 +18,7 @@ function PhotoCard({
     ? `/vessels/${photo.vessel_id}/photos/${photo.id}`
     : `/photos/${photo.id}`;
   const keyLabel = linkedVessel
-    ? `Use as key photo for ${source}`
+    ? `Use as vessel key photo for ${source}`
     : "Use as key photo";
   return (
     <div className="photo-item" data-photo-id={photo.id}>
