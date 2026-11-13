@@ -1,0 +1,49 @@
+compose.yaml
+  s_b897f3cec87a68::t_bd90b43a27c7ac 3
+frontend/src/PhotoGallery.tsx
+  s_b897f3cec87a68::t_e2e6038d692986 35-54
+tests/test_photos.py
+  s_b897f3cec87a68::t_ff2c79081331c7 3,7-50
+  s_b897f3cec87a68::t_8911fb5935bb55 51-52
+tests/test_inventory.py
+  s_b897f3cec87a68::t_458e701e8e169f 319
+backend/app.py
+  s_b897f3cec87a68::t_458e701e8e169f 995,999-1000,1012,1020
+  s_b897f3cec87a68::t_bd90b43a27c7ac 106
+frontend/package.json
+  s_b897f3cec87a68::t_bd90b43a27c7ac 4
+pyproject.toml
+  s_b897f3cec87a68::t_bd90b43a27c7ac 3
+README.md
+  s_b897f3cec87a68::t_bd90b43a27c7ac 12,18,37
+openapi.json
+  s_b897f3cec87a68::t_02bb647ef4aa0d 5
+tests/test_vessels.py
+  s_b897f3cec87a68::t_458e701e8e169f 135,160
+frontend/e2e/photo-key.spec.ts
+  s_b897f3cec87a68::t_e2e6038d692986 113-118,145-153
+  s_b897f3cec87a68::t_d822d1b034d68e 4-49
+  s_b897f3cec87a68::t_458e701e8e169f 92-95
+CHANGELOG.md
+  s_b897f3cec87a68::t_bd90b43a27c7ac 3-7
+frontend/package-lock.json
+  s_b897f3cec87a68::t_f38a423dec21de 3,9
+uv.lock
+  s_b897f3cec87a68::t_0fdb07a6ebdc66 82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "71868c804de030c8c527a706b5b994adb298dfcb",
+  "prompts": {},
+  "sessions": {
+    "s_b897f3cec87a68": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1d69e-7cac-7ec3-9ca0-0e12b40dca22",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}
