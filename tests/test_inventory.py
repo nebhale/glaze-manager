@@ -316,7 +316,7 @@ def test_photos_cover_caption_and_validation(client, catalog):
     path = f"/api/v1/glazes/{catalog['glaze']['id']}/photos"
     first = client.post(path, files={"file": ("tile.png", buffer.getvalue(), "image/png")}).json()
     second = client.post(path, files={"file": ("tile.png", buffer.getvalue(), "image/png")}).json()
-    assert first["cover"] and not second["cover"]
+    assert first["cover"] and second["cover"]
     updated = client.patch(
         f"/api/v1/photos/{second['id']}", json={"caption": "Cone 6 on porcelain", "cover": True}
     ).json()

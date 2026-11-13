@@ -9,13 +9,13 @@ Glaze Manager keeps a pottery studio’s glaze jars, shelf locations, and remain
 
 ## Quick start
 
-Run the published Linux image on an AMD64 or ARM64 host with Docker Compose. Download the [1.8.0 Compose file](https://raw.githubusercontent.com/nebhale/glaze-manager/v1.8.0/compose.yaml) into a directory for the studio, then run:
+Run the published Linux image on an AMD64 or ARM64 host with Docker Compose. Download the [1.8.1 Compose file](https://raw.githubusercontent.com/nebhale/glaze-manager/v1.8.1/compose.yaml) into a directory for the studio, then run:
 
 ```sh
 docker compose up -d
 ```
 
-Open [Glaze Manager](http://localhost:8000). The Compose file pins the image to `ghcr.io/nebhale/glaze-manager:1.8.0`. A named volume stores the SQLite database, glaze photos, and weight history between restarts.
+Open [Glaze Manager](http://localhost:8000). The Compose file pins the image to `ghcr.io/nebhale/glaze-manager:1.8.1`. A named volume stores the SQLite database, glaze photos, and weight history between restarts.
 
 The default address is loopback. To connect phones and scales, set `GLAZE_BIND_ADDRESS` to your server’s trusted LAN address and run Compose again. Anyone who can reach the app can change inventory. Restrict remote access to a VPN or an authenticated HTTPS proxy.
 
@@ -34,7 +34,7 @@ Search by glaze, manufacturer, product line, code, location, or exact jar number
 
 In **Vessels**, enter a name and an optional location, then upload photos and select the glazes you used. Vessel locations suggest places used for vessels, and jar locations suggest places used for jars. Each piece gets a permanent vessel number starting at #1. Search by name, location, or number to find it again. Each glaze application has an optional note, with suggestions from earlier entries. You can record the same glaze several times to distinguish a base coat from a later application.
 
-Open a glaze to see its reference photos alongside photos of the vessels that use it. Select the vessel name beneath a photo to manage that photo, or use the vessel list below **Jars** to open a piece.
+Open a glaze to see its reference photos alongside photos of the vessels that use it. Each uploaded photo becomes the key photo for its glaze or vessel. Use the star on another photo to change the selection. Glaze pages show stars only on glaze photos; select the vessel name beneath a photo to choose its key photo on the vessel page, or use the vessel list below **Jars** to open a piece.
 
 **Archive** hides a vessel from the default list while keeping its photos and glaze history accessible. Turn on **Show archived** to find it and choose **Restore vessel** to return it to the active list.
 

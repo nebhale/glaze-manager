@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.8.1](https://github.com/nebhale/glaze-manager/releases/tag/v1.8.1) · 2026-11-13
+
+- Each newly uploaded glaze or vessel photo becomes its key photo, replacing the previous selection. Use the star to select another photo at any time.
+- Glaze pages offer key-photo controls only on glaze photos. Choose vessel key photos on the vessel page.
+
 ## [1.8.0](https://github.com/nebhale/glaze-manager/releases/tag/v1.8.0) · 2026-11-13
 
 - Connect a Kilnfire studio with renewable session tokens, without storing login credentials. Compact connection status shows both the studio and Kilnfire.

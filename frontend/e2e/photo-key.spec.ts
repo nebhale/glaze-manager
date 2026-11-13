@@ -1,6 +1,52 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
+for (const [resource, label] of [["glazes", "glaze"], ["vessels", "vessel"]]) {
+  test(`uploading a ${label} photo overrides the current key photo`, async ({ page, request }, testInfo) => {
+    const response = await request.post(`/api/v1/${resource}`, {
+      data: { name: `Upload ${label} ${testInfo.project.name} ${crypto.randomUUID()}` },
+    });
+    expect(response.ok()).toBeTruthy();
+    const owner = await response.json();
+    await page.goto(`/${resource}/${owner.id}`);
+    const photos = page.getByRole("region", { name: "Photos", exact: true });
+    const key = (id: string) => photos.locator(`[data-photo-id="${id}"]`).getByRole("button", {
+      name: "Use as key photo", exact: true,
+    });
+    async function upload() {
+      const saved = page.waitForResponse((result) =>
+        result.url().endsWith(`/api/v1/${resource}/${owner.id}/photos`) &&
+        result.request().method() === "POST",
+      );
+      await photos.getByLabel(`Add ${label} photo`, { exact: true }).setInputFiles({
+        name: "tile.png",
+        mimeType: "image/png",
+        buffer: Buffer.from(
+          "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAPElEQVR4nO3RQREAMAjEwKP+TdREXeCpEsKHX1bAMRPq3c6ms7oeDwz4A2QiZCJkImQiZCJkImQiZKKQD4HWAmQfdnzhAAAAAElFTkSuQmCC",
+          "base64",
+        ),
+      });
+      const result = await saved;
+      expect(result.status()).toBe(201);
+      const photo = await result.json();
+      await expect(key(photo.id)).toHaveAttribute("aria-pressed", "true");
+      return photo;
+    }
+    const first = await upload();
+    const second = await upload();
+    await expect(key(first.id)).toHaveAttribute("aria-pressed", "false");
+    await key(first.id).click();
+    await expect(key(first.id)).toHaveAttribute("aria-pressed", "true");
+    await expect(key(second.id)).toHaveAttribute("aria-pressed", "false");
+    const third = await upload();
+    await expect(key(first.id)).toHaveAttribute("aria-pressed", "false");
+    await expect(key(second.id)).toHaveAttribute("aria-pressed", "false");
+    await page.reload();
+    await expect(key(third.id)).toHaveAttribute("aria-pressed", "true");
+    await expect(photos.getByRole("button", { name: "Use as key photo", pressed: true })).toHaveCount(1);
+  });
+}
+
 test("glazes and vessels keep separate key photos and use them in every thumbnail", async ({
   page,
   request,
@@ -43,6 +89,10 @@ test("glazes and vessels keep separate key photos and use them in every thumbnai
 
   await page.goto(`/glazes/${glaze.id}${query}`);
   await expect(photos.getByRole("img")).toHaveCount(4);
+  await expect(glazeThumb).toHaveAttribute("src", glazeSecond.thumbnail_url);
+  await photo(glazeFirst.id).getByRole("button", {
+    name: "Use as key photo", exact: true,
+  }).click();
   await expect(glazeThumb).toHaveAttribute("src", glazeFirst.thumbnail_url);
   await photo(glazeSecond.id).getByRole("button", {
     name: "Use as key photo", exact: true,
@@ -59,12 +109,13 @@ test("glazes and vessels keep separate key photos and use them in every thumbnai
       "src", glazeSecond.thumbnail_url,
     );
 
-  await photo(vesselSecond.id).getByRole("button", {
-    name: `Use as vessel key photo for ${vessel.name}`, exact: true,
-  }).click();
-  await expect(photo(vesselSecond.id).getByRole("button")).toHaveAttribute("aria-pressed", "true");
-  await expect(photo(vesselFirst.id).getByRole("button")).toHaveAttribute("aria-pressed", "false");
   await expect(related.locator("img.glaze-thumb")).toHaveAttribute("src", vesselSecond.thumbnail_url);
+  await expect(photos.getByRole("button", { name: "Use as key photo", exact: true })).toHaveCount(2);
+  await expect(photo(vesselFirst.id).getByRole("button")).toHaveCount(0);
+  await expect(photo(vesselSecond.id).getByRole("button")).toHaveCount(0);
+  await expect(photo(vesselFirst.id).getByRole("link", { name: vessel.name, exact: true })).toHaveAttribute(
+    "href", `/vessels/${vessel.id}`,
+  );
   await expect(glazeThumb).toHaveAttribute("src", glazeSecond.thumbnail_url);
   await page.reload();
   await expect(glazeThumb).toHaveAttribute("src", glazeSecond.thumbnail_url);
@@ -91,6 +142,15 @@ test("glazes and vessels keep separate key photos and use them in every thumbnai
     "src", vesselSecond.thumbnail_url,
   );
   await page.locator(`#vessel-${vessel.id}`).click();
+  await photo(vesselFirst.id).getByRole("button", {
+    name: "Use as key photo", exact: true,
+  }).click();
+  await expect(photo(vesselFirst.id).getByRole("button", {
+    name: "Use as key photo", exact: true,
+  })).toHaveAttribute("aria-pressed", "true");
+  await photo(vesselSecond.id).getByRole("button", {
+    name: "Use as key photo", exact: true,
+  }).click();
   await expect(photo(vesselSecond.id).getByRole("button", {
     name: "Use as key photo", exact: true,
   })).toHaveAttribute("aria-pressed", "true");

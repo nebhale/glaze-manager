@@ -132,7 +132,7 @@ def test_application_links_notes_and_shared_photos(client, catalog):
     direct = upload(client, f"{glaze_path}/photos", "blue")
     first = upload(client, f"{vessel_path}/photos", "red")
     second = upload(client, f"{vessel_path}/photos", "green")
-    assert first["cover"] and not second["cover"]
+    assert first["cover"] and second["cover"]
     assert client.get(glaze_path).json()["vessels"] == []
 
     base = client.post(apps, json={"glaze_id": glaze_id, "application_note": "3 coats"}).json()
@@ -157,7 +157,7 @@ def test_application_links_notes_and_shared_photos(client, catalog):
             "location": None,
             "source_url": None,
             "archived": True,
-            "photos": [first, second],
+            "photos": [second, {**first, "cover": False}],
         }
     ]
     assert client.delete(f"/api/v1/photos/{first['id']}").status_code == 404

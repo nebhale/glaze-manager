@@ -17,9 +17,6 @@ function PhotoCard({
   const resource = "vessel_id" in photo
     ? `/vessels/${photo.vessel_id}/photos/${photo.id}`
     : `/photos/${photo.id}`;
-  const keyLabel = linkedVessel
-    ? `Use as vessel key photo for ${source}`
-    : "Use as key photo";
   return (
     <div className="photo-item" data-photo-id={photo.id}>
       <div className="photo-tile">
@@ -35,24 +32,26 @@ function PhotoCard({
             loading="lazy"
           />
         </a>
-        <button
-          type="button"
-          className="icon-button photo-key"
-          aria-label={keyLabel}
-          aria-pressed={photo.cover}
-          title={photo.cover ? `Key photo for ${source}` : keyLabel}
-          disabled={save.isPending}
-          onClick={() => {
-            if (!photo.cover)
-              save.mutate({ path: resource, method: "PATCH", body: { cover: true } });
-          }}
-        >
-          <Star
-            size={15}
-            fill={photo.cover ? "currentColor" : "none"}
-            aria-hidden="true"
-          />
-        </button>
+        {!linkedVessel && (
+          <button
+            type="button"
+            className="icon-button photo-key"
+            aria-label="Use as key photo"
+            aria-pressed={photo.cover}
+            title={photo.cover ? `Key photo for ${source}` : "Use as key photo"}
+            disabled={save.isPending}
+            onClick={() => {
+              if (!photo.cover)
+                save.mutate({ path: resource, method: "PATCH", body: { cover: true } });
+            }}
+          >
+            <Star
+              size={15}
+              fill={photo.cover ? "currentColor" : "none"}
+              aria-hidden="true"
+            />
+          </button>
+        )}
         {!linkedVessel && (
           <button
             type="button"
