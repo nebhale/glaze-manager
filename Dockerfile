@@ -5,8 +5,8 @@ RUN npm ci
 COPY frontend/ ./
 RUN npm run build
 
-FROM ghcr.io/astral-sh/uv:0.13.6 AS uv
-FROM python:3.13-slim-bookworm
+FROM ghcr.io/astral-sh/uv:0.13.7 AS uv
+FROM python:3.15-slim-bookworm
 COPY --from=uv /uv /usr/local/bin/uv
 WORKDIR /app
 ENV UV_COMPILE_BYTECODE=1 UV_PYTHON_DOWNLOADS=never \
