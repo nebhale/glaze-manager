@@ -194,9 +194,12 @@ def test_manually_selected_device_jar(client, catalog):
     assert client.post(path, json={**body, "request_id": "manual-device-02"}).status_code == 409
 
 
-def test_new_glaze_in_atomic_setup(client, catalog):
+@pytest.mark.parametrize("viscosity", [None, "45 seconds (Zahn #2)"])
+def test_new_glaze_in_atomic_setup(client, catalog, viscosity):
     body = setup_body(catalog)
     body["new_glaze"] = {"name": "Kiln test", "manufacturer_id": catalog["manufacturer"]["id"]}
+    if viscosity is not None:
+        body["new_glaze"]["viscosity"] = viscosity
     assert client.post("/api/v1/device/jar-setups", json=body).status_code == 422
     del body["glaze_id"]
     path = "/api/v1/device/jar-setups"
@@ -206,3 +209,8 @@ def test_new_glaze_in_atomic_setup(client, catalog):
     assert saved.status_code == 200
     assert client.post(path, json=body).json() == saved.json()
     assert len(client.get("/api/v1/device/options/glazes?q=Kiln").json()["items"]) == 1
+    jar = client.get(f"/api/v1/containers/{saved.json()['container_id']}").json()
+    assert jar["glaze"]["viscosity"] == viscosity
+    options = client.get("/api/v1/device/options/viscosities").json()
+    expected = [] if viscosity is None else [{"value": viscosity, "label": viscosity, "code": None}]
+    assert options == {"items": expected, "next_offset": None}

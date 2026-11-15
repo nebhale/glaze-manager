@@ -279,19 +279,20 @@ def test_filters_and_cone_ordering(client, catalog, jar):
     assert client.get("/api/v1/suggestions/cone").json() == ["5/6", "low fire"]
 
 
-def test_glaze_sort_precedes_pagination(client, catalog):
+@pytest.mark.parametrize("field", ["product_line", "viscosity"])
+def test_glaze_sort_precedes_pagination(client, catalog, field):
     for name, line in [("amber", "Satin"), ("Copper", "satin"), ("Pearl", "Crystal")]:
         response = client.post(
             "/api/v1/glazes",
             json={
                 "manufacturer_id": catalog["manufacturer"]["id"],
                 "name": name,
-                "product_line": line,
+                field: line,
             },
         )
         assert response.status_code == 201
 
-    # Blue Rutile from the fixture has no product line and sorts last in both directions.
+    # Blue Rutile from the fixture has no value and sorts last in both directions.
     for descending, expected in [
         (False, ["Pearl", "amber", "Copper", "Blue Rutile"]),
         (True, ["amber", "Copper", "Pearl", "Blue Rutile"]),
@@ -299,7 +300,7 @@ def test_glaze_sort_precedes_pagination(client, catalog):
         names = []
         for page in (1, 2):
             params = {
-                "sort": "product_line",
+                "sort": field,
                 "descending": descending,
                 "page_size": 2,
                 "page": page,

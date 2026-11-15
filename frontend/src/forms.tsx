@@ -102,6 +102,9 @@ export function GlazeForm({ done }: { done: () => void }) {
         <Field label="Cone">
           <Autocomplete source="cone" name="cone" maxLength={200} />
         </Field>
+        <Field label="Viscosity">
+          <Autocomplete source="viscosity" name="viscosity" maxLength={200} />
+        </Field>
         <Field label="Classification">
           <Select name="classification" defaultValue="">
             <option value="">Not set</option>

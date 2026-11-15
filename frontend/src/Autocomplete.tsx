@@ -14,6 +14,7 @@ const suggestionLabels = {
   location: "Location",
   vessel_location: "Location",
   cone: "Cone",
+  viscosity: "Viscosity",
   application_note: "Application note",
 };
 export type SuggestionField = keyof typeof suggestionLabels;

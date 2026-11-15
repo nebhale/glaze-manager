@@ -36,7 +36,7 @@ export function Catalog() {
   const { sort, descending } = useListSort(
     "glazes",
     params,
-    ["name", "product_line"],
+    ["name", "viscosity"],
     "name",
   );
   const [adding, setAdding] = useState(false);
@@ -115,9 +115,9 @@ export function Catalog() {
                 <tr>
                   {heading("name", "Name")}
                   {heading(
-                    "product_line",
-                    "Product Line",
-                    "catalog-product-line",
+                    "viscosity",
+                    "Viscosity",
+                    "catalog-viscosity",
                   )}
                 </tr>
               </thead>
@@ -156,10 +156,10 @@ export function Catalog() {
                       </Link>
                     </td>
                     <td
-                      className="catalog-product-line"
-                      title={record.product_line ?? undefined}
+                      className="catalog-viscosity"
+                      title={record.viscosity ?? undefined}
                     >
-                      {record.product_line ?? ""}
+                      {record.viscosity ?? ""}
                     </td>
                   </tr>
                 ))}

@@ -11,11 +11,12 @@ def test_suggestions_exclude_empty_values_and_deduplicate_case(client, catalog):
                     manufacturer_id=catalog["manufacturer"]["id"],
                     name=f"Glaze {index}",
                     product_line=value,
+                    viscosity=value,
                 )
             )
             db.add(m.Container(number=index + 1, glaze_id=catalog["glaze"]["id"], location=value))
         db.commit()
-    for field in ("product_line", "location"):
+    for field in ("product_line", "viscosity", "location"):
         response = client.get(f"/api/v1/suggestions/{field}")
         assert response.status_code == 200
         assert response.json() == ["Celadon", "Pottery Choice"]

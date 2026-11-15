@@ -82,6 +82,9 @@ def create_app(data_dir: Path | None = None):
         with engine.begin() as connection:
             connection.exec_driver_sql("BEGIN IMMEDIATE")
             Base.metadata.create_all(connection)
+            glaze_columns = {column["name"] for column in inspect(connection).get_columns("glazes")}
+            if "viscosity" not in glaze_columns:
+                connection.exec_driver_sql("ALTER TABLE glazes ADD COLUMN viscosity VARCHAR")
             columns = inspect(connection).get_columns("containers")
             if not any(column["name"] == "cost_cents" for column in columns):
                 connection.exec_driver_sql("ALTER TABLE containers ADD COLUMN cost_cents INTEGER")
@@ -158,7 +161,9 @@ def create_app(data_dir: Path | None = None):
 
     @app.get("/api/v1/suggestions/{field}", response_model=list[str])
     def suggestions(
-        field: Literal["product_line", "location", "vessel_location", "cone", "application_note"],
+        field: Literal[
+            "product_line", "location", "vessel_location", "cone", "viscosity", "application_note"
+        ],
         db: DB,
     ):
         column = {
@@ -166,6 +171,7 @@ def create_app(data_dir: Path | None = None):
             "location": m.Container.location,
             "vessel_location": m.Vessel.location,
             "cone": m.Glaze.cone,
+            "viscosity": m.Glaze.viscosity,
             "application_note": m.GlazeApplication.application_note,
         }[field]
         # Include historical values from this field and preserve the stored spelling.
@@ -230,7 +236,7 @@ def create_app(data_dir: Path | None = None):
         db: DB,
         q: str = "",
         manufacturer_id: str | None = None,
-        sort: Literal["name", "product_line"] = "name",
+        sort: Literal["name", "product_line", "viscosity"] = "name",
         descending: bool = False,
         number: int = Query(1, alias="page", ge=1),
         size: int = Query(100, alias="page_size", ge=1, le=1000),
@@ -252,6 +258,7 @@ def create_app(data_dir: Path | None = None):
                     "manufacturer_name",
                     "product_code",
                     "product_line",
+                    "viscosity",
                 )
             ).casefold()
         ]
@@ -259,13 +266,13 @@ def create_app(data_dir: Path | None = None):
             key=lambda glaze: (glaze["name"].casefold(), glaze["id"]),
             reverse=sort == "name" and descending,
         )
-        if sort == "product_line":
-            with_line = sorted(
-                (glaze for glaze in result if glaze["product_line"]),
-                key=lambda glaze: glaze["product_line"].casefold(),
+        if sort != "name":
+            with_value = sorted(
+                (glaze for glaze in result if glaze[sort]),
+                key=lambda glaze: glaze[sort].casefold(),
                 reverse=descending,
             )
-            result = with_line + [glaze for glaze in result if not glaze["product_line"]]
+            result = with_value + [glaze for glaze in result if not glaze[sort]]
         return page(result, number, size)
 
     @app.get("/api/v1/glaze-options", response_model=list[s.GlazeReference])
@@ -779,7 +786,10 @@ def create_app(data_dir: Path | None = None):
 
     @app.get("/api/v1/device/options/{kind}", response_model=s.DeviceOptions)
     def device_options(
-        kind: Literal["manufacturers", "glazes", "presets", "locations", "cones", "product-lines", "jars", "unlinked-jars"],
+        kind: Literal[
+            "manufacturers", "glazes", "presets", "locations", "cones", "viscosities",
+            "product-lines", "jars", "unlinked-jars",
+        ],
         db: DB,
         manufacturer_id: str | None = None,
         q: str = "",
@@ -837,8 +847,13 @@ def create_app(data_dir: Path | None = None):
                 {"value": str(number), "label": caption, "code": None}
                 for number, caption in db.execute(stmt.offset(offset).execution_options(yield_per=32))
             )
-        elif kind in {"locations", "cones", "product-lines"}:
-            field = {"locations": "location", "cones": "cone", "product-lines": "product_line"}[kind]
+        elif kind in {"locations", "cones", "viscosities", "product-lines"}:
+            field = {
+                "locations": "location",
+                "cones": "cone",
+                "viscosities": "viscosity",
+                "product-lines": "product_line",
+            }[kind]
             options = (
                 {"value": value, "label": value, "code": None}
                 for value in suggestions(field, db)

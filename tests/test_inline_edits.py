@@ -24,6 +24,7 @@ def test_unrelated_glaze_edits_merge_and_stale_same_field_conflicts(client, cata
         ({"name": None}, {"name": "Blue Rutile"}),
         ({"name": "  "}, {"name": "Blue Rutile"}),
         ({"cone": "x" * 201}, {"cone": "5/6"}),
+        ({"viscosity": "x" * 201}, {"viscosity": None}),
         ({"product_url": "javascript:alert(1)"}, {"product_url": None}),
         ({"low_stock_threshold_g": 100}, {"low_stock_threshold_g": None}),
         ({"id": "new"}, {"id": "old"}),

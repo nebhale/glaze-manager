@@ -57,6 +57,7 @@ test("shared fields align between create and detail", async ({
         "Name",
         "Product code",
         "Cone",
+        "Viscosity",
         "Classification",
         "Manufacturer",
         "Product line",

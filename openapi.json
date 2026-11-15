@@ -36,6 +36,7 @@
                 "location",
                 "vessel_location",
                 "cone",
+                "viscosity",
                 "application_note"
               ],
               "type": "string",
@@ -393,7 +394,8 @@
             "schema": {
               "enum": [
                 "name",
-                "product_line"
+                "product_line",
+                "viscosity"
               ],
               "type": "string",
               "default": "name",
@@ -1910,6 +1912,7 @@
                 "presets",
                 "locations",
                 "cones",
+                "viscosities",
                 "product-lines",
                 "jars",
                 "unlinked-jars"
@@ -4222,6 +4225,19 @@
             ],
             "title": "Cone"
           },
+          "viscosity": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Viscosity"
+          },
           "classification": {
             "anyOf": [
               {
@@ -4360,6 +4376,19 @@
             ],
             "title": "Cone"
           },
+          "viscosity": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Viscosity"
+          },
           "classification": {
             "anyOf": [
               {
@@ -4464,6 +4493,19 @@
               }
             ],
             "title": "Cone"
+          },
+          "viscosity": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Viscosity"
           },
           "classification": {
             "anyOf": [

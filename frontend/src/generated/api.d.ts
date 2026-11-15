@@ -1020,6 +1020,8 @@ export interface components {
             product_line?: string | null;
             /** Cone */
             cone?: string | null;
+            /** Viscosity */
+            viscosity?: string | null;
             /** Classification */
             classification?: ("glaze" | "underglaze" | "other") | null;
             /** Product Url */
@@ -1047,6 +1049,8 @@ export interface components {
             product_line?: string | null;
             /** Cone */
             cone?: string | null;
+            /** Viscosity */
+            viscosity?: string | null;
             /** Classification */
             classification?: ("glaze" | "underglaze" | "other") | null;
             /** Product Url */
@@ -1066,6 +1070,8 @@ export interface components {
             product_line?: string | null;
             /** Cone */
             cone?: string | null;
+            /** Viscosity */
+            viscosity?: string | null;
             /** Classification */
             classification?: ("glaze" | "underglaze" | "other") | null;
             /** Product Url */
@@ -1574,7 +1580,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                field: "product_line" | "location" | "vessel_location" | "cone" | "application_note";
+                field: "product_line" | "location" | "vessel_location" | "cone" | "viscosity" | "application_note";
             };
             cookie?: never;
         };
@@ -1821,7 +1827,7 @@ export interface operations {
             query?: {
                 q?: string;
                 manufacturer_id?: string | null;
-                sort?: "name" | "product_line";
+                sort?: "name" | "product_line" | "viscosity";
                 descending?: boolean;
                 page?: number;
                 page_size?: number;
@@ -2833,7 +2839,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                kind: "manufacturers" | "glazes" | "presets" | "locations" | "cones" | "product-lines" | "jars" | "unlinked-jars";
+                kind: "manufacturers" | "glazes" | "presets" | "locations" | "cones" | "viscosities" | "product-lines" | "jars" | "unlinked-jars";
             };
             cookie?: never;
         };

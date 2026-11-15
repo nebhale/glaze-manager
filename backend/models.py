@@ -33,6 +33,7 @@ class Glaze(Base):
     product_code: Mapped[str | None]
     product_line: Mapped[str | None]
     cone: Mapped[str | None]
+    viscosity: Mapped[str | None]
     classification: Mapped[str | None]
     product_url: Mapped[str | None]
     notes: Mapped[str | None] = mapped_column(Text)
