@@ -106,7 +106,7 @@ def create_app(data_dir: Path | None = None):
         yield
         engine.dispose()
 
-    app = FastAPI(title="Glaze Manager", version="1.8.1", lifespan=lifespan)
+    app = FastAPI(title="Glaze Manager", version="1.9.0", lifespan=lifespan)
     app.state.engine = engine
     app.state.sessions = sessions
 

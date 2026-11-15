@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.9.0](https://github.com/nebhale/glaze-manager/releases/tag/v1.9.0) · 2026-11-15
+
+- Record optional viscosity as free text between Cone and Classification when creating or editing a glaze. Instant autocomplete suggests saved values.
+- Show viscosity in place of Product Line in the Glazes list, with sorting and search support.
+- Let scales suggest viscosity values and include optional viscosity when creating a glaze and jar together. Existing glazes start with viscosity unset.
+
 ## [1.8.1](https://github.com/nebhale/glaze-manager/releases/tag/v1.8.1) · 2026-11-13
 
 - Each newly uploaded glaze or vessel photo becomes its key photo, replacing the previous selection. Use the star to select another photo at any time.
