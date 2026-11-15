@@ -1,0 +1,35 @@
+README.md
+  s_ed24279187ab8c::t_b450dfc2ab3978 12,18
+openapi.json
+  s_ed24279187ab8c::t_8143044e0dc8b4 5
+frontend/package.json
+  s_ed24279187ab8c::t_b450dfc2ab3978 4
+CHANGELOG.md
+  s_ed24279187ab8c::t_b450dfc2ab3978 3-8
+backend/app.py
+  s_ed24279187ab8c::t_b450dfc2ab3978 109
+pyproject.toml
+  s_ed24279187ab8c::t_b450dfc2ab3978 3
+compose.yaml
+  s_ed24279187ab8c::t_b450dfc2ab3978 3
+frontend/package-lock.json
+  s_ed24279187ab8c::t_3ddc39b296cb94 3,9
+uv.lock
+  s_ed24279187ab8c::t_c6cfd890a9ad90 82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a6f64ac87b3ef637e2dddcb7ad159bd5cb75462c",
+  "prompts": {},
+  "sessions": {
+    "s_ed24279187ab8c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1df63-ea4e-7b81-8811-72de080570b9",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}
