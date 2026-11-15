@@ -7,14 +7,14 @@ test("each list remembers its order across navigation and refreshes, with explic
   const prefix = `Sort preference ${crypto.randomUUID()}`;
   const names = (...suffixes: string[]) =>
     suffixes.map((suffix) => `${prefix} ${suffix}`);
-  for (const [suffix, product_line, location] of [
-    ["Copper", "Matte", "Gallery"],
-    ["Amber", "Satin", "Studio"],
-    ["Blue", "Gloss", "Rack"],
+  for (const [suffix, viscosity, location] of [
+    ["Copper", "Medium", "Gallery"],
+    ["Amber", "Thick", "Studio"],
+    ["Blue", "Fluid", "Rack"],
   ]) {
     const name = `${prefix} ${suffix}`;
     const response = await request.post("/api/v1/glazes", {
-      data: { name, product_line },
+      data: { name, viscosity },
     });
     expect(response.ok()).toBeTruthy();
     const glaze = await response.json();
@@ -44,7 +44,7 @@ test("each list remembers its order across navigation and refreshes, with explic
       defaultColumn: "Name",
       defaultSort: "name",
       defaultNames: names("Amber", "Blue", "Copper"),
-      column: "Product Line",
+      column: "Viscosity",
       sortedNames: names("Amber", "Copper", "Blue"),
     },
     {

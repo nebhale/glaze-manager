@@ -158,21 +158,21 @@ test("glaze headings sort the filtered list and keep its order through detail na
   const maker = await create(request, "/manufacturers", {
     name: `Sort studio ${crypto.randomUUID()}`,
   });
-  for (const [name, product_line] of [
-    ["Copper", "Matte"],
-    ["amber", "Satin"],
+  for (const [name, viscosity] of [
+    ["Copper", "Fluid"],
+    ["amber", "Thick"],
     ["Blue", null],
   ]) {
     await create(request, "/glazes", {
       manufacturer_id: maker.id,
       name,
-      product_line,
+      viscosity,
     });
   }
   await page.goto(`/catalog?q=${encodeURIComponent(maker.name)}`);
   const list = page.getByRole("region", { name: "Glazes", exact: true });
   const name = list.getByRole("columnheader", { name: "Name", exact: true });
-  const line = list.getByRole("columnheader", { name: "Product Line" });
+  const viscosity = list.getByRole("columnheader", { name: "Viscosity" });
   const names = list.getByRole("link");
   await expect(name).toHaveAttribute("aria-sort", "ascending");
   await expect(names).toHaveText(["amber", "Blue", "Copper"]);
@@ -180,10 +180,10 @@ test("glaze headings sort the filtered list and keep its order through detail na
   await expect(name).toHaveAttribute("aria-sort", "descending");
   await expect(names).toHaveText(["Copper", "Blue", "amber"]);
   await expect(name.getByRole("button")).toBeFocused();
-  await line.getByRole("button").click();
-  await expect(line).toHaveAttribute("aria-sort", "ascending");
+  await viscosity.getByRole("button").click();
+  await expect(viscosity).toHaveAttribute("aria-sort", "ascending");
   await expect(names).toHaveText(["Copper", "amber", "Blue"]);
-  await line.getByRole("button").click();
+  await viscosity.getByRole("button").click();
   await expect(names).toHaveText(["amber", "Copper", "Blue"]);
   await names.first().click();
   await page.reload();
@@ -194,7 +194,7 @@ test("glaze headings sort the filtered list and keep its order through detail na
     })
     .click();
   await expect(page.getByLabel("Search catalog")).toHaveValue(maker.name);
-  await expect(line).toHaveAttribute("aria-sort", "descending");
+  await expect(viscosity).toHaveAttribute("aria-sort", "descending");
   await expect(names).toHaveText(["amber", "Copper", "Blue"]);
 });
 

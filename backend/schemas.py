@@ -70,6 +70,7 @@ class GlazeInput(Schema):
     product_code: Name | None = None
     product_line: Name | None = None
     cone: Name | None = None
+    viscosity: Name | None = None
     classification: Literal["glaze", "underglaze", "other"] | None = None
     product_url: str | None = None
     notes: Text | None = None

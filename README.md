@@ -22,13 +22,15 @@ The default address is loopback. To connect phones and scales, set `GLAZE_BIND_A
 ## Stock your first shelf
 
 1. In **Settings**, add a container with its empty weight in grams. Add a manufacturer if you want to track one.
-2. Under **Glazes**, add a glaze. Record its manufacturer, product line, product code, cone, or reference photos as useful.
+2. Under **Glazes**, add a glaze. Record its manufacturer, product line, product code, cone, viscosity, or reference photos as useful. Viscosity is optional free text with suggestions from saved glazes.
 3. In **Inventory**, add a jar, choose its glaze and container, and enter a location.
 4. Use **Adjust Weight** in Jar Detail to enter a gross reading, including the container. With a compatible scale, link the NFC tag there and confirm readings directly on the scale.
 
 The inventory shows grams of glaze remaining after subtracting the empty container weight. For example, a 756 g jar with a 250 g container holds 506 g of glaze. The first positive confirmed device reading supplies a missing starting weight. The bar compares net remaining glaze with net starting glaze. Low-stock warnings work as soon as remaining grams are known, even without a starting weight. Set the studio-wide threshold in **Settings** (default 150 g).
 
 Search by glaze, manufacturer, product line, code, location, or exact jar number such as `#12`. Select a row to open its detail pane. On a phone, use **Inventory** to return to the list. **Archive** keeps the jar and its readings for later. **Delete** asks for confirmation before permanently removing a jar and its readings.
+
+![Glaze details with optional viscosity between cone and classification](docs/images/glaze-viscosity.png)
 
 ## Record a vessel
 

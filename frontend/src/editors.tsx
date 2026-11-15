@@ -101,6 +101,13 @@ export function GlazeFields({ glaze }: { glaze: Glaze }) {
         />
         <InlineField
           resource={resource}
+          field="viscosity"
+          value={glaze.viscosity ?? null}
+          label="Viscosity"
+          suggestions="viscosity"
+        />
+        <InlineField
+          resource={resource}
           field="classification"
           value={glaze.classification ?? null}
           label="Classification"
