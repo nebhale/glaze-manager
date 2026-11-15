@@ -1,0 +1,25 @@
+{
+  "id": "/",
+  "name": "Glaze Manager",
+  "short_name": "Glaze Manager",
+  "description": "Track glaze jars, remaining weight, and low stock in your pottery studio.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f6f4f9",
+  "theme_color": "#f5f1fa",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

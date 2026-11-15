@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.9.1](https://github.com/nebhale/glaze-manager/releases/tag/v1.9.1) · 2026-11-15
+
+- Use the app’s white jar icon on purple for Safari Home Screen shortcuts, browser favicons, and installed web apps.
+- Launch installed web apps in a standalone window.
+
 ## [1.9.0](https://github.com/nebhale/glaze-manager/releases/tag/v1.9.0) · 2026-11-15
 
 - Record optional viscosity as free text between Cone and Classification when creating or editing a glaze. Instant autocomplete suggests saved values.
