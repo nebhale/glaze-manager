@@ -1,0 +1,63 @@
+backend/models.py
+  s_ed24279187ab8c::t_143debd48ef51b 36
+tests/test_inline_edits.py
+  s_ed24279187ab8c::t_afe442333e330b 27
+frontend/src/generated/api.d.ts
+  s_ed24279187ab8c::t_f92fee57329afe 1023-1024,1052-1053,1073-1074,1583,1830
+  s_ed24279187ab8c::t_aeb650d025fa78 2842
+README.md
+  s_ed24279187ab8c::t_084a73d81dc8ed 25
+  s_ed24279187ab8c::t_0778fd4af0633f 33-34
+frontend/e2e/catalog-panes.spec.ts
+  s_ed24279187ab8c::t_dd520a6c55ac9a 161-163,169,175,183-184,186,197
+frontend/e2e/viscosity.spec.ts
+  s_ed24279187ab8c::t_afe442333e330b 1-60
+tests/test_inventory.py
+  s_ed24279187ab8c::t_afe442333e330b 282-283,290,295,303
+frontend/src/forms.tsx
+  s_ed24279187ab8c::t_143debd48ef51b 105-107
+frontend/src/Autocomplete.tsx
+  s_ed24279187ab8c::t_143debd48ef51b 17
+tests/test_scale_setup.py
+  s_ed24279187ab8c::t_849960123364fe 197-198,201-202,212-216
+backend/schemas.py
+  s_ed24279187ab8c::t_143debd48ef51b 73
+frontend/src/pages/Catalog.tsx
+  s_ed24279187ab8c::t_143debd48ef51b 39,118-120,159-160,162
+tests/test_viscosity.py
+  s_ed24279187ab8c::t_afe442333e330b 1-49
+frontend/e2e/sort-preferences.spec.ts
+  s_ed24279187ab8c::t_dd520a6c55ac9a 10-13,17,47
+openapi.json
+  s_ed24279187ab8c::t_75291e9852c54e 39,397-398,4228-4240,4379-4391,4497-4509
+  s_ed24279187ab8c::t_d24423809fe034 1915
+frontend/e2e/field-alignment.spec.ts
+  s_ed24279187ab8c::t_dd520a6c55ac9a 60
+tests/test_suggestions.py
+  s_ed24279187ab8c::t_dd520a6c55ac9a 14,19
+frontend/src/styles.css
+  s_ed24279187ab8c::t_143debd48ef51b 790
+frontend/src/editors.tsx
+  s_ed24279187ab8c::t_143debd48ef51b 104-108
+  s_ed24279187ab8c::t_2b3f70bb57a01e 102-103
+backend/app.py
+  s_ed24279187ab8c::t_849960123364fe 850-851,855-856
+  s_ed24279187ab8c::t_a7b39f3945569d 789-792,852-854
+  s_ed24279187ab8c::t_143debd48ef51b 85-87,164-166,174,239,261,269-272,275
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3d12a0b9d6aa12d905dfc7cb565316578b26e01b",
+  "prompts": {},
+  "sessions": {
+    "s_ed24279187ab8c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1df63-ea4e-7b81-8811-72de080570b9",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}
