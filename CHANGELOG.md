@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.9.2](https://github.com/nebhale/glaze-manager/releases/tag/v1.9.2) · 2026-11-15
+
+- Declare Apple Home Screen app metadata explicitly and offer separate general-purpose and maskable icons in the web app manifest.
+- Refresh touch-icon and manifest URLs so Safari requests the updated Home Screen icon metadata.
+
 ## [1.9.1](https://github.com/nebhale/glaze-manager/releases/tag/v1.9.1) · 2026-11-15
 
 - Use the app’s white jar icon on purple for Safari Home Screen shortcuts, browser favicons, and installed web apps.
