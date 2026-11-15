@@ -1,0 +1,41 @@
+frontend/public/site.webmanifest
+  s_7f996b8a1c3271::t_c45eb620e24097 1-25
+frontend/package.json
+  s_7f996b8a1c3271::t_58925ec737acd9 4
+compose.yaml
+  s_7f996b8a1c3271::t_58925ec737acd9 3
+frontend/public/favicon.svg
+  s_7f996b8a1c3271::t_c45eb620e24097 1-9
+openapi.json
+  s_7f996b8a1c3271::t_58925ec737acd9 5
+README.md
+  s_7f996b8a1c3271::t_58925ec737acd9 12,18
+backend/app.py
+  s_7f996b8a1c3271::t_58925ec737acd9 109
+frontend/index.html
+  s_7f996b8a1c3271::t_c45eb620e24097 8-11
+pyproject.toml
+  s_7f996b8a1c3271::t_58925ec737acd9 3
+CHANGELOG.md
+  s_7f996b8a1c3271::t_58925ec737acd9 3-7
+frontend/package-lock.json
+  s_7f996b8a1c3271::t_55986766bc0b3d 3,9
+uv.lock
+  s_7f996b8a1c3271::t_bd4707ee7c1e3b 82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5982f27a56fcd8cc2728853b7523f91d0f03c575",
+  "prompts": {},
+  "sessions": {
+    "s_7f996b8a1c3271": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1e043-8aca-7bd3-8484-506c7850d627",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}
