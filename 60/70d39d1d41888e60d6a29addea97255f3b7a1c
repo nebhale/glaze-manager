@@ -1,0 +1,26 @@
+frontend/src/GlazeVessels.tsx
+  s_5e396d61c3a6a0::t_761696da79bdd0 17-24
+  s_5e396d61c3a6a0::t_6ae7fc56bebf81 1-16,25-27
+frontend/e2e/vessels.spec.ts
+  s_5e396d61c3a6a0::t_761696da79bdd0 208-262
+frontend/src/pages/Catalog.tsx
+  s_5e396d61c3a6a0::t_6ae7fc56bebf81 27,310
+frontend/src/pages/ContainerDetail.tsx
+  s_5e396d61c3a6a0::t_6ae7fc56bebf81 17,234
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6070d39d1d41888e60d6a29addea97255f3b7a1c",
+  "prompts": {},
+  "sessions": {
+    "s_5e396d61c3a6a0": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1f078-154a-7212-9250-dc907ac3ab81",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}
