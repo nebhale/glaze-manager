@@ -20,6 +20,11 @@
   --surface: #fff;
   --amber: #8b4b13;
   --green: #38664c;
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --app-header-height: calc(56px + var(--safe-area-top));
 }
 
 .kilnfire-vessel-link {
@@ -160,11 +165,12 @@ code {
   text-transform: capitalize;
 }
 .app-header {
-  height: 56px;
+  height: var(--app-header-height);
   display: flex;
   align-items: center;
   gap: 32px;
-  padding: 0 20px;
+  padding: var(--safe-area-top) max(20px, var(--safe-area-right)) 0
+    max(20px, var(--safe-area-left));
   background: #fff;
   border-bottom: 1px solid var(--line);
 }
@@ -244,8 +250,9 @@ code {
   background: #b0782d;
 }
 .inventory-main {
-  height: calc(100dvh - 56px);
-  padding: 12px;
+  height: calc(100dvh - var(--app-header-height));
+  padding: 12px max(12px, var(--safe-area-right))
+    max(12px, var(--safe-area-bottom)) max(12px, var(--safe-area-left));
   overflow: hidden;
 }
 .inventory-workspace {
@@ -503,6 +510,7 @@ code {
   color: var(--muted);
 }
 .jar-detail-pane {
+  position: relative;
   flex: 1;
   min-width: 0;
   overflow: auto;
@@ -749,7 +757,8 @@ code {
 .standard-main {
   max-width: 1280px;
   margin: auto;
-  padding: 25px 24px 40px;
+  padding: 25px max(24px, var(--safe-area-right))
+    max(40px, var(--safe-area-bottom)) max(24px, var(--safe-area-left));
 }
 .page-heading {
   display: flex;
@@ -1680,7 +1689,8 @@ code {
 @media (max-width: 1250px) {
   .app-header {
     gap: 20px;
-    padding: 0 16px;
+    padding-right: max(16px, var(--safe-area-right));
+    padding-left: max(16px, var(--safe-area-left));
   }
   .nav-link {
     padding: 0 9px;
@@ -1698,12 +1708,15 @@ code {
   }
 }
 @media (max-width: 760px) {
+  :root {
+    --app-header-height: calc(46px + var(--safe-area-top));
+  }
   body {
     font-size: 13px;
   }
   .app-header {
-    height: 46px;
-    padding: 0 13px;
+    padding-right: max(13px, var(--safe-area-right));
+    padding-left: max(13px, var(--safe-area-left));
     gap: 8px;
   }
   .brand {
@@ -1722,8 +1735,9 @@ code {
     left: 0;
     bottom: 0;
     right: 0;
-    height: calc(57px + env(safe-area-inset-bottom));
-    padding-bottom: env(safe-area-inset-bottom);
+    height: calc(57px + var(--safe-area-bottom));
+    padding: 0 var(--safe-area-right) var(--safe-area-bottom)
+      var(--safe-area-left);
     z-index: 10;
     background: #fff;
     border-top: 1px solid var(--line);
@@ -1747,8 +1761,8 @@ code {
     height: 18px;
   }
   .inventory-main {
-    height: calc(100dvh - 103px - env(safe-area-inset-bottom));
-    padding: 0;
+    height: calc(100dvh - var(--app-header-height) - 57px - var(--safe-area-bottom));
+    padding: 0 var(--safe-area-right) 0 var(--safe-area-left);
   }
   .inventory-workspace {
     gap: 0;
@@ -1839,7 +1853,8 @@ code {
     padding: 12px 0;
   }
   .standard-main {
-    padding: 21px 13px calc(80px + env(safe-area-inset-bottom));
+    padding: 21px max(13px, var(--safe-area-right))
+      calc(80px + var(--safe-area-bottom)) max(13px, var(--safe-area-left));
   }
   .page-heading {
     align-items: start;
@@ -2193,9 +2208,9 @@ code {
   }
   .autosave-status.has-errors {
     position: fixed;
-    top: 46px;
-    left: 0;
-    right: 0;
+    top: var(--app-header-height);
+    left: var(--safe-area-left);
+    right: var(--safe-area-right);
     padding: 6px 12px;
     background: #fff4f3;
     border-bottom: 1px solid #edc5c2;
