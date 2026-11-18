@@ -1,0 +1,19 @@
+frontend/e2e/vessels.spec.ts
+  s_5e396d61c3a6a0::t_6db99c1524399b 232-244,246-252,254-267
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e55c33c5d685bc6eaa3acf0484128a8682040b37",
+  "prompts": {},
+  "sessions": {
+    "s_5e396d61c3a6a0": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1f078-154a-7212-9250-dc907ac3ab81",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}
