@@ -108,4 +108,33 @@ test("photos open in place throughout inventory, glazes, and vessels", async ({
   await expect(dialog.getByRole("alert")).toContainText("couldn’t be loaded");
   await close.click();
   await expect(trigger).toBeFocused();
+
+  if (testInfo.project.name === "phone") {
+    await page.unroute(`**${vesselPhoto.url}`);
+    await page.route(`**${vesselPhoto.url}`, (route) => route.fulfill({
+      contentType: "image/svg+xml",
+      body: '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1800"><rect width="1200" height="1800" fill="#70439c"/></svg>',
+    }));
+    await page.reload();
+    const session = await page.context().newCDPSession(page);
+    for (const { viewport, insets } of [
+      { viewport: { width: 390, height: 844 }, insets: { top: 59, right: 0, bottom: 34, left: 0 } },
+      { viewport: { width: 844, height: 390 }, insets: { top: 0, right: 59, bottom: 21, left: 59 } },
+      { viewport: { width: 740, height: 360 }, insets: { top: 0, right: 44, bottom: 21, left: 44 } },
+    ]) {
+      await page.setViewportSize(viewport);
+      await session.send("Emulation.setSafeAreaInsetsOverride", { insets });
+      await trigger.click();
+      await expect(dialog).toBeVisible();
+      await expect(dialog.locator("img")).toHaveJSProperty("naturalHeight", 1800);
+      const bounds = (await dialog.boundingBox())!;
+      expect(bounds.x).toBeGreaterThanOrEqual(insets.left + 12);
+      expect(bounds.y).toBeGreaterThanOrEqual(insets.top + 16);
+      expect(bounds.x + bounds.width).toBeLessThanOrEqual(viewport.width - insets.right - 12);
+      expect(bounds.y + bounds.height).toBeLessThanOrEqual(viewport.height - insets.bottom - 16);
+      await expect(close).toBeInViewport();
+      await close.click();
+      await expect(trigger).toBeFocused();
+    }
+  }
 });

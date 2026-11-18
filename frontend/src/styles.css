@@ -1122,9 +1122,11 @@ code {
   object-fit: contain;
 }
 .image-dialog {
-  width: min(1040px, calc(100% - 24px));
+  inset: var(--safe-area-top) var(--safe-area-right) var(--safe-area-bottom)
+    var(--safe-area-left);
+  width: min(1040px, calc(100% - 24px - var(--safe-area-left) - var(--safe-area-right)));
   max-width: none;
-  max-height: calc(100dvh - 32px);
+  max-height: calc(100dvh - 32px - var(--safe-area-top) - var(--safe-area-bottom));
   margin: auto;
   padding: 0;
   border: 1px solid #ffffff33;
@@ -1186,7 +1188,7 @@ code {
 .image-dialog-body img {
   display: block;
   max-width: 100%;
-  max-height: calc(100dvh - 150px);
+  max-height: calc(100dvh - 150px - var(--safe-area-top) - var(--safe-area-bottom));
   width: auto;
   height: auto;
   object-fit: contain;
