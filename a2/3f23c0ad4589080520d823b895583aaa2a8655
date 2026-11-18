@@ -1,0 +1,21 @@
+frontend/src/styles.css
+  s_483dccde2da9ad::t_13293a96219c5e 1125-1127,1129,1191
+frontend/e2e/image-viewer.spec.ts
+  s_483dccde2da9ad::t_f4ba8fbee48778 111-139
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a23f23c0ad4589080520d823b895583aaa2a8655",
+  "prompts": {},
+  "sessions": {
+    "s_483dccde2da9ad": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1f075-0a19-7dd3-b1e9-53f4119909da",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}
