@@ -1,0 +1,46 @@
+frontend/src/pages/Catalog.tsx
+  s_483dccde2da9ad::t_ebc318a73a38fa 139-140,142-148,155-156
+  s_483dccde2da9ad::t_8e986ba579545a 137,141
+frontend/src/components.tsx
+  s_483dccde2da9ad::t_ebc318a73a38fa 27,379,381,383-384,403,405,407-408,583,585-598,661,663-672,679-681
+frontend/src/styles.css
+  s_483dccde2da9ad::t_d94c2567aa9520 58,1022,1092-1098,1100-1192,1625-1631
+  s_483dccde2da9ad::t_ebc318a73a38fa 1099
+frontend/e2e/archived-jars.spec.ts
+  s_483dccde2da9ad::t_8e986ba579545a 48
+frontend/src/ImageViewer.tsx
+  s_483dccde2da9ad::t_d94c2567aa9520 1-44,51-122,125-132
+  s_483dccde2da9ad::t_868cc0e36c2889 45-50
+  s_483dccde2da9ad::t_8932570cf2a5b6 123-124
+frontend/src/pages/KilnfireImport.tsx
+  s_483dccde2da9ad::t_d94c2567aa9520 28,90,329-347,349-350
+frontend/e2e/image-viewer.spec.ts
+  s_483dccde2da9ad::t_9be65f93cdd290 1-104,107-111
+  s_483dccde2da9ad::t_943951bc59ba87 105-106
+frontend/e2e/kilnfire.spec.ts
+  s_483dccde2da9ad::t_9be65f93cdd290 292-297,308-313
+  s_483dccde2da9ad::t_0bc33238a8cdcd 299,423-424
+frontend/e2e/photo-key.spec.ts
+  s_483dccde2da9ad::t_0bc33238a8cdcd 108,130,134,141,171
+  s_483dccde2da9ad::t_868cc0e36c2889 114-115
+frontend/src/PhotoGallery.tsx
+  s_483dccde2da9ad::t_9c9b2b99ddd5da 6,24-29
+frontend/src/main.tsx
+  s_483dccde2da9ad::t_b8cea1f6fdd6eb 6,16-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b3f47444e0ee5f75b88cf5b729ee59e0df256a23",
+  "prompts": {},
+  "sessions": {
+    "s_483dccde2da9ad": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1f075-0a19-7dd3-b1e9-53f4119909da",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}
