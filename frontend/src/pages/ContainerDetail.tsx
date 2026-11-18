@@ -14,6 +14,7 @@ import {
 import { useSave } from "../forms";
 import { forgetDrafts } from "../autosave";
 import { JarFields } from "../editors";
+import { GlazeVessels } from "../GlazeVessels";
 
 dayjs.extend(relativeTime);
 
@@ -230,6 +231,7 @@ export function ContainerDetail({
           <section className="detail-section" aria-label="Jar fields">
             <JarFields jar={jar} />
           </section>
+          <GlazeVessels glazeId={jar.glaze_id} />
         </div>
       )}
     </aside>

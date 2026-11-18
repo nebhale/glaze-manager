@@ -205,6 +205,61 @@ test("locate, archive, and restore a vessel with type-specific suggestions", asy
   await expect(suggestions.getByRole("option")).toHaveText([cabinet]);
 });
 
+test("jar vessels follow the glaze shared by its jars", async ({
+  page,
+  request,
+}, testInfo) => {
+  async function create(path: string, data: object) {
+    const response = await request.post(`/api/v1/${path}`, { data });
+    expect(response.ok(), await response.text()).toBeTruthy();
+    return response.json();
+  }
+  const prefix = crypto.randomUUID();
+  const glaze = await create("glazes", { name: `${prefix} Blue` });
+  const other = await create("glazes", { name: `${prefix} Green` });
+  const unused = await create("glazes", { name: `${prefix} Unused` });
+  const first = await create("containers", { glaze_id: glaze.id });
+  const second = await create("containers", { glaze_id: glaze.id });
+  const bowl = await create("vessels", {
+    name: `${prefix} Bowl`,
+    location: "Display shelf",
+  });
+  const vase = await create("vessels", { name: `${prefix} Vase` });
+  await create(`vessels/${bowl.id}/applications`, { glaze_id: glaze.id });
+  await create(`vessels/${bowl.id}/applications`, { glaze_id: glaze.id });
+  await create(`vessels/${vase.id}/applications`, { glaze_id: other.id });
+
+  const vessels = page.getByRole("region", { name: "Vessels", exact: true });
+  for (const jar of [first, second]) {
+    await page.goto(`/containers/${jar.id}`);
+    await expect(vessels.getByRole("heading")).toHaveText("Vessels 1");
+    await expect(vessels.getByRole("link")).toHaveText([bowl.name]);
+    await expect(vessels.getByRole("cell", { name: "Display shelf" })).toBeVisible();
+  }
+  await vessels.scrollIntoViewIfNeeded();
+  await page.screenshot({
+    path: testInfo.outputPath("jar-vessels.png"),
+    fullPage: true,
+  });
+
+  await selectOption(page, "Glaze", other.name);
+  await expect(vessels.getByRole("heading")).toHaveText("Vessels 1");
+  await expect(vessels.getByRole("link")).toHaveText([vase.name]);
+  await selectOption(page, "Glaze", unused.name);
+  await expect(vessels.getByRole("heading")).toHaveText("Vessels 0");
+  await expect(vessels.getByText("No vessels use this glaze yet.")).toBeVisible();
+  await expect(vessels.getByRole("table")).toHaveCount(0);
+
+  await page.goto(`/containers/${first.id}`);
+  const link = vessels.getByRole("link", { name: `${bowl.name} #${bowl.id}` });
+  await expect(link).toHaveAttribute("href", `/vessels/${bowl.id}`);
+  await link.click();
+  await expect(
+    page.getByRole("complementary", { name: "Vessel details" })
+      .getByRole("heading", { name: `${bowl.name} #${bowl.id}` }),
+  ).toBeVisible();
+});
+
 test("record a numbered vessel and navigate its photos from a glaze", async ({
   page,
   request,

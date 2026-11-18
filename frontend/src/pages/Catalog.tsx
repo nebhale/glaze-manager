@@ -10,7 +10,6 @@ import {
 } from "../api";
 import {
   DetailPane,
-  VesselList,
   Empty,
   ErrorMessage,
   JarList,
@@ -25,6 +24,7 @@ import { GlazeFields } from "../editors";
 import { forgetDrafts } from "../autosave";
 import { ContainerForm, GlazeForm, useSave } from "../forms";
 import { PhotoGallery } from "../PhotoGallery";
+import { GlazeVessels } from "../GlazeVessels";
 import { SplitWorkspace } from "../SplitWorkspace";
 import { useListSort } from "../useListSort";
 
@@ -307,20 +307,7 @@ export function GlazeDetail({
           </div>
         )}
       </section>
-      <section className="detail-section" aria-label="Vessels">
-        <div className="section-heading">
-          <h3>
-            Vessels <span className="count">{glaze.vessels.length}</span>
-          </h3>
-        </div>
-        {glaze.vessels.length ? (
-          <div className="related-table-scroll">
-            <VesselList vessels={glaze.vessels} />
-          </div>
-        ) : (
-          <p className="small-empty">No vessels use this glaze yet.</p>
-        )}
-      </section>
+      <GlazeVessels glazeId={glaze.id} />
     </DetailPane>
   );
 }
