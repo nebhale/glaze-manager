@@ -45,7 +45,7 @@ test("show archived includes searchable jars that can be reopened and restored",
     page.locator(`[data-jar-id="${archived.id}"] .jar-archive-marker`),
   ).toHaveAttribute("title", "Archived");
   await expect(
-    page.locator(`[data-jar-id="${archived.id}"] .jar-select`),
+    page.locator(`[data-jar-id="${archived.id}"]`).getByRole("link"),
   ).toHaveAccessibleName(new RegExp("archived$"));
   await expect(page.getByLabel("Search jars")).toHaveValue(glaze.name);
   await page.screenshot({

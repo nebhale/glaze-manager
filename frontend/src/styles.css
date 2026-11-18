@@ -60,6 +60,7 @@
 .kilnfire-dialog-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .kilnfire-dialog h2 { font-size: 18px; overflow-wrap: anywhere; }
 .kilnfire-dialog-image { display: flex; flex-shrink: 0; align-items: center; justify-content: center; height: 180px; background: var(--soft); border-radius: 6px; color: var(--muted); }
+.kilnfire-dialog-image .image-button { width: 100%; height: 100%; object-fit: contain; }
 .kilnfire-dialog-image img { max-width: 100%; height: 100%; object-fit: contain; }
 .kilnfire-dialog .record-form { display: grid; gap: 12px; }
 .kilnfire-destination { min-width: 0; margin: 0; padding: 0; border: 0; display: flex; flex-wrap: wrap; gap: 14px; }
@@ -1027,7 +1028,7 @@ code {
   border: 1px solid var(--line);
   border-radius: 6px;
 }
-.photo-tile > a {
+.photo-tile > .image-button {
   position: absolute;
   inset: 0;
   display: block;
@@ -1096,6 +1097,109 @@ code {
 .photo-add-tile:focus-within {
   outline: 2px solid var(--purple);
   outline-offset: 3px;
+}
+.image-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  object-fit: cover;
+  cursor: zoom-in;
+}
+.image-button > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: inherit;
+  border-radius: inherit;
+}
+.image-button.kilnfire-candidate-image {
+  padding: 12px;
+  border-bottom: 1px solid var(--line);
+  background: var(--soft);
+  object-fit: contain;
+}
+.image-dialog {
+  inset: var(--safe-area-top) var(--safe-area-right) var(--safe-area-bottom)
+    var(--safe-area-left);
+  width: min(1040px, calc(100% - 24px - var(--safe-area-left) - var(--safe-area-right)));
+  max-width: none;
+  max-height: calc(100dvh - 32px - var(--safe-area-top) - var(--safe-area-bottom));
+  margin: auto;
+  padding: 0;
+  border: 1px solid #ffffff33;
+  border-radius: 12px;
+  background: #211b29;
+  color: #fff;
+  overflow: hidden;
+  box-shadow: 0 20px 80px #120d1d66;
+}
+.image-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+.image-dialog::backdrop {
+  background: #21152cb3;
+}
+.image-dialog-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 12px 12px 20px;
+  flex-shrink: 0;
+}
+.image-dialog-heading h2 {
+  font-size: 15px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  min-width: 0;
+  max-height: 4.2em;
+  overflow-y: auto;
+}
+.image-dialog-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  flex-shrink: 0;
+  border: 1px solid #ffffff44;
+  border-radius: 50%;
+  background: #ffffff12;
+  color: #fff;
+}
+.image-dialog-close:hover {
+  background: #ffffff26;
+}
+.image-dialog-close:focus-visible {
+  outline-color: #fff;
+}
+.image-dialog-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 0 12px 12px;
+}
+.image-dialog-body img {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100dvh - 150px - var(--safe-area-top) - var(--safe-area-bottom));
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 4px;
+}
+.image-dialog-body p {
+  padding: 40px 20px;
+  line-height: 1.6;
+}
+@media (max-width: 760px) {
+  .image-button.kilnfire-candidate-image { padding: 8px; }
 }
 .field {
   margin-bottom: 14px;
@@ -1528,6 +1632,13 @@ code {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.jar-select > a.jar-name-text {
+  flex: 1;
+  color: inherit;
+}
+.jar-select > a.jar-name-text:hover {
+  color: var(--purple);
 }
 .jar-select strong {
   font-weight: 550;

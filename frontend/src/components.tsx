@@ -24,6 +24,7 @@ import {
   X,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { ImageButton } from "./ImageViewer";
 import {
   grams,
   percent,
@@ -375,10 +376,12 @@ function ArchiveMarker() {
 function VesselThumb({ vessel }: { vessel: VesselSummary }) {
   const photo = vessel.photos.find((photo) => photo.cover) || vessel.photos[0];
   return photo ? (
-    <img
+    <ImageButton
       className="glaze-thumb"
+      imageClassName="glaze-thumb"
       src={photo.thumbnail_url}
-      alt=""
+      fullSrc={photo.url}
+      alt={photo.caption || vessel.name}
       loading="lazy"
     />
   ) : (
@@ -397,10 +400,12 @@ export function PhotoThumb({
 }) {
   const photo = glaze.photos.find((p) => p.cover) || glaze.photos[0];
   return photo ? (
-    <img
+    <ImageButton
       className={`glaze-thumb ${large ? "large" : ""}`}
+      imageClassName="glaze-thumb"
       src={photo.thumbnail_url}
-      alt={`${glaze.name} glaze sample`}
+      fullSrc={photo.url}
+      alt={photo.caption || `${glaze.name} glaze sample`}
     />
   ) : (
     <div className={`glaze-thumb placeholder ${large ? "large" : ""}`}>
@@ -575,20 +580,22 @@ export function VesselList({
               #{vessel.id}
             </td>
             <td className="stock-name-column">
-              <Link
-                id={`vessel-${vessel.id}`}
-                className="jar-select"
-                to={`/vessels/${vessel.id}${search}`}
-                aria-label={`${vessel.name} #${vessel.id}${vessel.archived ? ", archived" : ""}`}
-                aria-current={
-                  String(vessel.id) === selectedId ? "true" : undefined
-                }
-                title={vessel.name}
-              >
+              <div className="jar-select">
                 <VesselThumb vessel={vessel} />
-                <strong className="jar-name-text">{vessel.name}</strong>
-                {vessel.archived && <ArchiveMarker />}
-              </Link>
+                <Link
+                  id={`vessel-${vessel.id}`}
+                  className="jar-name-text"
+                  to={`/vessels/${vessel.id}${search}`}
+                  aria-label={`${vessel.name} #${vessel.id}${vessel.archived ? ", archived" : ""}`}
+                  aria-current={
+                    String(vessel.id) === selectedId ? "true" : undefined
+                  }
+                  title={vessel.name}
+                >
+                  <strong>{vessel.name}</strong>
+                  {vessel.archived && <ArchiveMarker />}
+                </Link>
+              </div>
             </td>
             <td
               className="stock-location-column"
@@ -651,27 +658,27 @@ export function JarList({
           >
             <td className="stock-id-column">#{jar.number}</td>
             <td className="stock-name-column">
-              <Link
-                id={`jar-${jar.id}`}
-                className="jar-select"
-                to={`/containers/${jar.id}${search}`}
-                aria-label={`${[jar.glaze.name, jar.glaze.product_code].filter(Boolean).join(" ")}, jar #${jar.number}${jar.archived ? ", archived" : ""}`}
-                aria-current={selectedId === jar.id ? "true" : undefined}
-                title={[jar.glaze.name, jar.glaze.product_code]
-                  .filter(Boolean)
-                  .join(" ")}
-              >
+              <div className="jar-select">
                 <PhotoThumb glaze={jar.glaze} />
-                <span className="jar-name-text">
+                <Link
+                  id={`jar-${jar.id}`}
+                  className="jar-name-text"
+                  to={`/containers/${jar.id}${search}`}
+                  aria-label={`${[jar.glaze.name, jar.glaze.product_code].filter(Boolean).join(" ")}, jar #${jar.number}${jar.archived ? ", archived" : ""}`}
+                  aria-current={selectedId === jar.id ? "true" : undefined}
+                  title={[jar.glaze.name, jar.glaze.product_code]
+                    .filter(Boolean)
+                    .join(" ")}
+                >
                   <strong>{jar.glaze.name}</strong>
                   {jar.glaze.product_code && (
                     <span className="jar-product-code">
                       {jar.glaze.product_code}
                     </span>
                   )}
-                </span>
-                {jar.archived && <ArchiveMarker />}
-              </Link>
+                  {jar.archived && <ArchiveMarker />}
+                </Link>
+              </div>
             </td>
             <td className="jar-bar-column">
               <RemainingBar jar={jar} />

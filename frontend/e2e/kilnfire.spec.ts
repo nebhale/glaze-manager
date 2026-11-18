@@ -289,8 +289,14 @@ test("search and archive image tiles, import photos, then unlink the vessel", as
   await showArchived.click();
   await expect(showArchived).not.toBeChecked();
   const cup = page.getByRole("article", { name: "Carved cup", exact: true });
+  const preview = cup.getByRole("button", { name: "Open photo · Carved cup", exact: true });
+  await preview.click();
+  const photoDialog = page.getByRole("dialog", { name: "Carved cup", exact: true });
+  await expect(photoDialog.getByRole("img")).toHaveAttribute("src", "/kilnfire-test-image.png");
+  await photoDialog.getByRole("button", { name: "Close photo" }).click();
+  await expect(preview).toBeFocused();
   await cup
-    .getByRole("button", { name: "Import Carved cup", exact: true })
+    .getByRole("button", { name: "Import", exact: true })
     .click();
   const dialog = page.getByRole("dialog", {
     name: "Carved cup",
@@ -299,6 +305,12 @@ test("search and archive image tiles, import photos, then unlink the vessel", as
   await expect(
     dialog.getByRole("radio", { name: "New vessel", exact: true }),
   ).toBeChecked();
+  const importPreview = dialog.getByRole("button", { name: "Open photo · Carved cup", exact: true });
+  await importPreview.click();
+  await expect(page.getByRole("button", { name: "Close photo" })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(importPreview).toBeFocused();
+  await expect(dialog).toBeVisible();
   const accessibility = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
     .analyze();
@@ -408,8 +420,8 @@ test("choose an existing vessel in the import dialog and prompt for expired sign
       });
   }
   await page.goto("/vessels/import");
-  await page
-    .getByRole("button", { name: "Import Tall vase", exact: true })
+  await page.getByRole("article", { name: "Tall vase", exact: true })
+    .getByRole("button", { name: "Import", exact: true })
     .click();
   const dialog = page.getByRole("dialog", {
     name: "Tall vase",
