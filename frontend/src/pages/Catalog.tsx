@@ -134,26 +134,26 @@ export function Catalog() {
                     }}
                   >
                     <td>
-                      <Link
-                        id={`catalog-${record.id}`}
-                        className="jar-select catalog-select"
-                        to={`/glazes/${record.id}${search}`}
-                        onClick={() => setAdding(false)}
-                        aria-current={
-                          selectedId === record.id ? "true" : undefined
-                        }
-                        title={record.name}
-                      >
+                      <div className="jar-select">
                         <PhotoThumb glaze={record} />
-                        <span className="jar-name-text">
+                        <Link
+                          id={`catalog-${record.id}`}
+                          className="jar-name-text catalog-select"
+                          to={`/glazes/${record.id}${search}`}
+                          onClick={() => setAdding(false)}
+                          aria-current={
+                            selectedId === record.id ? "true" : undefined
+                          }
+                          title={record.name}
+                        >
                           <strong>{record.name}</strong>
                           {record.product_code && (
                             <span className="jar-product-code">
                               {record.product_code}
                             </span>
                           )}
-                        </span>
-                      </Link>
+                        </Link>
+                      </div>
                     </td>
                     <td
                       className="catalog-viscosity"

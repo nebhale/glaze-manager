@@ -25,6 +25,7 @@ import { ErrorMessage, Field, ListHeading } from "../components";
 import { useSave } from "../forms";
 import { VesselPicker } from "../VesselPicker";
 import { forgetDrafts } from "../autosave";
+import { ImageButton } from "../ImageViewer";
 
 function createdDate(value: string | null) {
   return value
@@ -86,7 +87,7 @@ function ImportChoice({
       </div>
       <div className="kilnfire-dialog-image">
         {piece.thumbnail_url ? (
-          <img src={piece.thumbnail_url} alt={piece.name} />
+          <ImageButton src={piece.thumbnail_url} alt={piece.name} />
         ) : (
           <Amphora size={64} aria-hidden="true" />
         )}
@@ -325,26 +326,28 @@ export function KilnfireImport() {
                       key={piece.piece_id}
                       aria-label={piece.name}
                     >
-                      <button
-                        className="kilnfire-candidate-image"
-                        onClick={() => setSelected(piece)}
-                        aria-label={`Import ${piece.name}`}
-                      >
-                        {piece.thumbnail_url ? (
-                          <img
-                            src={piece.thumbnail_url}
-                            alt={piece.name}
-                            loading="lazy"
-                          />
-                        ) : (
+                      {piece.thumbnail_url ? (
+                        <ImageButton
+                          className="kilnfire-candidate-image"
+                          src={piece.thumbnail_url}
+                          alt={piece.name}
+                          loading="lazy"
+                        >
+                          {piece.image_count > 1 && (
+                            <span className="kilnfire-photo-count">
+                              {piece.image_count} photos
+                            </span>
+                          )}
+                        </ImageButton>
+                      ) : (
+                        <button
+                          className="kilnfire-candidate-image"
+                          onClick={() => setSelected(piece)}
+                          aria-label={`Import ${piece.name}`}
+                        >
                           <Amphora size={64} aria-hidden="true" />
-                        )}
-                        {piece.image_count > 1 && (
-                          <span className="kilnfire-photo-count">
-                            {piece.image_count} photos
-                          </span>
-                        )}
-                      </button>
+                        </button>
+                      )}
                       <div className="kilnfire-candidate-body">
                         <h2>{piece.name}</h2>
                         <p className="kilnfire-candidate-meta">

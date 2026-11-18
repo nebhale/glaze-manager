@@ -105,14 +105,14 @@ test("glazes and vessels keep separate key photos and use them in every thumbnai
   })).toHaveAttribute("aria-pressed", "false");
   await expect(glazeThumb).toHaveAttribute("src", glazeSecond.thumbnail_url);
   if (testInfo.project.name === "desktop")
-    await expect(page.locator(`#catalog-${glaze.id} img.glaze-thumb`)).toHaveAttribute(
+    await expect(page.locator(`#catalog-${glaze.id}`).locator("..").locator("img.glaze-thumb")).toHaveAttribute(
       "src", glazeSecond.thumbnail_url,
     );
 
   await expect(related.locator("img.glaze-thumb")).toHaveAttribute("src", vesselSecond.thumbnail_url);
   await expect(photos.getByRole("button", { name: "Use as key photo", exact: true })).toHaveCount(2);
-  await expect(photo(vesselFirst.id).getByRole("button")).toHaveCount(0);
-  await expect(photo(vesselSecond.id).getByRole("button")).toHaveCount(0);
+  await expect(photo(vesselFirst.id).getByRole("button", { name: /Use as key photo|Delete photo/ })).toHaveCount(0);
+  await expect(photo(vesselSecond.id).getByRole("button", { name: /Use as key photo|Delete photo/ })).toHaveCount(0);
   await expect(photo(vesselFirst.id).getByRole("link", { name: vessel.name, exact: true })).toHaveAttribute(
     "href", `/vessels/${vessel.id}`,
   );
@@ -127,18 +127,18 @@ test("glazes and vessels keep separate key photos and use them in every thumbnai
   await photos.screenshot({ path: testInfo.outputPath("key-photos.png"), scale: "css" });
 
   await page.goto(`/catalog${query}`);
-  await expect(page.locator(`#catalog-${glaze.id} img.glaze-thumb`)).toHaveAttribute(
+  await expect(page.locator(`#catalog-${glaze.id}`).locator("..").locator("img.glaze-thumb")).toHaveAttribute(
     "src", glazeSecond.thumbnail_url,
   );
   await page.goto(`/${query}`);
-  await expect(page.locator(`#jar-${jar.id} img.glaze-thumb`)).toHaveAttribute(
+  await expect(page.locator(`#jar-${jar.id}`).locator("..").locator("img.glaze-thumb")).toHaveAttribute(
     "src", glazeSecond.thumbnail_url,
   );
   await page.locator(`#jar-${jar.id}`).click();
   await expect(glazeThumb).toHaveAttribute("src", glazeSecond.thumbnail_url);
 
   await page.goto(`/vessels${query}`);
-  await expect(page.locator(`#vessel-${vessel.id} img.glaze-thumb`)).toHaveAttribute(
+  await expect(page.locator(`#vessel-${vessel.id}`).locator("..").locator("img.glaze-thumb")).toHaveAttribute(
     "src", vesselSecond.thumbnail_url,
   );
   await page.locator(`#vessel-${vessel.id}`).click();
@@ -168,7 +168,7 @@ test("glazes and vessels keep separate key photos and use them in every thumbnai
   await expect(photo(glazeSecond.id)).toHaveCount(0);
   await expect(glazeThumb).toHaveAttribute("src", glazeFirst.thumbnail_url);
   await page.goto(`/${query}`);
-  await expect(page.locator(`#jar-${jar.id} img.glaze-thumb`)).toHaveAttribute(
+  await expect(page.locator(`#jar-${jar.id}`).locator("..").locator("img.glaze-thumb")).toHaveAttribute(
     "src", glazeFirst.thumbnail_url,
   );
 });

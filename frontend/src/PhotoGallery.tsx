@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import type { GlazeRecord, Photo, VesselSummary } from "./api";
 import { ErrorMessage } from "./components";
 import { useSave } from "./forms";
+import { ImageButton } from "./ImageViewer";
 
 function PhotoCard({
   photo,
@@ -20,18 +21,12 @@ function PhotoCard({
   return (
     <div className="photo-item" data-photo-id={photo.id}>
       <div className="photo-tile">
-        <a
-          href={photo.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`Open photo · ${source}`}
-        >
-          <img
-            src={photo.thumbnail_url}
-            alt={photo.caption || source}
-            loading="lazy"
-          />
-        </a>
+        <ImageButton
+          src={photo.thumbnail_url}
+          fullSrc={photo.url}
+          alt={photo.caption || source}
+          loading="lazy"
+        />
         {!linkedVessel && (
           <button
             type="button"
