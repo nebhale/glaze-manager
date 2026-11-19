@@ -1,0 +1,35 @@
+CHANGELOG.md
+  s_5e396d61c3a6a0::t_0931c2e0f2336f 3-8
+README.md
+  s_5e396d61c3a6a0::t_9104ea7c8e4ee3 12,18,41-42
+backend/app.py
+  s_5e396d61c3a6a0::t_0d15419209ac54 109
+compose.yaml
+  s_5e396d61c3a6a0::t_eb9e743a04bee6 3
+frontend/package-lock.json
+  s_5e396d61c3a6a0::t_140196007d3187 3,9
+frontend/package.json
+  s_5e396d61c3a6a0::t_b32c5d30058824 4
+openapi.json
+  s_5e396d61c3a6a0::t_4d02c18fa96f55 5
+pyproject.toml
+  s_5e396d61c3a6a0::t_019e66550303d8 3
+uv.lock
+  s_5e396d61c3a6a0::t_1dd611e11d1aff 82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3c435c72da4b754c6df08001379486b596e6a7c4",
+  "prompts": {},
+  "sessions": {
+    "s_5e396d61c3a6a0": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1f078-154a-7212-9250-dc907ac3ab81",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}
