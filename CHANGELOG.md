@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.10.0](https://github.com/nebhale/glaze-manager/releases/tag/v1.10.0) · 2026-11-18
+
+- Show the vessels that use a jar’s glaze on the jar detail page. Jars of the same glaze share this list, and changing a jar’s glaze updates its vessels.
+- Preview glaze, vessel, and Kilnfire photos in a same-page modal. Close the preview to return to the current record without losing your place.
+- Keep headers, navigation, and editable content clear of phone screen cutouts and the home indicator in portrait and landscape.
+
 ## [1.9.2](https://github.com/nebhale/glaze-manager/releases/tag/v1.9.2) · 2026-11-15
 
 - Declare Apple Home Screen app metadata explicitly and offer separate general-purpose and maskable icons in the web app manifest.
