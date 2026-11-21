@@ -62,6 +62,63 @@ def test_heic_input_is_converted_to_jpeg(client, catalog):
         assert photo.format == "JPEG" and photo.size == (30, 40)
 
 
+@pytest.mark.parametrize("resource", ["glazes", "vessels"])
+def test_photo_library_jpeg_with_auxiliary_image(client, catalog, resource):
+    owner = (
+        catalog["glaze"]
+        if resource == "glazes"
+        else client.post("/api/v1/vessels", json={"name": "Mug"}).json()
+    )
+    image = Image.new("RGB", (600, 900), "purple")
+    exif = image.getexif()
+    exif[274] = 6
+    exif[315] = "Private camera owner"
+    buffer = io.BytesIO()
+    # Photo Library JPEGs can contain an auxiliary image, such as an HDR gain map.
+    image.save(
+        buffer,
+        format="MPO",
+        save_all=True,
+        append_images=[Image.new("L", (300, 450), "white")],
+        exif=exif,
+    )
+    with Image.open(io.BytesIO(buffer.getvalue())) as original:
+        assert original.format == "MPO" and original.n_frames == 2
+    result = client.post(
+        f"/api/v1/{resource}/{owner['id']}/photos",
+        files={"file": ("IMG_1234.JPG", buffer.getvalue(), "image/jpeg")},
+    )
+    assert result.status_code == 201
+    assert result.json()["cover"] is True
+    for field, size in [("url", (900, 600)), ("thumbnail_url", (480, 320))]:
+        response = client.get(result.json()[field])
+        assert response.status_code == 200
+        assert response.headers["content-type"] == "image/jpeg"
+        with Image.open(io.BytesIO(response.content)) as photo:
+            assert photo.format == "JPEG" and photo.size == size
+            assert photo.getpixel((0, 0)) == pytest.approx((128, 0, 128), abs=3)
+            assert not photo.getexif()
+            assert "mp" not in photo.info
+
+
+@pytest.mark.parametrize("resource", ["glazes", "vessels"])
+@pytest.mark.parametrize("image_format", ["GIF", "TIFF"])
+def test_unsupported_photo_format_is_rejected(client, catalog, resource, image_format):
+    owner = (
+        catalog["glaze"]
+        if resource == "glazes"
+        else client.post("/api/v1/vessels", json={"name": "Mug"}).json()
+    )
+    buffer = io.BytesIO()
+    Image.new("RGB", (30, 40), "purple").save(buffer, format=image_format)
+    result = client.post(
+        f"/api/v1/{resource}/{owner['id']}/photos",
+        files={"file": ("photo.jpg", buffer.getvalue(), "image/jpeg")},
+    )
+    assert result.status_code == 422
+    assert client.get(f"/api/v1/{resource}/{owner['id']}").json()["photos"] == []
+
+
 def test_photo_orientation_and_metadata(client, catalog):
     image = Image.new("RGB", (30, 40), "purple")
     exif = image.getexif()

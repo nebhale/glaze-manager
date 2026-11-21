@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.10.1](https://github.com/nebhale/glaze-manager/releases/tag/v1.10.1) · 2026-11-21
+
+- Accept Photo Library JPEGs that contain auxiliary images, such as HDR gain maps, when uploading glaze or vessel photos. Preserve the primary photo with corrected orientation and generate the usual JPEG preview and thumbnail.
+
 ## [1.10.0](https://github.com/nebhale/glaze-manager/releases/tag/v1.10.0) · 2026-11-18
 
 - Show the vessels that use a jar’s glaze on the jar detail page. Jars of the same glaze share this list, and changing a jar’s glaze updates its vessels.

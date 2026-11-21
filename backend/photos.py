@@ -9,7 +9,8 @@ def encode_photo(content):
         raise HTTPException(413, "Choose a photo smaller than 25 MB.")
     try:
         with Image.open(io.BytesIO(content)) as original:
-            if original.format not in {"JPEG", "PNG", "WEBP", "HEIF", "HEIC"}:
+            # Phone JPEGs with auxiliary images (such as HDR gain maps) open as MPO.
+            if original.format not in {"JPEG", "MPO", "PNG", "WEBP", "HEIF", "HEIC"}:
                 raise ValueError("Unsupported image format")
             image = ImageOps.exif_transpose(original).convert("RGB")
         image.thumbnail((3000, 3000))
