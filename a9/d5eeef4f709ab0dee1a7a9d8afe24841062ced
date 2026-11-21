@@ -1,0 +1,67 @@
+openapi.json
+  s_0dc439aa0f9039::t_0a4fb140fefe1e 5
+  s_0dc439aa0f9039::t_75f626591501db 37,945,5937-5949,5979-5991,6116-6128
+CHANGELOG.md
+  s_0dc439aa0f9039::t_47a37f94c676f0 3-7
+frontend/src/components.tsx
+  s_0dc439aa0f9039::t_1dc7811bf4e316 601-602
+  s_0dc439aa0f9039::t_7536bd4162bf5b 564
+  s_0dc439aa0f9039::t_c13aeb3e841fec 604
+pyproject.toml
+  s_0dc439aa0f9039::t_9d2d914b08489f 3
+frontend/src/pages/Vessels.tsx
+  s_0dc439aa0f9039::t_c13aeb3e841fec 78-80,298-303,463
+  s_0dc439aa0f9039::t_7536bd4162bf5b 411
+  s_0dc439aa0f9039::t_83dc6888cded83 304
+backend/schemas.py
+  s_0dc439aa0f9039::t_c13aeb3e841fec 102
+tests/test_vessels.py
+  s_0dc439aa0f9039::t_c34ae6b6efc119 50-55,57-59,82-85
+  s_0dc439aa0f9039::t_1dc7811bf4e316 33-41,117,124,129-130,134,138,172
+tests/test_suggestions.py
+  s_0dc439aa0f9039::t_1dc7811bf4e316 18,20
+compose.yaml
+  s_0dc439aa0f9039::t_9d2d914b08489f 3
+frontend/src/styles.css
+  s_0dc439aa0f9039::t_c13aeb3e841fec 1616-1619
+README.md
+  s_0dc439aa0f9039::t_9d2d914b08489f 12,18
+  s_0dc439aa0f9039::t_c34ae6b6efc119 37
+frontend/src/generated/api.d.ts
+  s_0dc439aa0f9039::t_077ffbab3fee8a 1491-1492,1500-1501,1535-1536,1589,2221
+backend/app.py
+  s_0dc439aa0f9039::t_c13aeb3e841fec 94-95,173,180,434,440-443,455
+  s_0dc439aa0f9039::t_9d2d914b08489f 111
+  s_0dc439aa0f9039::t_1dc7811bf4e316 167-172
+frontend/e2e/vessels.spec.ts
+  s_0dc439aa0f9039::t_7536bd4162bf5b 75-78,81,90,118-120,122-123,216,255,316-317,352
+  s_0dc439aa0f9039::t_1dc7811bf4e316 134-135,151,157-164,169,180-183,207,215,240,254
+frontend/e2e/sort-preferences.spec.ts
+  s_0dc439aa0f9039::t_7536bd4162bf5b 10-13,25,57,101
+backend/models.py
+  s_0dc439aa0f9039::t_c13aeb3e841fec 104
+frontend/src/Autocomplete.tsx
+  s_0dc439aa0f9039::t_c13aeb3e841fec 15
+frontend/package.json
+  s_0dc439aa0f9039::t_9d2d914b08489f 4
+frontend/package-lock.json
+  s_0dc439aa0f9039::t_a9740db122601c 3,9
+uv.lock
+  s_0dc439aa0f9039::t_95202d08616cda 82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a9d5eeef4f709ab0dee1a7a9d8afe24841062ced",
+  "prompts": {},
+  "sessions": {
+    "s_0dc439aa0f9039": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1fff2-89e3-7880-8fa9-4b1fa8cde6fb",
+        "model": "gpt-6.2-astra"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}
