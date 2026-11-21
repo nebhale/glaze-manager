@@ -15,8 +15,9 @@ def test_suggestions_exclude_empty_values_and_deduplicate_case(client, catalog):
                 )
             )
             db.add(m.Container(number=index + 1, glaze_id=catalog["glaze"]["id"], location=value))
+            db.add(m.Vessel(name=f"Vessel {index}", clay_body=value))
         db.commit()
-    for field in ("product_line", "viscosity", "location"):
+    for field in ("product_line", "viscosity", "location", "clay_body"):
         response = client.get(f"/api/v1/suggestions/{field}")
         assert response.status_code == 200
         assert response.json() == ["Celadon", "Pottery Choice"]

@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.11.0](https://github.com/nebhale/glaze-manager/releases/tag/v1.11.0) · 2026-11-21
+
+- Record an optional clay body between Name and Location when adding or editing a vessel. Type a new clay body or choose one suggested from earlier vessels.
+- Search and sort vessels by clay body. The Vessels list and the vessel lists on glaze and jar details now show Clay Body in the former Location column.
+
 ## [1.10.1](https://github.com/nebhale/glaze-manager/releases/tag/v1.10.1) · 2026-11-21
 
 - Accept Photo Library JPEGs that contain auxiliary images, such as HDR gain maps, when uploading glaze or vessel photos. Preserve the primary photo with corrected orientation and generate the usual JPEG preview and thumbnail.

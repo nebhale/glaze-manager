@@ -75,6 +75,9 @@ function NewVessel({
               placeholder="e.g. Carved serving bowl"
             />
           </Field>
+          <Field label="Clay body">
+            <Autocomplete name="clay_body" source="clay_body" maxLength={200} />
+          </Field>
           <Field label="Location">
             <Autocomplete
               name="location"
@@ -294,6 +297,13 @@ function VesselDetail({ id, onClose }: { id: string; onClose: () => void }) {
               />
               <InlineField
                 resource={path}
+                field="clay_body"
+                label="Clay body"
+                value={vessel.clay_body ?? null}
+                suggestions="clay_body"
+              />
+              <InlineField
+                resource={path}
                 field="location"
                 label="Location"
                 value={vessel.location ?? null}
@@ -398,7 +408,7 @@ function VesselWorkspace() {
   const { sort, descending } = useListSort(
     "vessels",
     params,
-    ["id", "name", "location"],
+    ["id", "name", "clay_body"],
     "id",
   );
   const showArchived = params.get("show_archived") === "true";
@@ -450,7 +460,7 @@ function VesselWorkspace() {
           query={q}
           onQueryChange={(value) => update({ q: value })}
           inputLabel="Search vessels"
-          placeholder="Search by name, location, or #…"
+          placeholder="Search by name, clay body, location, or #…"
         >
           <Link
             className="button secondary list-add-button"

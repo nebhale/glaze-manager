@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Glaze Manager",
-    "version": "1.10.1"
+    "version": "1.11.0"
   },
   "paths": {
     "/healthz": {
@@ -34,6 +34,7 @@
               "enum": [
                 "product_line",
                 "location",
+                "clay_body",
                 "vessel_location",
                 "cone",
                 "viscosity",
@@ -941,6 +942,7 @@
               "enum": [
                 "id",
                 "name",
+                "clay_body",
                 "location"
               ],
               "type": "string",
@@ -5932,6 +5934,19 @@
             "minLength": 1,
             "title": "Name"
           },
+          "clay_body": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Clay Body"
+          },
           "location": {
             "anyOf": [
               {
@@ -5960,6 +5975,19 @@
             "maxLength": 200,
             "minLength": 1,
             "title": "Name"
+          },
+          "clay_body": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Clay Body"
           },
           "location": {
             "anyOf": [
@@ -6084,6 +6112,19 @@
             "maxLength": 200,
             "minLength": 1,
             "title": "Name"
+          },
+          "clay_body": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Clay Body"
           },
           "location": {
             "anyOf": [

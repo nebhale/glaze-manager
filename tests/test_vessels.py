@@ -30,7 +30,15 @@ def test_vessel_numbers_survive_renames_and_deletion_independently_of_jars(clien
     assert client.patch(f"{path}/1", json=edit).json()["id"] == 1
     assert client.patch(f"{path}/1", json={**edit, "changes": {"name": "Other"}}).status_code == 409
     assert client.get(path, params={"q": "#1"}).json()["items"] == [
-        {"id": 1, "name": "Small bowl", "location": None, "source_url": None, "archived": False, "photos": []}
+        {
+            "id": 1,
+            "name": "Small bowl",
+            "clay_body": None,
+            "location": None,
+            "source_url": None,
+            "archived": False,
+            "photos": [],
+        }
     ]
     assert (
         client.post("/api/v1/containers", json={"glaze_id": jar["glaze_id"]}).json()["number"] == 2
@@ -39,14 +47,16 @@ def test_vessel_numbers_survive_renames_and_deletion_independently_of_jars(clien
 
 def test_vessel_sorting_precedes_pagination(client):
     path = "/api/v1/vessels"
-    for name, location in (
-        ("Cup C", None),
-        ("cup A", "gallery"),
-        ("Dish", None),
-        ("Cup B", "Studio"),
-        ("Cup A", "Gallery"),
+    for name, clay_body, location in (
+        ("Cup C", "Stoneware", None),
+        ("cup A", None, "gallery"),
+        ("Dish", "Porcelain", None),
+        ("Cup B", "porcelain", "Studio"),
+        ("Cup A", "stoneware", "Gallery"),
     ):
-        client.post(path, json={"name": name, "location": location}).raise_for_status()
+        client.post(
+            path, json={"name": name, "clay_body": clay_body, "location": location}
+        ).raise_for_status()
 
     result = client.get(path, params={"page_size": 2, "page": 2}).json()
     assert [item["id"] for item in result["items"]] == [3, 4]
@@ -69,6 +79,10 @@ def test_vessel_sorting_precedes_pagination(client):
     assert ids("id", True, 1) == [5, 4]
     assert ids("name", False, 1) == [2, 5]
     assert ids("name", True, 1) == [1, 4]
+    assert ids("clay_body", False, 1) == [4, 1]
+    assert ids("clay_body", False, 2) == [5, 2]
+    assert ids("clay_body", True, 1) == [1, 5]
+    assert client.get(path, params={"q": "STONE"}).json()["total"] == 2
     assert ids("location", False, 1) == [2, 5]
     assert ids("location", False, 2) == [4, 1]
     assert ids("location", True, 1) == [4, 2]
@@ -100,27 +114,28 @@ def test_vessel_archive_and_location_suggestions(client, jar):
     assert client.get(path, params={"q": "annex"}).json()["total"] == 1
 
 
-def test_existing_vessels_gain_location_and_archive_status(tmp_path):
+def test_existing_vessels_gain_optional_fields_and_archive_status(tmp_path):
     with TestClient(create_app(tmp_path)) as client:
         vessel = client.post("/api/v1/vessels", json={"name": "Original"}).json()
     with sqlite3.connect(tmp_path / "glaze.db") as db:
         db.execute("ALTER TABLE vessels DROP COLUMN source_url")
         db.execute("ALTER TABLE vessels DROP COLUMN archived")
         db.execute("ALTER TABLE vessels DROP COLUMN location")
+        db.execute("ALTER TABLE vessels DROP COLUMN clay_body")
     path = f"/api/v1/vessels/{vessel['id']}"
     with TestClient(create_app(tmp_path)) as client:
         assert client.get(path).json() == vessel
         update = {
-            "changes": {"archived": True, "location": "Storage"},
-            "expected": {"archived": False, "location": None},
+            "changes": {"archived": True, "clay_body": "Porcelain", "location": "Storage"},
+            "expected": {"archived": False, "clay_body": None, "location": None},
         }
         client.patch(path, json=update).raise_for_status()
     with TestClient(create_app(tmp_path)) as client:
-        assert client.get(path).json() == {**vessel, "archived": True, "location": "Storage"}
+        assert client.get(path).json() == {**vessel, **update["changes"]}
 
 
 def test_application_links_notes_and_shared_photos(client, catalog):
-    vessel = client.post("/api/v1/vessels", json={"name": "Bowl"}).json()
+    vessel = client.post("/api/v1/vessels", json={"name": "Bowl", "clay_body": "Stoneware"}).json()
     assert vessel["applications"] == [] and vessel["photos"] == []
     other = client.post("/api/v1/vessels", json={"name": "Bowl"}).json()
     glaze_id = catalog["glaze"]["id"]
@@ -154,6 +169,7 @@ def test_application_links_notes_and_shared_photos(client, catalog):
         {
             "id": vessel["id"],
             "name": "Bowl",
+            "clay_body": "Stoneware",
             "location": None,
             "source_url": None,
             "archived": True,

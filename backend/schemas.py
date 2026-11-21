@@ -99,6 +99,7 @@ class VesselPhotoOut(PhotoAsset):
 
 class VesselInput(Schema):
     name: Name
+    clay_body: Name | None = None
     location: Name | None = None
 
 

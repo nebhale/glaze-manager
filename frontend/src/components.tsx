@@ -561,7 +561,7 @@ export function VesselList({
         <tr>
           {heading("id", "ID", "stock-id-column")}
           {heading("name", "Name", "stock-name-column")}
-          {heading("location", "Location", "stock-location-column")}
+          {heading("clay_body", "Clay Body", "vessel-clay-body-column")}
         </tr>
       </thead>
       <tbody>
@@ -598,10 +598,10 @@ export function VesselList({
               </div>
             </td>
             <td
-              className="stock-location-column"
-              title={vessel.location ?? undefined}
+              className="vessel-clay-body-column"
+              title={vessel.clay_body ?? undefined}
             >
-              {vessel.location || "—"}
+              {vessel.clay_body || "—"}
             </td>
           </tr>
         ))}

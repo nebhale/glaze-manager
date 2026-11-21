@@ -59,8 +59,6 @@ test("vessels and inventory align their ID, thumbnail, and name", async ({
         nameHeading: left(headers[1].querySelector("button")!),
         thumbnail: left(cells[1].querySelector(".glaze-thumb")!),
         name: left(cells[1].querySelector("strong")!),
-        locationWidth:
-          headers[headers.length - 1].getBoundingClientRect().width,
       };
     });
   }
@@ -74,13 +72,13 @@ test("sort vessels by ID and name and keep the order when opening a vessel", asy
   request,
 }) => {
   const prefix = `Sort ${crypto.randomUUID()}`;
-  for (const [suffix, location] of [
-    ["Cup", "Studio"],
-    ["Bowl", "Rack"],
-    ["Vase", "Gallery"],
+  for (const [suffix, clayBody] of [
+    ["Cup", "Stoneware"],
+    ["Bowl", "Porcelain"],
+    ["Vase", "Earthenware"],
   ]) {
     const response = await request.post("/api/v1/vessels", {
-      data: { name: `${prefix} ${suffix}`, location },
+      data: { name: `${prefix} ${suffix}`, clay_body: clayBody },
     });
     expect(response.ok()).toBeTruthy();
   }
@@ -89,7 +87,7 @@ test("sort vessels by ID and name and keep the order when opening a vessel", asy
   await expect(table.getByRole("columnheader")).toHaveText([
     "ID",
     "Name",
-    "Location",
+    "Clay Body",
   ]);
   const name = table.getByRole("columnheader", { name: "Name" });
   const id = table.getByRole("columnheader", { name: "ID" });
@@ -117,12 +115,12 @@ test("sort vessels by ID and name and keep the order when opening a vessel", asy
   await page.goBack();
   await expect(id).toHaveAttribute("aria-sort", "descending");
   await expect(links).toHaveText(expected("Vase", "Bowl", "Cup"));
-  const location = table.getByRole("columnheader", { name: "Location" });
-  await location.getByRole("button").click();
-  await expect(location).toHaveAttribute("aria-sort", "ascending");
+  const clayBody = table.getByRole("columnheader", { name: "Clay Body" });
+  await clayBody.getByRole("button").click();
+  await expect(clayBody).toHaveAttribute("aria-sort", "ascending");
   await expect(links).toHaveText(expected("Vase", "Bowl", "Cup"));
-  await location.getByRole("button").click();
-  await expect(location).toHaveAttribute("aria-sort", "descending");
+  await clayBody.getByRole("button").click();
+  await expect(clayBody).toHaveAttribute("aria-sort", "descending");
   await expect(links).toHaveText(expected("Cup", "Bowl", "Vase"));
 });
 
@@ -133,6 +131,8 @@ test("locate, archive, and restore a vessel with type-specific suggestions", asy
   const prefix = crypto.randomUUID();
   const shelf = `${prefix} display`;
   const cabinet = `${prefix} supplies`;
+  const porcelain = `${prefix} porcelain`;
+  const stoneware = `${prefix} stoneware`;
   const name = `Bowl ${prefix}`;
   const maker = await (
     await request.post("/api/v1/manufacturers", { data: { name: prefix } })
@@ -148,16 +148,25 @@ test("locate, archive, and restore a vessel with type-specific suggestions", asy
     })
   ).json();
   await request.post("/api/v1/vessels", {
-    data: { name: "Plate", location: shelf },
+    data: { name: "Plate", clay_body: porcelain, location: shelf },
   });
 
   await page.goto(`/vessels/new?q=${encodeURIComponent(name)}`);
   const pane = page.getByRole("complementary", { name: "Vessel details" });
   await pane.getByLabel("Name", { exact: true }).fill(name);
+  const clayBody = pane.getByRole("combobox", { name: "Clay body" });
+  await pane.getByLabel("Name", { exact: true }).press("Tab");
+  await expect(clayBody).toBeFocused();
+  await clayBody.fill(prefix);
+  const claySuggestions = page.getByRole("listbox", { name: "Clay body suggestions" });
+  await expect(claySuggestions.getByRole("option")).toHaveText([porcelain]);
+  await claySuggestions.getByRole("option").click();
+  await clayBody.press("Tab");
   const location = page.getByRole("combobox", {
     name: "Location",
     exact: true,
   });
+  await expect(location).toBeFocused();
   await location.fill(prefix);
   const suggestions = page.getByRole("listbox", {
     name: "Location suggestions",
@@ -168,6 +177,10 @@ test("locate, archive, and restore a vessel with type-specific suggestions", asy
   await expect(
     pane.getByRole("heading", { name: new RegExp(name) }),
   ).toBeVisible();
+  await expect(clayBody).toHaveValue(porcelain);
+  await clayBody.fill(stoneware);
+  await clayBody.press("Tab");
+  await expect(location).toBeFocused();
   await expect(location).toHaveValue(shelf);
   await location.click();
   await expect(suggestions.getByRole("option")).toHaveText([shelf]);
@@ -191,6 +204,7 @@ test("locate, archive, and restore a vessel with type-specific suggestions", asy
   await page.reload();
   await expect(toggle).toBeChecked();
   await table.getByRole("link", { name: /, archived$/ }).click();
+  await expect(clayBody).toHaveValue(stoneware);
   await pane.getByRole("button", { name: "Restore vessel" }).click();
   await expect(
     pane.getByRole("button", { name: "Archive", exact: true }),
@@ -198,7 +212,8 @@ test("locate, archive, and restore a vessel with type-specific suggestions", asy
   await close.click();
   await toggle.click();
   await expect(toggle).not.toBeChecked();
-  await expect(table.getByRole("cell", { name: shelf })).toBeVisible();
+  await expect(table.getByRole("cell", { name: stoneware })).toBeVisible();
+  await expect(table.getByRole("cell", { name: shelf })).toHaveCount(0);
 
   await page.goto(`/containers/${jar.id}`);
   await location.fill(prefix);
@@ -222,6 +237,7 @@ test("jar vessels follow the glaze shared by its jars", async ({
   const second = await create("containers", { glaze_id: glaze.id });
   const bowl = await create("vessels", {
     name: `${prefix} Bowl`,
+    clay_body: "Red earthenware",
     location: "Display shelf",
   });
   const vase = await create("vessels", { name: `${prefix} Vase` });
@@ -235,7 +251,8 @@ test("jar vessels follow the glaze shared by its jars", async ({
       await page.goto(`/containers/${jar.id}`);
       await expect(vessels.getByRole("heading")).toHaveText("Vessels 1");
       await expect(vessels.getByRole("link")).toHaveText([bowl.name]);
-      await expect(vessels.getByRole("cell", { name: "Display shelf" })).toBeVisible();
+      await expect(vessels.getByRole("cell", { name: "Red earthenware" })).toBeVisible();
+      await expect(vessels.getByRole("cell", { name: "Display shelf" })).toHaveCount(0);
     }
     await vessels.scrollIntoViewIfNeeded();
     await page.screenshot({
@@ -296,8 +313,8 @@ test("record a numbered vessel and navigate its photos from a glaze", async ({
   await page.getByRole("link", { name: "Add vessel" }).click();
   const pane = page.getByRole("complementary", { name: "Vessel details" });
   await pane.getByLabel("Name", { exact: true }).fill("Carved bowl");
-  const shelf = `Workshop shelf ${testInfo.project.name}`;
-  await pane.getByLabel("Location", { exact: true }).fill(shelf);
+  const clayBody = "Speckled buff";
+  await pane.getByLabel("Clay body", { exact: true }).fill(clayBody);
   await pane.getByRole("button", { name: "Add vessel" }).click();
   await expect(page).toHaveURL(/\/vessels\/\d+$/);
   const number = new URL(page.url()).pathname.split("/").pop();
@@ -332,7 +349,7 @@ test("record a numbered vessel and navigate its photos from a glaze", async ({
   await used.getByRole("link", { name: glaze.name }).click();
   const reverse = page.getByRole("region", { name: "Vessels", exact: true });
   await expect(reverse.getByRole("link", { name: title })).toBeVisible();
-  await expect(reverse.getByRole("cell", { name: shelf })).toBeVisible();
+  await expect(reverse.getByRole("cell", { name: clayBody })).toBeVisible();
   await expect(photos.getByRole("img")).toHaveCount(2);
   await expect(
     photos.getByRole("button", { name: "Delete photo" }),

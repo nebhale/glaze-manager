@@ -91,6 +91,8 @@ def create_app(data_dir: Path | None = None):
             vessel_columns = {
                 column["name"] for column in inspect(connection).get_columns("vessels")
             }
+            if "clay_body" not in vessel_columns:
+                connection.exec_driver_sql("ALTER TABLE vessels ADD COLUMN clay_body VARCHAR")
             if "location" not in vessel_columns:
                 connection.exec_driver_sql("ALTER TABLE vessels ADD COLUMN location VARCHAR")
             if "archived" not in vessel_columns:
@@ -106,7 +108,7 @@ def create_app(data_dir: Path | None = None):
         yield
         engine.dispose()
 
-    app = FastAPI(title="Glaze Manager", version="1.10.1", lifespan=lifespan)
+    app = FastAPI(title="Glaze Manager", version="1.11.0", lifespan=lifespan)
     app.state.engine = engine
     app.state.sessions = sessions
 
@@ -162,13 +164,20 @@ def create_app(data_dir: Path | None = None):
     @app.get("/api/v1/suggestions/{field}", response_model=list[str])
     def suggestions(
         field: Literal[
-            "product_line", "location", "vessel_location", "cone", "viscosity", "application_note"
+            "product_line",
+            "location",
+            "clay_body",
+            "vessel_location",
+            "cone",
+            "viscosity",
+            "application_note",
         ],
         db: DB,
     ):
         column = {
             "product_line": m.Glaze.product_line,
             "location": m.Container.location,
+            "clay_body": m.Vessel.clay_body,
             "vessel_location": m.Vessel.location,
             "cone": m.Glaze.cone,
             "viscosity": m.Glaze.viscosity,
@@ -422,14 +431,16 @@ def create_app(data_dir: Path | None = None):
         db: DB,
         q: str = "",
         status: Literal["active", "archived", "all"] = "active",
-        sort: Literal["id", "name", "location"] = "id",
+        sort: Literal["id", "name", "clay_body", "location"] = "id",
         descending: bool = False,
         number: int = Query(1, alias="page", ge=1, le=2147483647),
         size: int = Query(50, alias="page_size", ge=1, le=1000),
     ):
         term = q.strip()
-        matching = m.Vessel.name.icontains(term, autoescape=True) | m.Vessel.location.icontains(
-            term, autoescape=True
+        matching = (
+            m.Vessel.name.icontains(term, autoescape=True)
+            | m.Vessel.clay_body.icontains(term, autoescape=True)
+            | m.Vessel.location.icontains(term, autoescape=True)
         )
         digits = term.removeprefix("#")
         if digits.isascii() and digits.isdigit():
@@ -441,6 +452,7 @@ def create_app(data_dir: Path | None = None):
         column = {
             "id": m.Vessel.id,
             "name": func.lower(m.Vessel.name),
+            "clay_body": func.lower(m.Vessel.clay_body),
             "location": func.lower(m.Vessel.location),
         }[sort]
         order = column.desc() if descending else column.asc()
