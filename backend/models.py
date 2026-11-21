@@ -101,6 +101,7 @@ class Vessel(Base):
     __table_args__: ClassVar = {"sqlite_autoincrement": True}
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(200))
+    clay_body: Mapped[str | None]
     location: Mapped[str | None]
     source_url: Mapped[str | None]
     archived: Mapped[bool] = mapped_column(Boolean, default=False, server_default="0")

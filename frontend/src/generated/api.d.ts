@@ -1488,6 +1488,8 @@ export interface components {
         VesselInput: {
             /** Name */
             name: string;
+            /** Clay Body */
+            clay_body?: string | null;
             /** Location */
             location?: string | null;
         };
@@ -1495,6 +1497,8 @@ export interface components {
         VesselOut: {
             /** Name */
             name: string;
+            /** Clay Body */
+            clay_body?: string | null;
             /** Location */
             location?: string | null;
             /** Archived */
@@ -1528,6 +1532,8 @@ export interface components {
         VesselSummary: {
             /** Name */
             name: string;
+            /** Clay Body */
+            clay_body?: string | null;
             /** Location */
             location?: string | null;
             /** Archived */
@@ -1580,7 +1586,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                field: "product_line" | "location" | "vessel_location" | "cone" | "viscosity" | "application_note";
+                field: "product_line" | "location" | "clay_body" | "vessel_location" | "cone" | "viscosity" | "application_note";
             };
             cookie?: never;
         };
@@ -2212,7 +2218,7 @@ export interface operations {
             query?: {
                 q?: string;
                 status?: "active" | "archived" | "all";
-                sort?: "id" | "name" | "location";
+                sort?: "id" | "name" | "clay_body" | "location";
                 descending?: boolean;
                 page?: number;
                 page_size?: number;

@@ -1613,6 +1613,10 @@ code {
 .stock-table .stock-location-column {
   width: 64px;
 }
+.stock-table .vessel-clay-body-column {
+  width: 28%;
+}
+.stock-table td.vessel-clay-body-column,
 .stock-table td.stock-location-column {
   color: var(--muted);
   font-size: 12px;

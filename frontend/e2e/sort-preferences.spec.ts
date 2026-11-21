@@ -7,10 +7,10 @@ test("each list remembers its order across navigation and refreshes, with explic
   const prefix = `Sort preference ${crypto.randomUUID()}`;
   const names = (...suffixes: string[]) =>
     suffixes.map((suffix) => `${prefix} ${suffix}`);
-  for (const [suffix, viscosity, location] of [
-    ["Copper", "Medium", "Gallery"],
-    ["Amber", "Thick", "Studio"],
-    ["Blue", "Fluid", "Rack"],
+  for (const [suffix, viscosity, clayBody] of [
+    ["Copper", "Medium", "Earthenware"],
+    ["Amber", "Thick", "Stoneware"],
+    ["Blue", "Fluid", "Porcelain"],
   ]) {
     const name = `${prefix} ${suffix}`;
     const response = await request.post("/api/v1/glazes", {
@@ -22,7 +22,7 @@ test("each list remembers its order across navigation and refreshes, with explic
       data: { glaze_id: glaze.id },
     })).ok()).toBeTruthy();
     expect((await request.post("/api/v1/vessels", {
-      data: { name, location },
+      data: { name, clay_body: clayBody },
     })).ok()).toBeTruthy();
   }
 
@@ -54,7 +54,7 @@ test("each list remembers its order across navigation and refreshes, with explic
       defaultColumn: "ID",
       defaultSort: "id",
       defaultNames: names("Copper", "Amber", "Blue"),
-      column: "Location",
+      column: "Clay Body",
       sortedNames: names("Amber", "Blue", "Copper"),
     },
   ];
@@ -98,7 +98,7 @@ test("each list remembers its order across navigation and refreshes, with explic
     await expect(list.locator("tbody strong")).toHaveText(screen.defaultNames);
   }
 
-  for (const stored of ["{", JSON.stringify({ sort: "unknown", descending: true })]) {
+  for (const stored of ["{", JSON.stringify({ sort: "location", descending: true })]) {
     await page.evaluate((value) => {
       localStorage.setItem("glaze-manager.vessels-sort", value);
     }, stored);

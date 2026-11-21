@@ -12,6 +12,7 @@ import { useApi } from "./api";
 const suggestionLabels = {
   product_line: "Product line",
   location: "Location",
+  clay_body: "Clay body",
   vessel_location: "Location",
   cone: "Cone",
   viscosity: "Viscosity",
