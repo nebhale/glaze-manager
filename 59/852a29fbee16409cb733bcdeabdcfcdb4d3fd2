@@ -1,0 +1,21 @@
+backend/photos.py
+  s_22ad3219072dc6::t_2da725246c8aca 12-13
+tests/test_photos.py
+  s_22ad3219072dc6::t_949ac48605c7cc 65-121
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "59852a29fbee16409cb733bcdeabdcfcdb4d3fd2",
+  "prompts": {},
+  "sessions": {
+    "s_22ad3219072dc6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1fe64-7e45-7000-987c-d26cdd118974",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}
