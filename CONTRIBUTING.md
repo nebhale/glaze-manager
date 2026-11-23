@@ -1,6 +1,6 @@
 # Contributing
 
-Use Python 3.12–3.14, uv, and Node.js 24. From a checkout:
+Use Python 3.12–3.15, uv, and Node.js 24. From a checkout:
 
 ```sh
 uv sync --locked
