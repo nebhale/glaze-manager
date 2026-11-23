@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.11.1](https://github.com/nebhale/glaze-manager/releases/tag/v1.11.1) · 2026-11-22
+
+- Run the production image on Python 3.15 with updated backend dependencies, including FastAPI, SQLAlchemy, and Pydantic.
+- Build the web app with Node.js 26, Vite 8, and TypeScript 7. Orval now generates the frontend models from the API schema.
+
 ## [1.11.0](https://github.com/nebhale/glaze-manager/releases/tag/v1.11.0) · 2026-11-21
 
 - Record an optional clay body between Name and Location when adding or editing a vessel. Type a new clay body or choose one suggested from earlier vessels.
