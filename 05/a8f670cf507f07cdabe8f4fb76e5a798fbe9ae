@@ -1,0 +1,25 @@
+.github/workflows/ci.yaml
+  s_d71d71e99e61db::t_99090169b33396 17-18
+CONTRIBUTING.md
+  s_d71d71e99e61db::t_99090169b33396 3
+pyproject.toml
+  s_d71d71e99e61db::t_99090169b33396 7
+uv.lock
+  s_d71d71e99e61db::t_1a89fc7905092c 3,29,200-225,330-350,399-414,511-540,713-732,823-834,962-1001
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "05a8f670cf507f07cdabe8f4fb76e5a798fbe9ae",
+  "prompts": {},
+  "sessions": {
+    "s_d71d71e99e61db": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a20686-4800-7560-bc5f-1f948cbcc40e",
+        "model": "gpt-6.2-astra"
+      },
+      "human_author": "Ben Hale <nebhale@nebhale.com>"
+    }
+  }
+}
