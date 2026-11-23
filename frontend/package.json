@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "tsc -b && vite build",
-    "types": "openapi-typescript ../openapi.json -o src/generated/api.d.ts",
+    "types": "orval --config orval.config.mjs",
     "test:e2e": "playwright test"
   },
   "dependencies": {
@@ -25,8 +25,8 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^6.3.0",
-    "openapi-typescript": "^7.10.0",
-    "typescript": "~5.9.0",
+    "orval": "8.49.0",
+    "typescript": "~7.0.2",
     "vite": "^8.3.8"
   },
   "overrides": {
