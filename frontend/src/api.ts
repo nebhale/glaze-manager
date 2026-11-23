@@ -1,23 +1,24 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import type { components } from "./generated/api";
+import type { PhotoOut, VesselPhotoOut } from "./generated/api";
 
-export type Jar = components["schemas"]["ContainerOut"];
-export type Glaze = components["schemas"]["GlazeOut"];
-export type GlazeRecord = components["schemas"]["GlazeDetailOut"];
-export type GlazeReference = components["schemas"]["GlazeReference"];
-export type Vessel = components["schemas"]["VesselOut"];
-export type VesselSummary = components["schemas"]["VesselSummary"];
-export type KilnfireStatus = components["schemas"]["KilnfireStatus"];
-export type KilnfireCandidate = components["schemas"]["KilnfireCandidate"];
-export type KilnfireVesselOption =
-  components["schemas"]["KilnfireVesselOption"];
-export type Application = components["schemas"]["ApplicationOut"];
-export type Manufacturer = components["schemas"]["ManufacturerOut"];
-export type Preset = components["schemas"]["PresetOut"];
-export type Measurement = components["schemas"]["MeasurementOut"];
-export type Photo =
-  components["schemas"]["PhotoOut"] | components["schemas"]["VesselPhotoOut"];
+export type {
+  ApplicationOut as Application,
+  ContainerOut as Jar,
+  GlazeDetailOut as GlazeRecord,
+  GlazeOut as Glaze,
+  GlazeReference,
+  KilnfireCandidate,
+  KilnfireStatus,
+  KilnfireVesselOption,
+  ManufacturerOut as Manufacturer,
+  MeasurementOut as Measurement,
+  PresetOut as Preset,
+  VesselOut as Vessel,
+  VesselSummary,
+} from "./generated/api";
+
+export type Photo = PhotoOut | VesselPhotoOut;
 export type Page<T> = {
   items: T[];
   total: number;
