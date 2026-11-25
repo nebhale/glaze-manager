@@ -11,16 +11,16 @@
   },
   "dependencies": {
     "@radix-ui/react-select": "^2.4.1",
-    "@tanstack/react-query": "^5.90.0",
+    "@tanstack/react-query": "^5.108.2",
     "dayjs": "^1.11.23",
-    "lucide-react": "^1.76.0",
+    "lucide-react": "^1.77.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-router-dom": "^7.0.0"
+    "react-router-dom": "^7.18.6"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
-    "@playwright/test": "^1.56.0",
+    "@playwright/test": "^1.65.1",
     "@types/node": "^26.6.6",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
