@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.11.2](https://github.com/nebhale/glaze-manager/releases/tag/v1.11.2) · 2026-11-24
+
+- Keep the title and connection indicators sharp below the iOS status bar when opening Glaze Manager from the Home Screen. The header stays visible while scrolling Settings.
+
 ## [1.11.1](https://github.com/nebhale/glaze-manager/releases/tag/v1.11.1) · 2026-11-22
 
 - Run the production image on Python 3.15 with updated backend dependencies, including FastAPI, SQLAlchemy, and Pydantic.
